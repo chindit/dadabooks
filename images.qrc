@@ -1,0 +1,21 @@
+<RCC>
+    <qresource prefix="/boutons">
+        <file>images/add.png</file>
+        <file>images/delete.png</file>
+        <file>images/edit.png</file>
+        <file>images/livre.png</file>
+        <file>images/ok.png</file>
+        <file>images/open.png</file>
+        <file>images/options.png</file>
+        <file>images/search.png</file>
+    </qresource>
+    <qresource prefix="/programme">
+        <file>images/icone.png</file>
+        <file>images/icone_125.jpg</file>
+    </qresource>
+    <qresource prefix="/menus">
+        <file>images/a_propos.png</file>
+        <file>images/quitter.png</file>
+        <file>images/logo_qt.jpg</file>
+    </qresource>
+</RCC>
