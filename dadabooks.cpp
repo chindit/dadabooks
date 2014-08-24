@@ -137,6 +137,7 @@ void DadaBooks::setListeLivres(){
             ui->tableWidget->setItem(0, 4, item4);
         }
         //On remplit l'accueil
+        ui->listWidget_accueil->clear();
         for(int i=0; i<resultat.size(); i++){
             ui->listWidget_accueil->addItem(resultat.at(i).value("titre"));
         }
@@ -163,6 +164,7 @@ void DadaBooks::setListeLivres(){
         //Et l'accueil
         QString req2 = "SELECT livres.titre FROM livres ORDER BY livres.id";
         QSqlQuery res2 = insSqlManager->query(req2);
+        ui->listWidget_accueil->clear();
         while(res2.next()){
             ui->listWidget_accueil->addItem(res2.record().value("titre").toString());
         }
@@ -182,18 +184,19 @@ void DadaBooks::preparePreview(){
     //Le but de cette fonction est simplement de convertir l'ID d'index du QTableView en un ID de livre pour appeler ensuite activatePreview()
     int id = 0;
     if(insSettingsManager->getSettings(Xml).toBool()){
-        id = insXmlManager->getIdByTitle(ui->listWidget_accueil->currentItem()->text());
+        if(!ui->listWidget_accueil->selectedItems().isEmpty())
+            id = insXmlManager->getIdByTitle(ui->listWidget_accueil->selectedItems().first()->text());
     }
     else{
         QSqlQuery resultat = insSqlManager->query("SELECT id FROM livres WHERE titre="+ui->listWidget_accueil->currentItem()->text());
         id = resultat.record().value("id").toInt();
     }
     if(id > 0){
-        this->activatePreview(id);
+        this->activatePreview(id, false, true);
     }
 }
 
-void DadaBooks::activatePreview(int id, bool search){
+void DadaBooks::activatePreview(int id, bool search, bool idOk){
     QString titre;
     QMultiMap<QString, QString> xmlLivre;
     QSqlQuery res1;
@@ -218,9 +221,13 @@ void DadaBooks::activatePreview(int id, bool search){
     nv_onglet->setLayout(layout_onglet);
     QString req1 = "SELECT livres.id, livres.titre, livres.ISBN, livres.coauteurs, livres.synopsis, livres.couverture, livres.pages, livres.edition, livres.langue, livres.classement, livres.exemplaires, livres.commentaire, livres.lu, livres.note, livres.empruntable, livres.pret, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id WHERE livres.id = ";
     QString real_id;
-    if(search){
+    if(search || idOk){
         real_id = QString::number(id)+";";
     }
+    //Si ce n'est pas de la recherche, on suppose que l'utilisateur a voulu ouvrir un livre récent (ui->tableWidget).
+    //Seulement, s'il a cliqué depuis ui->listWidget_accueil, on se retrouve avec une SIGSEGV vu qu'aucune ligne n'est sélectionnée
+    //dans ui->tableWidget.  On vérifie donc si la propriété idOk est à TRUE.  Si c'est le cas, on a pas besoin de chercher le real_id,
+    //il est déjà bon.
     else{
         real_id = ui->tableWidget->item(ui->tableWidget->currentRow(), 0)->text()+";";
     }

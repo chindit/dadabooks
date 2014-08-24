@@ -34,7 +34,7 @@ private slots:
     void getBook(QString id);
     void updateOnglet(int id);
     void setListeLivres();
-    void activatePreview(int id=0, bool search=false);
+    void activatePreview(int id=0, bool search=false, bool idOk=false);
     void preparePreview();
     void closeTab(int tab);
     void deleteLivre(int id);
