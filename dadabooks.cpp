@@ -306,10 +306,10 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
     QSpacerItem *spacer = new QSpacerItem(10, 100, QSizePolicy::Minimum, QSizePolicy::Minimum);
     QPushButton *button_edit = new QPushButton;
     button_edit->setFlat(true);
-    button_edit->setIcon(QIcon(":/main/images/edit.png"));
+    button_edit->setIcon(QIcon(":/boutons/images/edit.png"));
     QPushButton *button_delete = new QPushButton;
     button_delete->setFlat(true);
-    button_delete->setIcon(QIcon(":/main/images/delete.png"));
+    button_delete->setIcon(QIcon(":/boutons/images/delete.png"));
     QTextEdit *synopsis2 = new QTextEdit;
     QTextEdit *commentaire2 = new QTextEdit;
 
