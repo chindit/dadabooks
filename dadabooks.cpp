@@ -86,7 +86,7 @@ void DadaBooks::getBook(QString id){
 void DadaBooks::updateOnglet(int id){
     if(idOngletEdit >= 0){
         ui->tabWidget->removeTab(idOngletEdit);
-        this->activatePreview(id);
+        this->activatePreview(id, false, true);
         ui->tabWidget->setCurrentIndex(idOngletEdit);
         idOngletEdit = -1;
     }
