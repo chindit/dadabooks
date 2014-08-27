@@ -289,6 +289,7 @@
     <property name="title">
      <string>Fichier</string>
     </property>
+    <addaction name="actionNouveau"/>
     <addaction name="actionQuitter"/>
    </widget>
    <widget class="QMenu" name="menuAide">
@@ -330,6 +331,11 @@
    </property>
    <property name="text">
     <string>À propos de Qt</string>
+   </property>
+  </action>
+  <action name="actionNouveau">
+   <property name="text">
+    <string>Nouveau</string>
    </property>
   </action>
  </widget>

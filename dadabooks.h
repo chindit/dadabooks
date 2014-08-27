@@ -43,6 +43,7 @@ private slots:
     void prepareSearchView(int row);
     void openFile();
     void about();
+    void openNewColl();
 
 
 private:

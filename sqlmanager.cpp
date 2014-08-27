@@ -15,6 +15,10 @@ SqlManager::SqlManager(){
         instance.exec(requete);
         requete = "CREATE TABLE IF NOT EXISTS `livres` (`id` INTEGER PRIMARY KEY NOT NULL,`titre` VARCHAR(255) NOT NULL,`ISBN` VARCHAR(13) NOT NULL,`auteur` INTEGER NOT NULL,`coauteurs` VARCHAR(50) NOT NULL,`synopsis` TEXT NOT NULL,`couverture` VARCHAR(100) NOT NULL,`editeur` INTEGER NOT NULL,`annee` YEAR(4) NOT NULL,`pages` INTEGER NOT NULL,`edition` INTEGER NOT NULL DEFAULT '1',`langue` VARCHAR(25) NOT NULL,`classement` VARCHAR(255) NOT NULL,`exemplaires` INTEGER NOT NULL DEFAULT '1',`commentaire` TEXT NOT NULL,`lu` TINYINT NOT NULL,`note` INTEGER NOT NULL DEFAULT '1',`empruntable` TINYINT NOT NULL,`pret` TINYINT NOT NULL,`ebook` TINYINT NOT NULL,`emplacement` VARCHAR(255) NOT NULL);";
         instance.exec(requete);
+        requete = "CREATE TABLE IF NOT EXISTS `etiquettes` (`id` int(3) NOT NULL, `nom` varchar(50) COLLATE utf8_unicode_ci NOT NULL)";
+        instance.exec(requete);
+        requete = "CREATE TABLE IF NOT EXISTS `liste_etiquettes` (`id` int(5) NOT NULL, `id_livre` int(5) NOT NULL, `id_etiquette` int(3) NOT NULL)";
+        instance.exec(requete);
     }
 }
 

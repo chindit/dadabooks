@@ -44,6 +44,7 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     connect(ui->actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->action_propos_de_DadaBooks, SIGNAL(triggered()), this, SLOT(about()));
     connect(ui->action_propos_de_Qt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+    connect(ui->actionNouveau, SIGNAL(triggered()), this, SLOT(openNewColl()));
 
     //Et on liste les livres
     this->setListeLivres();
@@ -675,5 +676,22 @@ void DadaBooks::openFile(){
 void DadaBooks::about(){
     QString string_about = ("<h2>À propos de DadaBooks</h2><br><b>Dévoloppé par</b> : David Lumaye<br><b>Version</b> : ")+QString(VERSION)+tr("<br><b>Courriel</b>:<a href='mailto:d.lumaye.aro-base.mailtunnel.eu'>d.lumaye.aro-base.mailtunnel.eu</a><br><b>Distribué sous license</b> : <a href='http://www.gnu.org/licenses/gpl-3.0.fr.html'>GPL 3</a>");
     QMessageBox::about(this, tr("À propos de DadaBooks"), string_about);
+    return;
+}
+
+void DadaBooks::openNewColl(){
+    //Pour créer une nouvelle collection, on vire la référence de l'ancienne
+    insSettingsManager->setSettings(Fichier, "");
+    //Et on rapelle les fonctions d'initialisation
+    FirstLaunch *insFirstLaunch = new FirstLaunch;
+    insFirstLaunch->exec();
+    delete insFirstLaunch;
+
+    //On recharge les paramètres
+    insSettingsManager->loadSettings();
+    insSettingsManager->setSettings(Initialized, true);
+    if(insSettingsManager->getSettings(Fichier).toString().isEmpty() && !insSettingsManager->getSettings(MariaDB).toBool()){
+        this->openFile();
+    }
     return;
 }

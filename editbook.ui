@@ -47,14 +47,14 @@
    </item>
    <item row="1" column="0">
     <layout class="QGridLayout" name="gridLayout">
-     <item row="11" column="1">
+     <item row="11" column="2">
       <widget class="QSpinBox" name="spinBox_edition">
        <property name="value">
         <number>1</number>
        </property>
       </widget>
      </item>
-     <item row="0" column="2" alignment="Qt::AlignHCenter">
+     <item row="0" column="3" alignment="Qt::AlignHCenter">
       <widget class="QLabel" name="label_couverture">
        <property name="text">
         <string>Couverture</string>
@@ -68,7 +68,7 @@
        </property>
       </widget>
      </item>
-     <item row="8" column="1">
+     <item row="8" column="2">
       <widget class="QPlainTextEdit" name="plainTextEdit_resume"/>
      </item>
      <item row="10" column="0">
@@ -78,7 +78,14 @@
        </property>
       </widget>
      </item>
-     <item row="9" column="1">
+     <item row="22" column="3">
+      <widget class="QLabel" name="label_image_texte">
+       <property name="text">
+        <string>IMAGE 2</string>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="2">
       <widget class="QSpinBox" name="spinBox_annee">
        <property name="maximum">
         <number>2200</number>
@@ -88,17 +95,10 @@
        </property>
       </widget>
      </item>
-     <item row="16" column="1">
+     <item row="16" column="2">
       <widget class="QSpinBox" name="spinBox_exemplaires">
        <property name="value">
         <number>1</number>
-       </property>
-      </widget>
-     </item>
-     <item row="21" column="2">
-      <widget class="QLabel" name="label_image_texte">
-       <property name="text">
-        <string>IMAGE 2</string>
        </property>
       </widget>
      </item>
@@ -116,10 +116,31 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
+     <item row="4" column="2">
       <widget class="QLineEdit" name="lineEdit_coauteurs"/>
      </item>
-     <item row="6" column="1">
+     <item row="17" column="0">
+      <widget class="QLabel" name="label_empruntable">
+       <property name="text">
+        <string>Options</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="0">
+      <widget class="QLabel" name="label_resume">
+       <property name="text">
+        <string>Résumé</string>
+       </property>
+      </widget>
+     </item>
+     <item row="18" column="0">
+      <widget class="QLabel" name="label_commentaire">
+       <property name="text">
+        <string>Commentaire</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="2">
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
         <widget class="QComboBox" name="comboBox_editeur"/>
@@ -153,29 +174,12 @@
        </item>
       </layout>
      </item>
-     <item row="17" column="0">
-      <widget class="QLabel" name="label_empruntable">
-       <property name="text">
-        <string>Options</string>
-       </property>
-      </widget>
-     </item>
-     <item row="18" column="0">
-      <widget class="QLabel" name="label_commentaire">
-       <property name="text">
-        <string>Commentaire</string>
-       </property>
-      </widget>
-     </item>
      <item row="13" column="0">
       <widget class="QLabel" name="label_langue">
        <property name="text">
         <string>Langue</string>
        </property>
       </widget>
-     </item>
-     <item row="12" column="1">
-      <widget class="QLineEdit" name="lineEdit_ISBN"/>
      </item>
      <item row="0" column="0">
       <widget class="QLabel" name="label_titre">
@@ -184,7 +188,10 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
+     <item row="12" column="2">
+      <widget class="QLineEdit" name="lineEdit_ISBN"/>
+     </item>
+     <item row="0" column="2">
       <widget class="QLineEdit" name="lineEdit_titre"/>
      </item>
      <item row="4" column="0">
@@ -194,7 +201,7 @@
        </property>
       </widget>
      </item>
-     <item row="15" column="1">
+     <item row="15" column="2">
       <widget class="QLineEdit" name="lineEdit_classement"/>
      </item>
      <item row="12" column="0">
@@ -204,15 +211,8 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
+     <item row="5" column="2">
       <widget class="QLineEdit" name="lineEdit_editeur"/>
-     </item>
-     <item row="8" column="0">
-      <widget class="QLabel" name="label_resume">
-       <property name="text">
-        <string>Résumé</string>
-       </property>
-      </widget>
      </item>
      <item row="9" column="0">
       <widget class="QLabel" name="label_annee">
@@ -221,7 +221,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="1" column="2">
       <widget class="QLineEdit" name="lineEdit_auteur"/>
      </item>
      <item row="19" column="0">
@@ -231,7 +231,24 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="16" column="0">
+      <widget class="QLabel" name="label_exemplaires">
+       <property name="text">
+        <string>Exemplaires</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="2">
+      <widget class="QSpinBox" name="spinBox_pages">
+       <property name="maximum">
+        <number>15000</number>
+       </property>
+       <property name="value">
+        <number>50</number>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <widget class="QComboBox" name="comboBox_auteur"/>
@@ -265,24 +282,13 @@
        </item>
       </layout>
      </item>
-     <item row="16" column="0">
-      <widget class="QLabel" name="label_exemplaires">
-       <property name="text">
-        <string>Exemplaires</string>
-       </property>
-      </widget>
+     <item row="18" column="2">
+      <widget class="QPlainTextEdit" name="plainTextEdit_commentaire"/>
      </item>
-     <item row="10" column="1">
-      <widget class="QSpinBox" name="spinBox_pages">
-       <property name="maximum">
-        <number>15000</number>
-       </property>
-       <property name="value">
-        <number>50</number>
-       </property>
-      </widget>
+     <item row="13" column="2">
+      <widget class="QLineEdit" name="lineEdit_langue"/>
      </item>
-     <item row="17" column="1">
+     <item row="17" column="2">
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="QCheckBox" name="checkBox_empruntable">
@@ -300,13 +306,14 @@
        </item>
       </layout>
      </item>
-     <item row="18" column="1">
-      <widget class="QPlainTextEdit" name="plainTextEdit_commentaire"/>
+     <item row="15" column="0">
+      <widget class="QLabel" name="label_classement">
+       <property name="text">
+        <string>Classement</string>
+       </property>
+      </widget>
      </item>
-     <item row="13" column="1">
-      <widget class="QLineEdit" name="lineEdit_langue"/>
-     </item>
-     <item row="21" column="0" colspan="2">
+     <item row="22" column="0" colspan="3">
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
         <widget class="QCheckBox" name="checkBox_lu">
@@ -352,14 +359,14 @@
        </item>
       </layout>
      </item>
-     <item row="15" column="0">
-      <widget class="QLabel" name="label_classement">
+     <item row="1" column="3" rowspan="19">
+      <widget class="QLabel" name="label_image">
        <property name="text">
-        <string>Classement</string>
+        <string>IMAGE</string>
        </property>
       </widget>
      </item>
-     <item row="19" column="1">
+     <item row="19" column="2">
       <layout class="QHBoxLayout" name="horizontalLayout_6">
        <item>
         <widget class="QCheckBox" name="checkBox_ebook">
@@ -401,10 +408,17 @@
        </item>
       </layout>
      </item>
-     <item row="1" column="2" rowspan="19">
-      <widget class="QLabel" name="label_image">
+     <item row="20" column="0">
+      <widget class="QLabel" name="label_etiquette">
        <property name="text">
-        <string>IMAGE</string>
+        <string>Étiquette</string>
+       </property>
+      </widget>
+     </item>
+     <item row="20" column="2">
+      <widget class="QComboBox" name="comboBox_etiquette">
+       <property name="editable">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

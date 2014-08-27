@@ -77,6 +77,7 @@ void EditBook::accept(){
     ebook = (ui->checkBox_ebook->isChecked() ? 1 : 0);
     note = ui->horizontalSlider_note->value();
     QString req1;
+    int idLivre = -1;
     if(!insSettingsManager->getSettings(Xml).toBool()){
         if(idEdit == 0){
             req1 = "INSERT INTO livres(titre, ISBN, auteur, coauteurs, synopsis, couverture, editeur, annee, pages, edition, langue, classement, exemplaires, commentaire, lu, note, empruntable, pret, ebook, emplacement) VALUES(\""+ui->lineEdit_titre->text().replace("\"", "\\\"")+"\", \""+ui->lineEdit_ISBN->text()+"\", "+QString::number(id_auteur)+", \""+this->guillemets(ui->lineEdit_coauteurs->text())+"\", \""+this->guillemets(ui->plainTextEdit_resume->toPlainText())+"\", \""+ui->label_image_texte->text()+"\", "+QString::number(id_editeur)+", '"+QString::number(annee)+"', "+QString::number(pages)+", "+QString::number(edition)+", \""+this->guillemets(ui->lineEdit_langue->text())+"\", \""+this->guillemets(ui->lineEdit_classement->text())+"\", "+QString::number(exemplaires)+", \""+this->guillemets(ui->plainTextEdit_commentaire->toPlainText())+"\", "+QString::number(lu)+", "+QString::number(note)+", "+QString::number(empruntable)+", "+QString::number(pret)+", "+QString::number(ebook)+", \""+ui->lineEdit_emplacement->text()+"\");";
@@ -85,6 +86,34 @@ void EditBook::accept(){
             req1 = "UPDATE livres SET titre = \""+this->guillemets(ui->lineEdit_titre->text())+"\", ISBN = \""+ui->lineEdit_ISBN->text()+"\", auteur = "+QString::number(id_auteur)+", coauteurs = \""+this->guillemets(ui->lineEdit_coauteurs->text())+"\", synopsis = \""+this->guillemets(ui->plainTextEdit_resume->toPlainText())+"\", couverture = \""+ui->label_image_texte->text()+"\", editeur = "+QString::number(id_editeur)+", annee = '"+QString::number(annee)+"', pages = "+QString::number(pages)+", edition = "+QString::number(edition)+", langue = \""+this->guillemets(ui->lineEdit_langue->text())+"\", classement = \""+this->guillemets(ui->lineEdit_classement->text())+"\", exemplaires = "+QString::number(exemplaires)+", commentaire = \""+this->guillemets(ui->plainTextEdit_commentaire->toPlainText())+"\", lu = "+QString::number(lu)+", note = "+QString::number(note)+", empruntable = "+QString::number(empruntable)+", pret = "+QString::number(pret)+", ebook = "+QString::number(ebook)+", emplacement = \""+ui->lineEdit_emplacement->text()+"\" WHERE id="+QString::number(idEdit)+";";
         }
         QSqlQuery res1 = insSql->query(req1);
+        idLivre = (idEdit == 0) ? res1.lastInsertId().toInt() : idEdit;
+        QString etiquette = ui->comboBox_etiquette->currentText();
+        QStringList etiquettes;
+        if(etiquette.contains(",")){
+            etiquettes = etiquette.split(",");
+        }
+        else
+            etiquettes.append(etiquette);
+        if(!etiquette.isEmpty()){
+            int id = -1;
+            for(int i=0; i<etiquettes.size(); i++){
+                req1 = "SELECT id FROM etiquettes WHERE nom = \""+etiquettes.at(i)+"\"";
+                res1 = insSql->query(req1);
+                if(res1.size() < 1){
+                    req1 = "INSERT INTO etiquettes(nom) VALUES(\""+etiquettes.at(i)+"\")";
+                    res1 = insSql->query(req1);
+                    id = res1.lastInsertId().toInt();
+                }
+                else{
+                    //On a déjà une id
+                    id = res1.record().value("id").toInt();
+                }
+                //On insère le lien dans la BDD
+                req1 = "INSERT INTO liste_etiquettes(id_livre, id_etiquette) VALUES("+QString::number(id)+", "+QString::number(idLivre)+");";
+                res1 = insSql->query(req1);
+            }
+        }
+
     }
     else{
         //XML
@@ -216,6 +245,8 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
         ui->pushButton_edit_editeur->setVisible(false);
         ui->pushButton_auteur->setVisible(false);
         ui->pushButton_editeur->setVisible(false);
+        ui->label_etiquette->setVisible(false);
+        ui->comboBox_etiquette->setVisible(false);
     }
     else{
         this->getAuteur(livre.value("auteur"));
