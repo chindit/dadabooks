@@ -20,10 +20,9 @@ QList< QMultiMap<QString,QString> > Casadellibro::makeSearch(QString search){
         contenu_page = contenu_page.right(contenu_page.size()-16).trimmed();
 
         //ID
-        int taille = contenu_page.size();
-        int index = contenu_page.indexOf("href=");
-        contenu_page = contenu_page.right(taille-index-6);
-        QString w_id = contenu_page.left(contenu_page.indexOf("\""));
+        QString w_id = contenu_page.right(contenu_page.size()-contenu_page.indexOf("title-link searchResult"));
+        w_id = w_id.right(w_id.size()-w_id.indexOf("href=")-6);
+        w_id = w_id.left(w_id.indexOf("\""));
         if(!w_id.startsWith("http")){
             w_id.prepend("http://www.casadellibro.com");
         }
@@ -48,7 +47,7 @@ QList< QMultiMap<QString,QString> > Casadellibro::makeSearch(QString search){
         contenu_page = contenu_page.right(contenu_page.size()-contenu_page.indexOf(">")-1);
         QString w_editeur = contenu_page.left(contenu_page.indexOf("<"));
         if(w_editeur.trimmed().endsWith(","))
-            w_editeur.resize(-1);
+            w_editeur.resize(w_editeur.size()-1);
         w_editeur = w_editeur.trimmed();
 
         //Année
@@ -145,7 +144,7 @@ QMultiMap<QString,QString> Casadellibro::getBook( QString id ){
     langue = langue.right(langue.size()-langue.indexOf(">")-1);
     langue = langue.left(langue.indexOf("<")).trimmed();
 
-    QString resume = contenu_page.right(contenu_page.size()-contenu_page.indexOf("Resumen del libro"));
+    QString resume = contenu_page.right(contenu_page.size()-contenu_page.lastIndexOf("Resumen del libro"));
     resume = resume.right(resume.size()-resume.indexOf("\">")-2);
     resume = resume.replace("<br>", "");
     resume = resume.replace("<br />", "");

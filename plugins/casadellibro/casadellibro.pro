@@ -10,7 +10,7 @@ TARGET = casadellibro
 TEMPLATE = lib
 CONFIG += plugin
 
-DESTDIR = /home/david/Documents/Programmation/MyBibli/build-MyBibli-Desktop-Debug/plugins/
+DESTDIR = /tmp/dadabooks_Debug/
 
 SOURCES += \
     casadellibro.cpp

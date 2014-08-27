@@ -168,10 +168,12 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
     ui->lineEdit_ISBN->setText(livre.value("isbn"));
     ui->lineEdit_langue->setText(livre.value("langue"));
     ui->spinBox_pages->setValue(livre.value("pages").toInt());
+    ui->plainTextEdit_resume->clear();
     ui->plainTextEdit_resume->insertPlainText(livre.value("synopsis"));
     ui->lineEdit_coauteurs->setText(livre.value("coauteurs", ""));
     ui->spinBox_edition->setValue(livre.value("edition", "1").toInt());
     ui->spinBox_exemplaires->setValue(livre.value("exemplaires", "1").toInt());
+    ui->plainTextEdit_commentaire->clear();
     ui->plainTextEdit_commentaire->insertPlainText(livre.value("commentaire", ""));
     ui->lineEdit_classement->setText(livre.value("classement", ""));
     if(livre.value("empruntable", "0").toInt() == 1)

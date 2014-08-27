@@ -537,6 +537,8 @@ void DadaBooks::deleteLivre(int id){
 
         //On met à jour le tableau
         this->setListeLivres();
+        //On vire l'onglet
+        this->closeTab(ui->tabWidget->currentIndex());
     }
     return;
 }
