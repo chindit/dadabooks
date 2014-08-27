@@ -476,7 +476,7 @@ void DadaBooks::closeTab(int tab){
 void DadaBooks::editLivre(int id){
     idOngletEdit = ui->tabWidget->currentIndex();
     QMultiMap<QString, QString> livre;
-    QString req1 = "SELECT livres.id, livres.titre, livres.ISBN, livres.coauteurs, livres.synopsis, livres.couverture, livres.pages, livres.edition, livres.langue, livres.classement, livres.exemplaires, livres.commentaire, livres.note, livres.lu, livres.empruntable, livres.pret, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id WHERE livres.id = "+QString::number(id)+";";
+    QString req1 = "SELECT livres.id, livres.titre, livres.ISBN, livres.coauteurs, livres.synopsis, livres.couverture, livres.pages, livres.edition, livres.langue, livres.classement, livres.exemplaires, livres.commentaire, livres.note, livres.lu, livres.empruntable, livres.pret, livres.ebook, livres.emplacement, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id WHERE livres.id = "+QString::number(id)+";";
     if(insSettingsManager->getSettings(Xml).toBool()){
         //XML
         livre = insXmlManager->getBook(id);
@@ -503,6 +503,8 @@ void DadaBooks::editLivre(int id){
         livre.insert("prete", res1.record().value("pret").toString());
         livre.insert("note", res1.record().value("note").toString());
         livre.insert("lu", res1.record().value("lu").toString());
+        livre.insert("ebook", res1.record().value("ebook").toString());
+        livre.insert("emplacement", res1.record().value("emplacement").toString());
         livre.insert("xml", "0");
     }
     insEditBook->setId(id);
