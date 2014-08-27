@@ -17,6 +17,7 @@ EditBook::EditBook(QWidget *parent) : QDialog(parent), ui(new Ui::EditBook){
     connect(insAddAuteur, SIGNAL(makeClose()), this, SLOT(updateAuteurs()));
     connect(ui->pushButton_editeur, SIGNAL(clicked()), insAddEditeur, SLOT(show()));
     connect(insAddEditeur, SIGNAL(makeClose()), this, SLOT(updateEditeurs()));
+    connect(ui->pushButton_emplacement, SIGNAL(clicked()), this, SLOT(uploadEbook()));
 }
 
 EditBook::~EditBook(){
@@ -61,7 +62,11 @@ void EditBook::accept(){
             return;
         }
     }
-    int annee, pages, edition, exemplaires, empruntable, pret, lu, note;
+    if(ui->lineEdit_titre->text().isEmpty()){
+        QMessageBox::critical(this, "Impossible d'ajouter le livre", "Nous sommes désolé mais il est impossible d'ajouter un livre qui ne possède pas de titre");
+        return;
+    }
+    int annee, pages, edition, exemplaires, empruntable, pret, lu, note, ebook;
     annee = ui->spinBox_annee->value();
     pages = ui->spinBox_pages->value();
     edition = ui->spinBox_edition->value();
@@ -69,14 +74,15 @@ void EditBook::accept(){
     empruntable = (ui->checkBox_empruntable->isChecked()) ? 1 : 0 ;
     pret = (ui->checkBox_prete->isChecked()) ? 1 : 0 ;
     lu = (ui->checkBox_lu->isChecked()) ? 1 : 0;
+    ebook = (ui->checkBox_ebook->isChecked() ? 1 : 0);
     note = ui->horizontalSlider_note->value();
     QString req1;
     if(!insSettingsManager->getSettings(Xml).toBool()){
         if(idEdit == 0){
-            req1 = "INSERT INTO livres(titre, ISBN, auteur, coauteurs, synopsis, couverture, editeur, annee, pages, edition, langue, classement, exemplaires, commentaire, lu, note, empruntable, pret) VALUES(\""+ui->lineEdit_titre->text().replace("\"", "\\\"")+"\", \""+ui->lineEdit_ISBN->text()+"\", "+QString::number(id_auteur)+", \""+this->guillemets(ui->lineEdit_coauteurs->text())+"\", \""+this->guillemets(ui->plainTextEdit_resume->toPlainText())+"\", \""+ui->label_image_texte->text()+"\", "+QString::number(id_editeur)+", '"+QString::number(annee)+"', "+QString::number(pages)+", "+QString::number(edition)+", \""+this->guillemets(ui->lineEdit_langue->text())+"\", \""+this->guillemets(ui->lineEdit_classement->text())+"\", "+QString::number(exemplaires)+", \""+this->guillemets(ui->plainTextEdit_commentaire->toPlainText())+"\", "+QString::number(lu)+", "+QString::number(note)+", "+QString::number(empruntable)+", "+QString::number(pret)+");";
+            req1 = "INSERT INTO livres(titre, ISBN, auteur, coauteurs, synopsis, couverture, editeur, annee, pages, edition, langue, classement, exemplaires, commentaire, lu, note, empruntable, pret, ebook, emplacement) VALUES(\""+ui->lineEdit_titre->text().replace("\"", "\\\"")+"\", \""+ui->lineEdit_ISBN->text()+"\", "+QString::number(id_auteur)+", \""+this->guillemets(ui->lineEdit_coauteurs->text())+"\", \""+this->guillemets(ui->plainTextEdit_resume->toPlainText())+"\", \""+ui->label_image_texte->text()+"\", "+QString::number(id_editeur)+", '"+QString::number(annee)+"', "+QString::number(pages)+", "+QString::number(edition)+", \""+this->guillemets(ui->lineEdit_langue->text())+"\", \""+this->guillemets(ui->lineEdit_classement->text())+"\", "+QString::number(exemplaires)+", \""+this->guillemets(ui->plainTextEdit_commentaire->toPlainText())+"\", "+QString::number(lu)+", "+QString::number(note)+", "+QString::number(empruntable)+", "+QString::number(pret)+", "+QString::number(ebook)+", \""+ui->lineEdit_emplacement->text()+"\");";
         }
         else{
-            req1 = "UPDATE livres SET titre = \""+this->guillemets(ui->lineEdit_titre->text())+"\", ISBN = \""+ui->lineEdit_ISBN->text()+"\", auteur = "+QString::number(id_auteur)+", coauteurs = \""+this->guillemets(ui->lineEdit_coauteurs->text())+"\", synopsis = \""+this->guillemets(ui->plainTextEdit_resume->toPlainText())+"\", couverture = \""+ui->label_image_texte->text()+"\", editeur = "+QString::number(id_editeur)+", annee = '"+QString::number(annee)+"', pages = "+QString::number(pages)+", edition = "+QString::number(edition)+", langue = \""+this->guillemets(ui->lineEdit_langue->text())+"\", classement = \""+this->guillemets(ui->lineEdit_classement->text())+"\", exemplaires = "+QString::number(exemplaires)+", commentaire = \""+this->guillemets(ui->plainTextEdit_commentaire->toPlainText())+"\", lu = "+QString::number(lu)+", note = "+QString::number(note)+", empruntable = "+QString::number(empruntable)+", pret = "+QString::number(pret)+" WHERE id="+QString::number(idEdit)+";";
+            req1 = "UPDATE livres SET titre = \""+this->guillemets(ui->lineEdit_titre->text())+"\", ISBN = \""+ui->lineEdit_ISBN->text()+"\", auteur = "+QString::number(id_auteur)+", coauteurs = \""+this->guillemets(ui->lineEdit_coauteurs->text())+"\", synopsis = \""+this->guillemets(ui->plainTextEdit_resume->toPlainText())+"\", couverture = \""+ui->label_image_texte->text()+"\", editeur = "+QString::number(id_editeur)+", annee = '"+QString::number(annee)+"', pages = "+QString::number(pages)+", edition = "+QString::number(edition)+", langue = \""+this->guillemets(ui->lineEdit_langue->text())+"\", classement = \""+this->guillemets(ui->lineEdit_classement->text())+"\", exemplaires = "+QString::number(exemplaires)+", commentaire = \""+this->guillemets(ui->plainTextEdit_commentaire->toPlainText())+"\", lu = "+QString::number(lu)+", note = "+QString::number(note)+", empruntable = "+QString::number(empruntable)+", pret = "+QString::number(pret)+", ebook = "+QString::number(ebook)+", emplacement = \""+ui->lineEdit_emplacement->text()+"\" WHERE id="+QString::number(idEdit)+";";
         }
         QSqlQuery res1 = insSql->query(req1);
     }
@@ -115,6 +121,13 @@ void EditBook::accept(){
         }
         else{
             livre.insert("lu", "False");
+        }
+        if(ui->checkBox_ebook->isChecked()){
+            livre.insert("ebook", "True");
+            livre.insert("emplacement", ui->lineEdit_emplacement->text());
+        }
+        else{
+            livre.insert("ebook", "False");
         }
         if(idEdit == 0){
             insXml->addBook(livre);
@@ -167,7 +180,14 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
         ui->checkBox_prete->setChecked(true);
     if(livre.value("lu").toInt() == 1)
         ui->checkBox_lu->setChecked(true);
-    ui->horizontalSlider_note->setValue(livre.value("note").toFloat()*2);
+    if(livre.value("ebook").toInt() == 1){
+        ui->checkBox_ebook->setChecked(true);
+        ui->lineEdit_emplacement->setText(livre.value("emplacement"));
+        ui->pushButton_emplacement->setEnabled(true);
+    }
+    ui->horizontalSlider_note->setValue(livre.value("note").toInt());
+    ui->label_note->setText(QString::number(livre.value("note").toInt())+"/20");
+
     //Récupération de l'image
     QNetworkAccessManager nw_manager;
     QNetworkRequest request(livre.value("couverture"));
@@ -325,7 +345,12 @@ QString EditBook::guillemets(QString input){
 }
 
 void EditBook::updateNote(int value){
-    float result = (float)value/2;
-    ui->label_note->setText(QString::number(result)+"/10");
+    ui->label_note->setText(QString::number(value)+"/20");
+    return;
+}
+
+void EditBook::uploadEbook(){
+    QString ebook = QFileDialog::getOpenFileName(this, "Sélectionnez le fichier", QDir::homePath());
+    ui->lineEdit_emplacement->setText(ebook);
     return;
 }

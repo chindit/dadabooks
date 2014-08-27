@@ -277,7 +277,7 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
     //-----------------------------------------------
     //Création des éléments
     //-----------------------------------------------
-    QLabel *titre_fen, *id1, *id2, *titre_livre, *titre2, *isbn, *isbn2, *coauteurs, *coauteurs2, *synopsis, *couverture, *couverture2, *pages, *pages2, *edition, *edition2, *langue, *langue2, *classement, *classement2, *exemplaires, *exemplaires2, *commentaire, *annee, *annee2, *auteur, *auteur2, *editeur, *editeur2, *note1, *note2;
+    QLabel *titre_fen, *id1, *id2, *titre_livre, *titre2, *isbn, *isbn2, *coauteurs, *coauteurs2, *synopsis, *couverture, *couverture2, *pages, *pages2, *edition, *edition2, *langue, *langue2, *classement, *classement2, *exemplaires, *exemplaires2, *commentaire, *annee, *annee2, *auteur, *auteur2, *editeur, *editeur2, *note1, *note2, *ebook2, *ebook3;
     id1 = new QLabel("ID");
     titre_livre = new QLabel("Titre");
     isbn = new QLabel("ISBN");
@@ -296,13 +296,16 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
     auteur = new QLabel("Auteur");
     editeur = new QLabel("Éditeur");
     note1 = new QLabel("Note");
-    QCheckBox *empruntable, *prete, *lu;
+    ebook2 = new QLabel("Emplacement");
+    QCheckBox *empruntable, *prete, *lu, *ebook1;
     empruntable = new QCheckBox("Empruntable");
     empruntable->setEnabled(false);
     prete = new QCheckBox("En prêt");
     prete->setEnabled(false);
     lu = new QCheckBox("Lu");
     lu->setEnabled(false);
+    ebook1 = new QCheckBox("Ebook");
+    ebook1->setEnabled(false);
     QSpacerItem *spacer = new QSpacerItem(10, 100, QSizePolicy::Minimum, QSizePolicy::Minimum);
     QPushButton *button_edit = new QPushButton;
     button_edit->setFlat(true);
@@ -349,10 +352,12 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
         auteur2 = new QLabel(xmlLivre.value("auteur"));
         editeur2 = new  QLabel(xmlLivre.value("editeur"));
         note2 = new QLabel(xmlLivre.value("note"));
+        ebook3 = new QLabel(xmlLivre.value("emplacement", ""));
         synopsis2->insertPlainText(xmlLivre.value("synopsis"));
         commentaire2->insertPlainText(xmlLivre.value("commentaire"));
         prete->setChecked(((xmlLivre.value("prete") == "True") ? true : false));
         empruntable->setChecked(((xmlLivre.value("empruntable") == "True") ? true : false));
+        ebook1->setChecked(((xmlLivre.value("ebook") == "True") ? true : false));
         mapper_delete->setMapping(button_delete, xmlLivre.value("id").toInt());
         mapper_edit->setMapping(button_edit, xmlLivre.value("id").toInt());
     }
@@ -389,8 +394,10 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
         note2 = new QLabel(res1.record().value("note").toString());
         synopsis2->insertPlainText(res1.record().value("synopsis").toString());
         commentaire2->insertPlainText(res1.record().value("commentaire").toString());
+        ebook3 = new QLabel(res1.record().value("emplacement").toString());
         empruntable->setChecked(res1.record().value("empruntable").toBool());
         prete->setChecked(res1.record().value("pret").toBool());
+        ebook1->setChecked(res1.record().value("ebook").toBool());
         mapper_delete->setMapping(button_delete, res1.record().value("id").toInt());
         mapper_edit->setMapping(button_edit, res1.record().value("id").toInt());
     }
@@ -421,8 +428,8 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
     layout_onglet->addWidget(isbn2, 7, 4);
     layout_onglet->addWidget(coauteurs, 3, 3);
     layout_onglet->addWidget(coauteurs2, 3, 4);
-    layout_onglet->addWidget(synopsis, 11, 0);
-    layout_onglet->addWidget(synopsis2, 12, 0, 1, 3);
+    layout_onglet->addWidget(synopsis, 12, 0);
+    layout_onglet->addWidget(synopsis2, 13, 0, 1, 3);
     layout_onglet->addWidget(pages, 5, 1);
     layout_onglet->addWidget(pages2, 5, 2);
     layout_onglet->addWidget(edition, 5, 3);
@@ -431,8 +438,8 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
     layout_onglet->addWidget(langue2, 6, 2);
     layout_onglet->addWidget(exemplaires, 6, 3);
     layout_onglet->addWidget(exemplaires2, 6, 4);
-    layout_onglet->addWidget(commentaire, 11, 3, 1, 1, Qt::AlignLeft);
-    layout_onglet->addWidget(commentaire2, 12, 3, 1, 2);
+    layout_onglet->addWidget(commentaire, 12, 3, 1, 1, Qt::AlignLeft);
+    layout_onglet->addWidget(commentaire2, 13, 3, 1, 2);
     layout_onglet->addWidget(classement, 7, 1);
     layout_onglet->addWidget(classement2, 7, 2);
     layout_onglet->addWidget(annee, 4, 3);
@@ -444,12 +451,15 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
     layout_onglet->addWidget(empruntable, 8, 1, 1, 2, Qt::AlignLeft);
     layout_onglet->addWidget(prete, 8, 2, 1, 1, Qt::AlignLeft);
     layout_onglet->addWidget(lu, 8, 3, 1, 2, Qt::AlignLeft);
+    layout_onglet->addWidget(ebook1, 9, 1, 1, 2, Qt::AlignLeft);
+    layout_onglet->addWidget(ebook2, 9, 2, 1, 1, Qt::AlignLeft);
+    layout_onglet->addWidget(ebook3, 9, 3, 1, 2, Qt::AlignLeft);
     layout_onglet->addWidget(couverture, 1, 0, 1, 1, Qt::AlignHCenter);
-    layout_onglet->addWidget(couverture2, 2, 0, 9, 1, Qt::AlignVCenter);
-    layout_onglet->addWidget(note1, 9, 1);
-    layout_onglet->addWidget(note2, 9, 2);
+    layout_onglet->addWidget(couverture2, 2, 0, 10, 1, Qt::AlignVCenter);
+    layout_onglet->addWidget(note1, 10, 1);
+    layout_onglet->addWidget(note2, 10, 2);
 
-    layout_onglet->addItem(spacer, 10, 1, 1, 3, Qt::AlignHCenter);
+    layout_onglet->addItem(spacer, 11, 1, 1, 3, Qt::AlignHCenter);
     ui->tabWidget->setCurrentWidget(nv_onglet);
     return;
 }
