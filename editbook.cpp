@@ -97,9 +97,9 @@ void EditBook::accept(){
         if(!etiquette.isEmpty()){
             int id = -1;
             //On vire les vieilles étiquettes
-            insSql->query("DELETE * FROM liste_etiquettes WHERE id_livre="+QString::number(idLivre));
+            insSql->query("DELETE FROM liste_etiquettes WHERE id_livre="+QString::number(idLivre));
             for(int i=0; i<etiquettes.size(); i++){
-                req1 = "SELECT id FROM etiquettes WHERE nom = \""+etiquettes.at(i)+"\"";
+                req1 = "SELECT id FROM etiquettes WHERE nom=\""+etiquettes.at(i).trimmed()+"\"";
                 res1 = insSql->query(req1);
                 if(res1.size() < 1){
                     req1 = "INSERT INTO etiquettes(nom) VALUES(\""+etiquettes.at(i)+"\")";
@@ -108,6 +108,7 @@ void EditBook::accept(){
                 }
                 else{
                     //On a déjà une id
+                    res1.first();
                     id = res1.record().value("id").toInt();
                 }
                 //On insère le lien dans la BDD
