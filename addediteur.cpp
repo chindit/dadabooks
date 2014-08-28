@@ -1,10 +1,10 @@
 #include "addediteur.h"
 #include "ui_addediteur.h"
 
-AddEditeur::AddEditeur(SqlManager *instance, QWidget *parent) : QDialog(parent), ui(new Ui::AddEditeur){
+AddEditeur::AddEditeur(QWidget *parent) : QDialog(parent), ui(new Ui::AddEditeur){
     ui->setupUi(this);
     isEdit = 0;
-    insSql = instance;
+    insSql = new SqlManager;
 }
 
 AddEditeur::~AddEditeur(){
@@ -19,12 +19,12 @@ void AddEditeur::accept(){
 
     QSqlQuery res1;
     QString req1 = "INSERT INTO editeurs(nom, adresse, site) VALUES('"+nom.replace("'", "\\'")+"', \""+adresse.replace("'", "\\'")+"\", '"+site.replace("'", "\\'")+"');";
-    if(isEdit > 0){
+    if(isEdit > 0)
         req1 = "UPDATE editeurs SET nom = '"+nom.replace("'", "\\'")+"', adresse ='"+adresse.replace("'", "\\'")+"', site = '"+site.replace("'", "\\'")+"' WHERE id="+QString::number(isEdit)+";";
-        isEdit = 0;
-    }
     res1 = insSql->query(req1);
-    emit makeClose();
+    if(isEdit == 0)
+        isEdit = res1.lastInsertId().toInt();
+    emit makeClose(isEdit, nom);
 }
 
 void AddEditeur::setEditeur(int id){

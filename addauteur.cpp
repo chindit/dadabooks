@@ -1,10 +1,10 @@
 #include "addauteur.h"
 #include "ui_addauteur.h"
 
-AddAuteur::AddAuteur(SqlManager *instance, QWidget *parent) : QDialog(parent), ui(new Ui::AddAuteur){
+AddAuteur::AddAuteur(QWidget *parent) : QDialog(parent), ui(new Ui::AddAuteur){
     ui->setupUi(this);
     isEdit = 0;
-    insSql = instance;
+    insSql = new SqlManager;
 }
 
 AddAuteur::~AddAuteur(){
@@ -21,12 +21,12 @@ void AddAuteur::accept(){
 
     QSqlQuery res1;
     QString req1 = "INSERT INTO auteurs(nom, naissance, mort, biographie, photo) VALUES('"+nom.replace("'", "\\'")+"', '"+QString::number(naissance)+"', '"+QString::number(mort)+"', \""+biographie.replace("\"", "\\\"")+"\", '"+photo+"');";
-    if(isEdit > 0){
+    if(isEdit > 0)
         req1 = "UPDATE auteurs SET nom = '"+nom.replace("'", "\\'")+"', naissance ='"+QString::number(naissance)+"', mort = '"+QString::number(mort)+"', biographie = \""+biographie.replace("'", "\\'")+"\", photo='"+photo+"' WHERE id="+QString::number(isEdit)+";";
-        isEdit = 0;
-    }
     res1 = insSql->query(req1);
-    emit makeClose();
+    if(isEdit == 0)
+        isEdit = res1.lastInsertId().toInt();
+    emit makeClose(isEdit, nom);
 }
 
 void AddAuteur::setImage(){

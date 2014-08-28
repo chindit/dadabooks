@@ -29,8 +29,8 @@ public:
     void setManual();
 
 public slots:
-    void updateAuteurs();
-    void updateEditeurs();
+    void updateAuteurs(int id, QString nom);
+    void updateEditeurs(int id, QString nom);
 
 private slots:
     void accept();

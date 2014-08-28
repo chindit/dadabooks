@@ -15,13 +15,13 @@ class AddAuteur : public QDialog
     Q_OBJECT
     
 public:
-    explicit AddAuteur(SqlManager *instance, QWidget *parent = 0);
+    explicit AddAuteur(QWidget *parent = 0);
     void setAuteur(int id);
     int setAuteur(QString nom);
     ~AddAuteur();
 
 signals:
-    void makeClose();
+    void makeClose(int, QString);
 
 private slots:
     void accept();

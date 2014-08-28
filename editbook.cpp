@@ -4,8 +4,8 @@
 EditBook::EditBook(QWidget *parent) : QDialog(parent), ui(new Ui::EditBook){
     ui->setupUi(this);
     idEdit = 0;
-    insAddAuteur = new AddAuteur(insSql, this);
-    insAddEditeur = new AddEditeur(insSql, this);
+    insAddAuteur = new AddAuteur(this);
+    insAddEditeur = new AddEditeur(this);
     insSettingsManager = new SettingsManager(this);
     if(insSettingsManager->getSettings(Xml).toBool()){
         insXml = new XmlManager;
@@ -14,9 +14,9 @@ EditBook::EditBook(QWidget *parent) : QDialog(parent), ui(new Ui::EditBook){
         insSql = new SqlManager();
     }
     connect(ui->pushButton_auteur, SIGNAL(clicked()), insAddAuteur, SLOT(show()));
-    connect(insAddAuteur, SIGNAL(makeClose()), this, SLOT(updateAuteurs()));
+    connect(insAddAuteur, SIGNAL(makeClose(int, QString)), this, SLOT(updateAuteurs(int, QString)));
     connect(ui->pushButton_editeur, SIGNAL(clicked()), insAddEditeur, SLOT(show()));
-    connect(insAddEditeur, SIGNAL(makeClose()), this, SLOT(updateEditeurs()));
+    connect(insAddEditeur, SIGNAL(makeClose(int, QString)), this, SLOT(updateEditeurs(int, QString)));
     connect(ui->pushButton_emplacement, SIGNAL(clicked()), this, SLOT(uploadEbook()));
 }
 
@@ -96,6 +96,8 @@ void EditBook::accept(){
             etiquettes.append(etiquette);
         if(!etiquette.isEmpty()){
             int id = -1;
+            //On vire les vieilles étiquettes
+            insSql->query("DELETE * FROM liste_etiquettes WHERE id_livre="+QString::number(idLivre));
             for(int i=0; i<etiquettes.size(); i++){
                 req1 = "SELECT id FROM etiquettes WHERE nom = \""+etiquettes.at(i)+"\"";
                 res1 = insSql->query(req1);
@@ -109,7 +111,7 @@ void EditBook::accept(){
                     id = res1.record().value("id").toInt();
                 }
                 //On insère le lien dans la BDD
-                req1 = "INSERT INTO liste_etiquettes(id_livre, id_etiquette) VALUES("+QString::number(id)+", "+QString::number(idLivre)+");";
+                req1 = "INSERT INTO liste_etiquettes(id_livre, id_etiquette) VALUES("+QString::number(idLivre)+", "+QString::number(id)+");";
                 res1 = insSql->query(req1);
             }
         }
@@ -248,9 +250,14 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
         ui->label_etiquette->setVisible(false);
         ui->comboBox_etiquette->setVisible(false);
     }
-    else{
+    else{//Pas XML -> SQL
         this->getAuteur(livre.value("auteur"));
         this->getEditeur(livre.value("editeur"));
+        //Màj des étiquettes
+        QSqlQuery resultat = insSql->query("SELECT id,nom FROM etiquettes");
+        while(resultat.next()){
+            ui->comboBox_etiquette->addItem(resultat.record().value("nom").toString(), resultat.record().value("id"));
+        }
     }
     return;
 }
@@ -264,7 +271,8 @@ void EditBook::getAuteur(QString nom){
         ui->comboBox_auteur->addItem(res1.record().value("nom").toString(), res1.record().value("id"));
     }
     if(ui->comboBox_auteur->count() == 0){
-        ui->pushButton_edit_auteur->setEnabled(false);
+        //ui->pushButton_edit_auteur->setEnabled(false);
+        ui->pushButton_edit_auteur->setText("Actualiser");
     }
 }
 
@@ -277,24 +285,31 @@ void EditBook::getEditeur(QString nom){
             ui->comboBox_editeur->addItem(res1.record().value("nom").toString(), res1.record().value("id"));
         }
     if(ui->comboBox_editeur->count() == 0){
-        ui->pushButton_edit_editeur->setEnabled(false);
+        //ui->pushButton_edit_editeur->setEnabled(false);
+        ui->pushButton_edit_editeur->setText("Actualiser");
     }
 }
 
 void EditBook::setAuteur(bool editeur){
-    QString id = "SELECT id FROM ";
+    QString id = "SELECT id,nom FROM ";
     if(editeur){
         id +="editeurs";
     }
     else{
         id +="auteurs";
     }
-    id +=" WHERE nom LIKE '";
+    id +=" WHERE nom LIKE \"%";
     if(editeur){
-        id+=this->guillemets(ui->comboBox_editeur->currentText())+"';";
+        if(ui->pushButton_edit_editeur->text() == "Actualiser")
+            id+=ui->lineEdit_editeur->text()+"%\";";
+        else
+            id+=this->guillemets(ui->comboBox_editeur->currentText())+"';";
     }
     else{
-        id+=this->guillemets(ui->comboBox_auteur->currentText())+"';";
+        if(ui->pushButton_edit_auteur->text() == "Actualiser")
+            id+=ui->lineEdit_auteur->text()+"%\"";
+        else
+            id+=this->guillemets(ui->comboBox_auteur->currentText())+"';";
     }
 
     QSqlQuery res = insSql->query(id);
@@ -302,10 +317,26 @@ void EditBook::setAuteur(bool editeur){
     int idl = res.record().value("id").toInt();
     if(idl > 0){
         if(editeur){
-            insAddEditeur->setEditeur(idl);
-            insAddEditeur->show();
+            if(ui->pushButton_edit_editeur->text() == "Actualiser"){
+                ui->comboBox_editeur->clear();
+                do{
+                    ui->comboBox_editeur->addItem(res.record().value("nom").toString(), res.record().value("id"));
+                }while(res.next());
+                ui->pushButton_edit_editeur->setText("Éditer l'éditeur");
+            }
+            else{
+                insAddEditeur->setEditeur(idl);
+                insAddEditeur->show();
+            }
         }
         else{
+            if(ui->pushButton_edit_auteur->text() == "Actualiser"){
+                ui->comboBox_auteur->clear();
+                do{
+                    ui->comboBox_auteur->addItem(res.record().value("nom").toString(), res.record().value("id"));
+                }while(res.next());
+                ui->pushButton_edit_auteur->setText("Éditeur l'auteur");
+            }
             insAddAuteur->setAuteur(idl);
             insAddAuteur->show();
         }
@@ -320,15 +351,15 @@ void EditBook::setEditeur(){
     this->setAuteur(true);
 }
 
-void EditBook::updateAuteurs(){
+void EditBook::updateAuteurs(int id, QString nom){
     ui->comboBox_auteur->clear();
-    this->getAuteur(ui->lineEdit_auteur->text());
+    ui->comboBox_auteur->addItem(nom, id);
     insAddAuteur->close();
 }
 
-void EditBook::updateEditeurs(){
+void EditBook::updateEditeurs(int id, QString nom){
     ui->comboBox_editeur->clear();
-    this->getEditeur(ui->lineEdit_editeur->text());
+    ui->comboBox_editeur->addItem(nom, id);
     insAddEditeur->close();
 }
 
