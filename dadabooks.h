@@ -44,6 +44,7 @@ private slots:
     void openFile();
     void about();
     void openNewColl();
+    void showEtiquette(const int &id);
 
 
 private:

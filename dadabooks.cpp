@@ -317,6 +317,7 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
     button_delete->setIcon(QIcon(":/boutons/images/delete.png"));
     QTextEdit *synopsis2 = new QTextEdit;
     QTextEdit *commentaire2 = new QTextEdit;
+    QHBoxLayout *layoutEtiquettes = new QHBoxLayout;
 
     QSignalMapper *mapper_delete = new QSignalMapper;
     connect(button_delete, SIGNAL(clicked()), mapper_delete, SLOT(map()));
@@ -353,7 +354,7 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
         annee2 = new QLabel(xmlLivre.value("annee"));
         auteur2 = new QLabel(xmlLivre.value("auteur"));
         editeur2 = new  QLabel(xmlLivre.value("editeur"));
-        note2 = new QLabel(xmlLivre.value("note"));
+        note2 = new QLabel(xmlLivre.value("note")+"/20");
         ebook3 = new QLabel(xmlLivre.value("emplacement", ""));
         synopsis2->insertPlainText(xmlLivre.value("synopsis"));
         commentaire2->insertPlainText(xmlLivre.value("commentaire"));
@@ -393,7 +394,7 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
         annee2 = new QLabel(res1.record().value("annee").toString());
         auteur2 = new QLabel(res1.record().value("nom").toString());
         editeur2 = new QLabel(res1.record().value("nom_editeur").toString());
-        note2 = new QLabel(res1.record().value("note").toString());
+        note2 = new QLabel(res1.record().value("note").toString()+"/20");
         synopsis2->insertPlainText(res1.record().value("synopsis").toString());
         commentaire2->insertPlainText(res1.record().value("commentaire").toString());
         ebook3 = new QLabel(res1.record().value("emplacement").toString());
@@ -402,6 +403,18 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
         ebook1->setChecked(res1.record().value("ebook").toBool());
         mapper_delete->setMapping(button_delete, res1.record().value("id").toInt());
         mapper_edit->setMapping(button_edit, res1.record().value("id").toInt());
+
+        //Stockage des étiquettes dans un layout propre
+        QSqlQuery liste = insSqlManager->query("SELECT etiquettes.id,etiquettes.nom FROM etiquettes LEFT JOIN liste_etiquettes ON etiquettes.id=liste_etiquettes.id_etiquette WHERE liste_etiquettes.id_livre="+real_id);
+        while(liste.next()){
+            QPushButton *etiquette = new QPushButton(liste.record().value("nom").toString());
+            etiquette->setFlat(true);
+            QSignalMapper *mappeurEtiquette = new QSignalMapper;
+            connect(etiquette, SIGNAL(clicked()), mappeurEtiquette, SLOT(map()));
+            mappeurEtiquette->setMapping(etiquette, liste.record().value("id").toInt());
+            connect(mappeurEtiquette, SIGNAL(mapped(const int &)), this, SLOT(showEtiquette(const int &)));
+            layoutEtiquettes->addWidget(etiquette);
+        }
     }
 
     synopsis2->setReadOnly(true);
@@ -460,6 +473,7 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
     layout_onglet->addWidget(couverture2, 2, 0, 10, 1, Qt::AlignVCenter);
     layout_onglet->addWidget(note1, 10, 1);
     layout_onglet->addWidget(note2, 10, 2);
+    layout_onglet->addLayout(layoutEtiquettes, 10, 3, 1, 2, Qt::AlignLeft);
 
     layout_onglet->addItem(spacer, 11, 1, 1, 3, Qt::AlignHCenter);
     ui->tabWidget->setCurrentWidget(nv_onglet);
@@ -546,14 +560,15 @@ void DadaBooks::deleteLivre(int id){
 }
 
 void DadaBooks::makeSearch(){
+    QList<QMultiMap<QString, QString> > resultats;
+    QSqlQuery res1;
+
     QString recherche = ui->lineEdit_search->text();
     if(recherche.isEmpty() || recherche.isNull()){
         QMessageBox::warning(this, "Chaîne vide", "Aucun terme recherché");
         return;
     }
     QStringList termes = recherche.split(" ");
-    QList<QMultiMap<QString, QString> > resultats;
-    QSqlQuery res1;
     if(!insSettingsManager->getSettings(Xml).toBool()){
         QString requete = "SELECT livres.id, livres.titre, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id WHERE";
         QString temp;
@@ -581,6 +596,7 @@ void DadaBooks::makeSearch(){
     else{
         resultats = insXmlManager->makeSearch(termes);
     }
+
     QWidget *nv_onglet = new QWidget(ui->tabWidget);
     ui->tabWidget->addTab(nv_onglet, "Recherche...");
     QTableWidget *table = new QTableWidget(nv_onglet);
@@ -694,5 +710,44 @@ void DadaBooks::openNewColl(){
     if(insSettingsManager->getSettings(Fichier).toString().isEmpty() && !insSettingsManager->getSettings(MariaDB).toBool()){
         this->openFile();
     }
+    return;
+}
+
+void DadaBooks::showEtiquette(const int &id){
+    QSqlQuery requete = insSqlManager->query("SELECT livres.id, livres.titre, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN liste_etiquettes ON livres.id=liste_etiquettes.id_livre LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id WHERE liste_etiquettes.id_etiquette="+QString::number(id)+" ORDER BY id DESC");
+
+    QWidget *nv_onglet = new QWidget(ui->tabWidget);
+    ui->tabWidget->addTab(nv_onglet, "Recherche...");
+    QTableWidget *table = new QTableWidget(nv_onglet);
+    table->setColumnCount(5);
+    QStringList liste_headers;
+    liste_headers << "ID" << "Titre" << "Auteur" << "Éditeur" << "Année";
+    table->setHorizontalHeaderLabels(liste_headers);
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(table, 0, 0);
+    nv_onglet->setLayout(layout);
+
+    while(requete.next()){
+        table->insertRow(0);
+        QTableWidgetItem *item0 = new QTableWidgetItem();
+        QTableWidgetItem *item1 = new QTableWidgetItem();
+        QTableWidgetItem *item2 = new QTableWidgetItem();
+        QTableWidgetItem *item3 = new QTableWidgetItem();
+        QTableWidgetItem *item4 = new QTableWidgetItem();
+        item0->setText(requete.record().value("id").toString());
+        item1->setText(requete.record().value("titre").toString());
+        item2->setText(requete.record().value("nom").toString());
+        item3->setText(requete.record().value("nom_editeur").toString());
+        item4->setText(requete.record().value("annee").toString());
+        table->setItem(0, 0, item0);
+        table->setItem(0, 1, item1);
+        table->setItem(0, 2, item2);
+        table->setItem(0, 3, item3);
+        table->setItem(0, 4, item4);
+    }
+    table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    connect(table, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(prepareSearchView(int)));
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->tabWidget->setCurrentWidget(nv_onglet);
     return;
 }
