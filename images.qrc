@@ -8,6 +8,7 @@
         <file>images/open.png</file>
         <file>images/options.png</file>
         <file>images/search.png</file>
+        <file>images/etiquette.png</file>
     </qresource>
     <qresource prefix="/programme">
         <file>images/icone.png</file>

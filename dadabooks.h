@@ -48,6 +48,8 @@ private slots:
 
 
 private:
+    void intabPreview(int id);
+
     AddBook *insAddBook;
     Ui::DadaBooks *ui;
     EditBook *insEditBook;

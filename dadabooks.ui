@@ -165,7 +165,7 @@
       </item>
      </layout>
     </item>
-    <item row="1" column="0">
+    <item row="2" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="tabShape">
        <enum>QTabWidget::Rounded</enum>
@@ -184,24 +184,6 @@
         <string>Accueil</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="1" column="1">
-         <widget class="QLabel" name="label">
-          <property name="font">
-           <font>
-            <family>TC Chavez Pro</family>
-            <pointsize>24</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>DadaBooks</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignHCenter|Qt::AlignTop</set>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="0" rowspan="3">
          <widget class="QListWidget" name="listWidget_accueil">
           <property name="minimumSize">
@@ -218,43 +200,68 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
-         <widget class="QLabel" name="label_2">
-          <property name="font">
-           <font>
-            <family>TC Chavez Pro</family>
-            <pointsize>12</pointsize>
-           </font>
+        <item row="0" column="1" rowspan="3">
+         <layout class="QGridLayout" name="gridLayoutPrincipal">
+          <property name="topMargin">
+           <number>0</number>
           </property>
-          <property name="text">
-           <string>Bienvenue dans DadaBooks, le gestionnaire simple et efficace de votre bibliotheque.</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-          <property name="wordWrap">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="label_image">
-          <property name="maximumSize">
-           <size>
-            <width>166666</width>
-            <height>125</height>
-           </size>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="pixmap">
-           <pixmap resource="images.qrc">:/programme/images/icone_125.jpg</pixmap>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignHCenter|Qt::AlignTop</set>
-          </property>
-         </widget>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label">
+            <property name="font">
+             <font>
+              <family>TC Chavez Pro</family>
+              <pointsize>24</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>DadaBooks</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignHCenter|Qt::AlignTop</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_image">
+            <property name="maximumSize">
+             <size>
+              <width>166666</width>
+              <height>125</height>
+             </size>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="pixmap">
+             <pixmap resource="images.qrc">:/programme/images/icone_125.jpg</pixmap>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignHCenter|Qt::AlignTop</set>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="font">
+             <font>
+              <family>TC Chavez Pro</family>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Bienvenue dans DadaBooks, le gestionnaire simple et efficace de votre bibliotheque.</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>

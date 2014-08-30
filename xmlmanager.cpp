@@ -152,8 +152,7 @@ int XmlManager::getIdByTitle(QString titre){
     return -1;
 }
 
-void XmlManager::exportCurrentAsGCStar(){
-    QList<QMultiMap<QString, QString> > base = this->readBase();
+void XmlManager::exportCurrentAsGCStar(QList< QMultiMap<QString, QString> > base){
     QDomDocument doc;
     QDomElement collection = doc.createElement("collection");
     collection.setAttribute("type", "GCbooks");

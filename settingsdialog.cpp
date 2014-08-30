@@ -1,10 +1,7 @@
 #include "settingsdialog.h"
 #include "ui_settingsdialog.h"
 
-SettingsDialog::SettingsDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::SettingsDialog)
-{
+SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent), ui(new Ui::SettingsDialog){
     ui->setupUi(this);
     insSettingsManager = new SettingsManager;
     this->prepareUi();
@@ -24,8 +21,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     connect(map3, SIGNAL(mapped(int)), this, SLOT(manageCheck(int)));
 }
 
-SettingsDialog::~SettingsDialog()
-{
+SettingsDialog::~SettingsDialog(){
     delete ui;
     delete insSettingsManager;
 }
@@ -63,6 +59,12 @@ void SettingsDialog::prepareUi(){
     ui->groupBox_mysql->setChecked(insSettingsManager->getSettings(MariaDB).toBool());
     if(!insSettingsManager->getSettings(Xml).toBool())
         ui->horizontalLayout_3->setEnabled(false);
+    if(insSettingsManager->getSettings(MariaDB).toBool()){
+        ui->lineEdit_base->setText(insSettingsManager->getSettings(DBBase).toString());
+        ui->lineEdit_host->setText(insSettingsManager->getSettings(DBHost).toString());
+        ui->lineEdit_user->setText(insSettingsManager->getSettings(DBUser).toString());
+        ui->lineEdit_pass->setText(insSettingsManager->getSettings(DBPass).toString());
+    }
     return;
 }
 
@@ -87,6 +89,32 @@ void SettingsDialog::manageCheck(int zone){
 
 void SettingsDialog::exportForGCStar(){
     XmlManager manager;
-    manager.exportCurrentAsGCStar();
+    QList<QMultiMap<QString, QString> > base;
+    if(insSettingsManager->getSettings(Xml).toBool()){
+        base = manager.readBase();
+    }
+    else{
+        //On crée manuellement la liste
+    SqlManager sql;
+        QSqlQuery requete = sql.query("SELECT livres.id, livres.titre, livres.ISBN, livres.coauteurs, livres.synopsis, livres.couverture, livres.pages, livres.edition, livres.langue, livres.classement, livres.exemplaires, livres.commentaire, livres.lu, livres.note, livres.empruntable, livres.pret, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id ORDER BY id");
+        while(requete.next()){
+            QMultiMap <QString, QString> livre;
+            livre.insert("id", requete.record().value("id").toString());
+            livre.insert("titre", requete.record().value("titre").toString());
+            livre.insert("isbn", requete.record().value("isbn").toString());
+            livre.insert("synopsis", requete.record().value("synopsis").toString());
+            livre.insert("couverture", requete.record().value("couverture").toString());
+            livre.insert("pages", requete.record().value("pages").toString());
+            livre.insert("edition", requete.record().value("edition").toString());
+            livre.insert("langue", requete.record().value("langue").toString());
+            livre.insert("classement", requete.record().value("classement").toString());
+            livre.insert("commentaire", requete.record().value("commentaire").toString());
+            livre.insert("editeur", requete.record().value("nom_editeur").toString());
+            livre.insert("annee", requete.record().value("annee").toString());
+            livre.insert("lu", requete.record().value("lu").toBool() ? "True" : "False");
+            base.append(livre);
+        }
+    }
+    manager.exportCurrentAsGCStar(base);
     return;
 }

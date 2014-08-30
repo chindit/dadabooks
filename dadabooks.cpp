@@ -199,6 +199,10 @@ void DadaBooks::preparePreview(){
 }
 
 void DadaBooks::activatePreview(int id, bool search, bool idOk){
+    if(idOk){
+        this->intabPreview(id);
+        return;
+    }
     QString titre;
     QMultiMap<QString, QString> xmlLivre;
     QSqlQuery res1;
@@ -409,6 +413,8 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
         while(liste.next()){
             QPushButton *etiquette = new QPushButton(liste.record().value("nom").toString());
             etiquette->setFlat(true);
+            etiquette->setIcon(QIcon(":/boutons/images/etiquette.png"));
+            etiquette->setStyleSheet("text-decoration: underline;");
             QSignalMapper *mappeurEtiquette = new QSignalMapper;
             connect(etiquette, SIGNAL(clicked()), mappeurEtiquette, SLOT(map()));
             mappeurEtiquette->setMapping(etiquette, liste.record().value("id").toInt());
@@ -750,4 +756,15 @@ void DadaBooks::showEtiquette(const int &id){
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tabWidget->setCurrentWidget(nv_onglet);
     return;
+}
+
+void DadaBooks::intabPreview(int id){
+    //On efface le message d'accueil pour afficher le livre à côté.
+    QLayoutItem *child;
+    while ((child = ui->gridLayoutPrincipal->takeAt(0)) != 0) {
+        child->widget()->deleteLater();
+        delete child;
+    }
+    QLabel *test = new QLabel("David est LE PLUS FORT");
+    ui->gridLayoutPrincipal->addWidget(test, 0, 0, 1, 1, Qt::AlignHCenter | Qt::AlignCenter);
 }

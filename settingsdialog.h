@@ -6,6 +6,7 @@
 
 #include "settingsmanager.h"
 #include "xmlmanager.h"
+#include "sqlmanager.h"
 
 namespace Ui {
 class SettingsDialog;

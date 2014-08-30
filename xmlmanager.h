@@ -24,7 +24,7 @@ public:
     void addBook(QMultiMap<QString, QString> livre);
     void deleteBook(int id);
     QList<QMultiMap<QString, QString> > makeSearch(QStringList mots);
-    void exportCurrentAsGCStar();
+    void exportCurrentAsGCStar(QList< QMultiMap<QString, QString> > base);
     int getIdByTitle(QString titre);
     
 signals:
