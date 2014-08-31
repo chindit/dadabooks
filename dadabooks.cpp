@@ -1,6 +1,7 @@
 #include "dadabooks.h"
 #include "ui_dadabooks.h"
 
+//Constructeur
 DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBooks){
     ui->setupUi(this);
     insPreviewBook = new PreviewBook;
@@ -50,6 +51,7 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     this->setListeLivres();
 }
 
+//Destructeur
 DadaBooks::~DadaBooks(){
     delete ui;
     delete insAddBook;
@@ -64,6 +66,7 @@ DadaBooks::~DadaBooks(){
     delete insSettingsManager;
 }
 
+//Transfère les données de AddBook à PreviewBook
 void DadaBooks::rechercheInternet(QString requete, QString site){
     insAddBook->close();
     QList< QMultiMap<QString,QString> > resultats;
@@ -75,6 +78,7 @@ void DadaBooks::rechercheInternet(QString requete, QString site){
     return;
 }
 
+//Sélectionne le livre fourni en paramètre
 void DadaBooks::getBook(QString id){
     insPreviewBook->close();
     QMultiMap<QString,QString> livre;
@@ -83,7 +87,7 @@ void DadaBooks::getBook(QString id){
     insEditBook->show();
 }
 
-//WARNING : ANALYSER
+//Actualise l'onglet courant
 void DadaBooks::updateOnglet(int id){
     if(idOngletEdit >= 0){
         ui->tabWidget->removeTab(idOngletEdit);
@@ -94,6 +98,7 @@ void DadaBooks::updateOnglet(int id){
     return;
 }
 
+//Génère la liste livres totale et la liste des récents
 void DadaBooks::setListeLivres(){
     QList<QMultiMap<QString, QString> > resultat;
     QSqlQuery res1;
@@ -181,6 +186,7 @@ void DadaBooks::setListeLivres(){
     return;
 }
 
+//Transfère le livre de la liste des récents à la prévisualisation en onglet
 void DadaBooks::preparePreview(){
     //Le but de cette fonction est simplement de convertir l'ID d'index du QTableView en un ID de livre pour appeler ensuite activatePreview()
     int id = 0;
@@ -198,8 +204,9 @@ void DadaBooks::preparePreview(){
     }
 }
 
+//Affiche le livre sélectionné dans un nouvel onglet
 void DadaBooks::activatePreview(int id, bool search, bool idOk){
-    if(idOk){
+    if(idOk && insSettingsManager->getSettings(OpenInTab).toBool()){
         this->intabPreview(id);
         return;
     }
@@ -486,6 +493,7 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
     return;
 }
 
+//Ferme l'onglet sélectionné
 void DadaBooks::closeTab(int tab){
     if(ui->tabWidget->tabText(tab) == "Accueil" || ui->tabWidget->tabText(tab) == "Récents"){
         return;
@@ -495,6 +503,7 @@ void DadaBooks::closeTab(int tab){
     }
 }
 
+//Appelle EditBook avec le contenu du livre fourni en paramètre
 void DadaBooks::editLivre(int id){
     idOngletEdit = ui->tabWidget->currentIndex();
     QMultiMap<QString, QString> livre;
@@ -535,6 +544,7 @@ void DadaBooks::editLivre(int id){
     return;
 }
 
+//Supprime le livre fourni en paramètre
 void DadaBooks::deleteLivre(int id){
     QString titre;
     if(insSettingsManager->getSettings(Xml).toBool()){
@@ -565,6 +575,7 @@ void DadaBooks::deleteLivre(int id){
     return;
 }
 
+//Recherche toutes les occurences possibles à partir du champ de recherche
 void DadaBooks::makeSearch(){
     QList<QMultiMap<QString, QString> > resultats;
     QSqlQuery res1;
@@ -661,6 +672,7 @@ void DadaBooks::makeSearch(){
     return;
 }
 
+//Transfère le livre du résultat de recherche vers la prévisualisation
 void DadaBooks::prepareSearchView(int row){
     QWidget *widget = ui->tabWidget->widget(ui->tabWidget->currentIndex());
     QList<QTableWidget *>liste = widget->findChildren<QTableWidget *>();
@@ -674,6 +686,7 @@ void DadaBooks::prepareSearchView(int row){
     return;
 }
 
+//Ouvre un fichier de base de données
 void DadaBooks::openFile(){
     QString fileName = QFileDialog::getOpenFileName(this, "Ouvrir un fichier", QDir::homePath(), "Tous documents (*.sql, *.xml);;Documents XML (*.xml);;Bases de données (*.db)");
     if(fileName.endsWith(".xml")){
@@ -696,12 +709,14 @@ void DadaBooks::openFile(){
     return;
 }
 
+//Boite de dialogue «À propos» du programme
 void DadaBooks::about(){
     QString string_about = ("<h2>À propos de DadaBooks</h2><br><b>Dévoloppé par</b> : David Lumaye<br><b>Version</b> : ")+QString(VERSION)+tr("<br><b>Courriel</b>:<a href='mailto:d.lumaye.aro-base.mailtunnel.eu'>d.lumaye.aro-base.mailtunnel.eu</a><br><b>Distribué sous license</b> : <a href='http://www.gnu.org/licenses/gpl-3.0.fr.html'>GPL 3</a>");
     QMessageBox::about(this, tr("À propos de DadaBooks"), string_about);
     return;
 }
 
+//Ouvre ou crée une nouvelle collection
 void DadaBooks::openNewColl(){
     //Pour créer une nouvelle collection, on vire la référence de l'ancienne
     insSettingsManager->setSettings(Fichier, "");
@@ -719,6 +734,7 @@ void DadaBooks::openNewColl(){
     return;
 }
 
+//Affiche les étiquettes du livre fourni en paramètre
 void DadaBooks::showEtiquette(const int &id){
     QSqlQuery requete = insSqlManager->query("SELECT livres.id, livres.titre, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN liste_etiquettes ON livres.id=liste_etiquettes.id_livre LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id WHERE liste_etiquettes.id_etiquette="+QString::number(id)+" ORDER BY id DESC");
 
@@ -758,6 +774,7 @@ void DadaBooks::showEtiquette(const int &id){
     return;
 }
 
+//Affiche le livre sélectionné dans l'onglet principal
 void DadaBooks::intabPreview(int id){
     //On efface le message d'accueil pour afficher le livre à côté.
     QLayoutItem *child;

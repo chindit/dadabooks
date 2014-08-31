@@ -35,10 +35,13 @@ void SettingsDialog::accept(){
     insSettingsManager->setSettings(Xml, ui->groupBox_xml->isChecked());
     //MariaDB
     insSettingsManager->setSettings(MariaDB, ui->groupBox_mysql->isChecked());
-    insSettingsManager->setSettings(DBHost, ui->lineEdit_host->text());
-    insSettingsManager->setSettings(DBUser, ui->lineEdit_user->text());
-    insSettingsManager->setSettings(DBPass, ui->lineEdit_pass->text());
-    insSettingsManager->setSettings(DBBase, ui->lineEdit_base->text());
+    if(ui->groupBox_mysql->isChecked()){
+        insSettingsManager->setSettings(DBHost, ui->lineEdit_host->text());
+        insSettingsManager->setSettings(DBUser, ui->lineEdit_user->text());
+        insSettingsManager->setSettings(DBPass, ui->lineEdit_pass->text());
+        insSettingsManager->setSettings(DBBase, ui->lineEdit_base->text());
+    }
+    insSettingsManager->setSettings(OpenInTab, ui->checkBox_ongletPrincipal->isChecked());
     this->close();
 }
 
@@ -65,6 +68,7 @@ void SettingsDialog::prepareUi(){
         ui->lineEdit_user->setText(insSettingsManager->getSettings(DBUser).toString());
         ui->lineEdit_pass->setText(insSettingsManager->getSettings(DBPass).toString());
     }
+    ui->checkBox_ongletPrincipal->setChecked(insSettingsManager->getSettings(OpenInTab).toBool());
     return;
 }
 
