@@ -776,12 +776,248 @@ void DadaBooks::showEtiquette(const int &id){
 
 //Affiche le livre sélectionné dans l'onglet principal
 void DadaBooks::intabPreview(int id){
-    //On efface le message d'accueil pour afficher le livre à côté.
-    QLayoutItem *child;
-    while ((child = ui->gridLayoutPrincipal->takeAt(0)) != 0) {
-        child->widget()->deleteLater();
-        delete child;
+    //En premier lieu, on cache les 3 éléments de l'accueil
+    if(!ui->label_image->isHidden()){
+        ui->label_image->setHidden(true);
+        ui->label->setHidden(true);
+        ui->label_2->setHidden(true);
+
+        //On prépare les éléments
+        //QLabel *titre_fen, *id1, *id2, *titre, *titre2, *isbn, *isbn2, *coauteurs, *coauteurs2, *synopsis, *couverture, *couverture2, *pages, *pages2, *edition, *edition2, *langue, *langue2, *classement, *classement2, *exemplaires, *exemplaires2, *commentaire, *annee, *annee2, *auteur, *auteur2, *editeur, *editeur2, *note1, *note2, *ebook2, *ebook3;
+        titre_fen = new QLabel();
+        id1 = new QLabel("ID");
+        id2 = new QLabel();
+        titre = new QLabel("Titre");
+        titre2 = new QLabel();
+        isbn = new QLabel("ISBN");
+        isbn2 = new QLabel();
+        coauteurs = new QLabel("Co-auteur(s)");
+        coauteurs2 = new QLabel();
+        synopsis = new QLabel("Résumé");
+        couverture = new QLabel("Couverture");
+        couverture2 = new QLabel();
+        pages = new QLabel("Nombre de pages");
+        pages2 = new QLabel();
+        edition = new QLabel("Édition");
+        edition2 = new QLabel();
+        langue = new QLabel("Langue de publication");
+        langue2 = new QLabel();
+        exemplaires = new QLabel("Nombre d'exemplaires");
+        exemplaires2 = new QLabel();
+        commentaire = new QLabel("Commentaire");
+        classement = new QLabel("Classement");
+        classement2 = new QLabel();
+        annee = new QLabel("Année de publication");
+        annee2 = new QLabel();
+        auteur = new QLabel("Auteur");
+        auteur2 = new QLabel();
+        editeur = new QLabel("Éditeur");
+        editeur2 = new QLabel();
+        note1 = new QLabel("Note");
+        note2 = new QLabel();
+        ebook2 = new QLabel("Emplacement");
+        ebook3 = new QLabel();
+        empruntable = new QCheckBox("Empruntable");
+        empruntable->setEnabled(false);
+        prete = new QCheckBox("En prêt");
+        prete->setEnabled(false);
+        lu = new QCheckBox("Lu");
+        lu->setEnabled(false);
+        ebook = new QCheckBox("Ebook");
+        ebook->setEnabled(false);
+        buttonEdit = new QPushButton;
+        buttonEdit->setFlat(true);
+        buttonEdit->setIcon(QIcon(":/boutons/images/edit.png"));
+        buttonDelete = new QPushButton;
+        buttonDelete->setFlat(true);
+        buttonDelete->setIcon(QIcon(":/boutons/images/delete.png"));
+        synopsis2 = new QTextEdit;
+        commentaire2 = new QTextEdit;
+        mapperDelete = new QSignalMapper;
+        mapperEdit = new QSignalMapper;
+        layoutEtiquettesLivres = new QHBoxLayout;
+        listeEtiquettes = new QLabel();
+        layoutEtiquettesLivres->addWidget(listeEtiquettes);
+
+        connect(listeEtiquettes, SIGNAL(linkActivated(QString)), this, SLOT(openTagList(QString)));
+        connect(buttonDelete, SIGNAL(clicked()), mapperDelete, SLOT(map()));
+        connect(buttonEdit, SIGNAL(clicked()), mapperEdit, SLOT(map()));
+        connect(mapperDelete, SIGNAL(mapped(int)), this, SLOT(deleteLivre(int)));
+        connect(mapperEdit, SIGNAL(mapped(int)), this, SLOT(editLivre(int)));
     }
-    QLabel *test = new QLabel("David est LE PLUS FORT");
-    ui->gridLayoutPrincipal->addWidget(test, 0, 0, 1, 1, Qt::AlignHCenter | Qt::AlignCenter);
+    else{
+        /*delete layoutEtiquettesLivres;
+        layoutEtiquettesLivres = new QHBoxLayout;*/
+        layoutEtiquettesLivres->removeItem(layoutEtiquettesLivres->takeAt(0));
+    }
+
+    if(insSettingsManager->getSettings(Xml).toBool()){
+        //XML
+        /*QMultiMap<QString, QString> xmlLivre;
+        xmlLivre = insXmlManager->getBook(id);
+        titre_fen = new QLabel(xmlLivre.value("titre"));
+        id2 = new QLabel(xmlLivre.value("id"));
+        titre2 = new QLabel(xmlLivre.value("titre"));
+        isbn2 = new QLabel(xmlLivre.value("isbn"));
+        coauteurs2 = new QLabel(xmlLivre.value("coauteurs"));
+        QNetworkAccessManager nw_manager;
+        QNetworkRequest request(xmlLivre.value("couverture"));
+        QNetworkReply *reponse = nw_manager.get(request);
+        QEventLoop eventLoop;
+        connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
+        eventLoop.exec();
+        QByteArray data = reponse->readAll();
+        loader.loadFromData(data);
+        int width = loader.width();
+        if(width > 150){
+            float coef = (float)width / 150;
+            int result = loader.width()/coef;
+            loader = loader.scaledToWidth(result);
+        }
+        couverture2->setPixmap(loader);
+        pages2 = new QLabel(xmlLivre.value("pages"));
+        edition2 = new QLabel(xmlLivre.value("edition"));
+        langue2 = new QLabel(xmlLivre.value("langue"));
+        exemplaires2 = new QLabel(xmlLivre.value("exemplaires"));
+        classement2 = new QLabel(xmlLivre.value("classement"));
+        annee2 = new QLabel(xmlLivre.value("annee"));
+        auteur2 = new QLabel(xmlLivre.value("auteur"));
+        editeur2 = new  QLabel(xmlLivre.value("editeur"));
+        note2 = new QLabel(xmlLivre.value("note")+"/20");
+        ebook3 = new QLabel(xmlLivre.value("emplacement", ""));
+        synopsis2->insertPlainText(xmlLivre.value("synopsis"));
+        commentaire2->insertPlainText(xmlLivre.value("commentaire"));
+        prete->setChecked(((xmlLivre.value("prete") == "True") ? true : false));
+        empruntable->setChecked(((xmlLivre.value("empruntable") == "True") ? true : false));
+        ebook1->setChecked(((xmlLivre.value("ebook") == "True") ? true : false));
+        mapper_delete->setMapping(button_delete, xmlLivre.value("id").toInt());
+        mapper_edit->setMapping(button_edit, xmlLivre.value("id").toInt());*/
+    }
+    else{
+        //SQL
+        QString req1 = "SELECT livres.id, livres.titre, livres.ISBN, livres.coauteurs, livres.synopsis, livres.couverture, livres.pages, livres.edition, livres.langue, livres.classement, livres.exemplaires, livres.commentaire, livres.lu, livres.note, livres.empruntable, livres.pret, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id WHERE livres.id="+QString::number(id);
+        QSqlQuery res1 = insSqlManager->query(req1);
+        res1.first();
+        titre_fen->setText(res1.record().value("titre").toString());
+        id2->setText(res1.record().value("id").toString());
+        titre2->setText(res1.record().value("titre").toString());
+        isbn2->setText(res1.record().value("isbn").toString());
+        coauteurs2->setText(res1.record().value("coauteurs").toString());
+        QNetworkAccessManager nw_manager;
+        QNetworkRequest request(res1.record().value("couverture").toString());
+        QNetworkReply *reponse = nw_manager.get(request);
+        QEventLoop eventLoop;
+        connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
+        eventLoop.exec();
+        QByteArray data = reponse->readAll();
+        QPixmap loader;
+        loader.loadFromData(data);
+        int width = loader.width();
+        if(width > 150){
+            float coef = (float)width / 150;
+            int result = loader.width()/coef;
+            loader = loader.scaledToWidth(result);
+        }
+        couverture2->setPixmap(loader);
+        pages2->setText(res1.record().value("pages").toString());
+        edition2->setText(res1.record().value("edition").toString());
+        langue2->setText(res1.record().value("langue").toString());
+        exemplaires2->setText(res1.record().value("exemplaires").toString());
+        classement2->setText(res1.record().value("classement").toString());
+        annee2->setText(res1.record().value("annee").toString());
+        auteur2->setText(res1.record().value("nom").toString());
+        editeur2->setText(res1.record().value("nom_editeur").toString());
+        note2->setText(res1.record().value("note").toString()+"/20");
+        synopsis2->clear();
+        synopsis2->insertPlainText(res1.record().value("synopsis").toString());
+        commentaire2->clear();
+        commentaire2->insertPlainText(res1.record().value("commentaire").toString());
+        ebook3->setText(res1.record().value("emplacement").toString());
+        empruntable->setChecked(res1.record().value("empruntable").toBool());
+        prete->setChecked(res1.record().value("pret").toBool());
+        ebook->setChecked(res1.record().value("ebook").toBool());
+        lu->setChecked(res1.record().value("lu").toBool());
+        mapperDelete->setMapping(buttonDelete, res1.record().value("id").toInt());
+        mapperEdit->setMapping(buttonEdit, res1.record().value("id").toInt());
+
+        //Stockage des étiquettes dans un layout propre
+        QSqlQuery liste = insSqlManager->query("SELECT etiquettes.id,etiquettes.nom FROM etiquettes LEFT JOIN liste_etiquettes ON etiquettes.id=liste_etiquettes.id_etiquette WHERE liste_etiquettes.id_livre="+QString::number(id));
+        QString test;
+        while(liste.next()){
+            QPushButton *etiquette = new QPushButton(liste.record().value("nom").toString());
+            etiquette->setFlat(true);
+            etiquette->setIcon(QIcon(":/boutons/images/etiquette.png"));
+            etiquette->setStyleSheet("text-decoration: underline;");
+            QSignalMapper *mappeurEtiquette = new QSignalMapper;
+            connect(etiquette, SIGNAL(clicked()), mappeurEtiquette, SLOT(map()));
+            mappeurEtiquette->setMapping(etiquette, liste.record().value("id").toInt());
+            connect(mappeurEtiquette, SIGNAL(mapped(const int &)), this, SLOT(showEtiquette(const int &)));
+            test.append("<img src=\":/boutons/images/etiquette_small.png\"><a href=\""+liste.record().value("id").toString()+"\">"+liste.record().value("nom").toString()+"</a>     ");
+        }
+        listeEtiquettes->setText(test);
+    }
+    synopsis2->setReadOnly(true);
+    commentaire2->setReadOnly(true);
+    titre_fen->setFont(QFont("Ubuntu", 20, 0, false));
+
+
+    //-----------------------------------------------
+    //Mise en place dans le layout
+    //-----------------------------------------------
+    ui->gridLayoutPrincipal->addWidget(titre_fen, 0, 0, 1, 4, Qt::AlignHCenter);
+    QHBoxLayout *layout_buttons = new QHBoxLayout;
+    layout_buttons->addWidget(buttonEdit, 0, Qt::AlignRight | Qt::AlignTop);
+    layout_buttons->addWidget(buttonDelete, 0, Qt::AlignRight | Qt::AlignTop);
+    ui->gridLayoutPrincipal->addLayout(layout_buttons, 0, 4, 1, 1, Qt::AlignRight | Qt::AlignTop);
+    QHBoxLayout *layout_id = new QHBoxLayout;
+    layout_id->addWidget(id1);
+    layout_id->addWidget(id2);
+    ui->gridLayoutPrincipal->addLayout(layout_id, 2, 1, 1, 2, Qt::AlignLeft);
+    ui->gridLayoutPrincipal->addWidget(titre, 2, 3);
+    ui->gridLayoutPrincipal->addWidget(titre2, 2, 4);
+    ui->gridLayoutPrincipal->addWidget(isbn, 7, 3);
+    ui->gridLayoutPrincipal->addWidget(isbn2, 7, 4);
+    ui->gridLayoutPrincipal->addWidget(coauteurs, 3, 3);
+    ui->gridLayoutPrincipal->addWidget(coauteurs2, 3, 4);
+    ui->gridLayoutPrincipal->addWidget(synopsis, 12, 0);
+    ui->gridLayoutPrincipal->addWidget(synopsis2, 13, 0, 1, 3);
+    ui->gridLayoutPrincipal->addWidget(pages, 5, 1);
+    ui->gridLayoutPrincipal->addWidget(pages2, 5, 2);
+    ui->gridLayoutPrincipal->addWidget(edition, 5, 3);
+    ui->gridLayoutPrincipal->addWidget(edition2, 5, 4);
+    ui->gridLayoutPrincipal->addWidget(langue, 6, 1);
+    ui->gridLayoutPrincipal->addWidget(langue2, 6, 2);
+    ui->gridLayoutPrincipal->addWidget(exemplaires, 6, 3);
+    ui->gridLayoutPrincipal->addWidget(exemplaires2, 6, 4);
+    ui->gridLayoutPrincipal->addWidget(commentaire, 12, 3, 1, 1, Qt::AlignLeft);
+    ui->gridLayoutPrincipal->addWidget(commentaire2, 13, 3, 1, 2);
+    ui->gridLayoutPrincipal->addWidget(classement, 7, 1);
+    ui->gridLayoutPrincipal->addWidget(classement2, 7, 2);
+    ui->gridLayoutPrincipal->addWidget(annee, 4, 3);
+    ui->gridLayoutPrincipal->addWidget(annee2, 4, 4);
+    ui->gridLayoutPrincipal->addWidget(auteur, 3, 1);
+    ui->gridLayoutPrincipal->addWidget(auteur2, 3, 2);
+    ui->gridLayoutPrincipal->addWidget(editeur, 4, 1);
+    ui->gridLayoutPrincipal->addWidget(editeur2, 4, 2);
+    ui->gridLayoutPrincipal->addWidget(empruntable, 8, 1, 1, 2, Qt::AlignLeft);
+    ui->gridLayoutPrincipal->addWidget(empruntable, 8, 2, 1, 1, Qt::AlignLeft);
+    ui->gridLayoutPrincipal->addWidget(lu, 8, 3, 1, 2, Qt::AlignLeft);
+    ui->gridLayoutPrincipal->addWidget(ebook, 9, 1, 1, 2, Qt::AlignLeft);
+    ui->gridLayoutPrincipal->addWidget(ebook, 9, 2, 1, 1, Qt::AlignLeft);
+    ui->gridLayoutPrincipal->addWidget(ebook2, 9, 3, 1, 2, Qt::AlignLeft);
+    ui->gridLayoutPrincipal->addWidget(couverture, 1, 0, 1, 1, Qt::AlignHCenter);
+    ui->gridLayoutPrincipal->addWidget(couverture2, 2, 0, 10, 1, Qt::AlignVCenter);
+    ui->gridLayoutPrincipal->addWidget(note1, 10, 1);
+    ui->gridLayoutPrincipal->addWidget(note2, 10, 2);
+    ui->gridLayoutPrincipal->addLayout(layoutEtiquettesLivres, 10, 3, 1, 2, Qt::AlignLeft);
+    QSpacerItem *spacer = new QSpacerItem(10, 100, QSizePolicy::Minimum, QSizePolicy::Minimum);
+    ui->gridLayoutPrincipal->addItem(spacer, 11, 1, 1, 3, Qt::AlignHCenter);
+}
+
+void DadaBooks::openTagList(QString tag){
+    bool resultat = false;
+    int id = tag.toInt(&resultat);
+    if(resultat){
+        this->showEtiquette(id);
+    }
 }

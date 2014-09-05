@@ -9,6 +9,7 @@
         <file>images/options.png</file>
         <file>images/search.png</file>
         <file>images/etiquette.png</file>
+        <file>images/etiquette_small.png</file>
     </qresource>
     <qresource prefix="/programme">
         <file>images/icone.png</file>
@@ -18,5 +19,6 @@
         <file>images/a_propos.png</file>
         <file>images/quitter.png</file>
         <file>images/logo_qt.jpg</file>
+        <file>images/nouveau.png</file>
     </qresource>
 </RCC>
