@@ -53,6 +53,53 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
 
 //Destructeur
 DadaBooks::~DadaBooks(){
+    if(ui->label_image->isHidden()){
+        delete layoutEtiquettesLivres;
+        delete titre_fen;
+        delete id1;
+        delete id2;
+        delete titre;
+        delete titre2;
+        delete isbn;
+        delete isbn2;
+        delete coauteurs;
+        delete coauteurs2;
+        delete synopsis;
+        delete couverture;
+        delete couverture2;
+        delete pages;
+        delete pages2;
+        delete edition;
+        delete edition2;
+        delete langue;
+        delete langue2;
+        delete classement;
+        delete classement2;
+        delete exemplaires;
+        delete exemplaires2;
+        delete commentaire;
+        delete annee;
+        delete annee2;
+        delete auteur;
+        delete auteur2;
+        delete editeur;
+        delete editeur2;
+        delete note1;
+        delete note2;
+        delete ebook2;
+        delete ebook3;
+        delete listeEtiquettes;
+        delete empruntable;
+        delete prete;
+        delete lu;
+        delete ebook;
+        delete buttonEdit;
+        delete buttonDelete;
+        delete synopsis2;
+        delete commentaire2;
+        delete mapperDelete;
+        delete mapperEdit;
+    }
     delete ui;
     delete insAddBook;
     delete insSiteManager;
