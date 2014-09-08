@@ -900,13 +900,13 @@ void DadaBooks::intabPreview(int id){
 
     if(insSettingsManager->getSettings(Xml).toBool()){
         //XML
-        /*QMultiMap<QString, QString> xmlLivre;
+        QMultiMap<QString, QString> xmlLivre;
         xmlLivre = insXmlManager->getBook(id);
-        titre_fen = new QLabel(xmlLivre.value("titre"));
-        id2 = new QLabel(xmlLivre.value("id"));
-        titre2 = new QLabel(xmlLivre.value("titre"));
-        isbn2 = new QLabel(xmlLivre.value("isbn"));
-        coauteurs2 = new QLabel(xmlLivre.value("coauteurs"));
+        titre_fen->setText(xmlLivre.value("titre"));
+        id2->setText(xmlLivre.value("id"));
+        titre2->setText(xmlLivre.value("titre"));
+        isbn2->setText(xmlLivre.value("isbn"));
+        coauteurs2->setText(xmlLivre.value("coauteurs"));
         QNetworkAccessManager nw_manager;
         QNetworkRequest request(xmlLivre.value("couverture"));
         QNetworkReply *reponse = nw_manager.get(request);
@@ -914,6 +914,7 @@ void DadaBooks::intabPreview(int id){
         connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
         eventLoop.exec();
         QByteArray data = reponse->readAll();
+        QPixmap loader;
         loader.loadFromData(data);
         int width = loader.width();
         if(width > 150){
@@ -922,23 +923,25 @@ void DadaBooks::intabPreview(int id){
             loader = loader.scaledToWidth(result);
         }
         couverture2->setPixmap(loader);
-        pages2 = new QLabel(xmlLivre.value("pages"));
-        edition2 = new QLabel(xmlLivre.value("edition"));
-        langue2 = new QLabel(xmlLivre.value("langue"));
-        exemplaires2 = new QLabel(xmlLivre.value("exemplaires"));
-        classement2 = new QLabel(xmlLivre.value("classement"));
-        annee2 = new QLabel(xmlLivre.value("annee"));
-        auteur2 = new QLabel(xmlLivre.value("auteur"));
-        editeur2 = new  QLabel(xmlLivre.value("editeur"));
-        note2 = new QLabel(xmlLivre.value("note")+"/20");
-        ebook3 = new QLabel(xmlLivre.value("emplacement", ""));
+        pages2->setText(xmlLivre.value("pages"));
+        edition2->setText(xmlLivre.value("edition"));
+        langue2->setText(xmlLivre.value("langue"));
+        exemplaires2->setText(xmlLivre.value("exemplaires"));
+        classement2->setText(xmlLivre.value("classement"));
+        annee2->setText(xmlLivre.value("annee"));
+        auteur2->setText(xmlLivre.value("auteur"));
+        editeur2->setText(xmlLivre.value("editeur"));
+        note2->setText(xmlLivre.value("note")+"/20");
+        ebook3->setText(xmlLivre.value("emplacement", ""));
+        synopsis2->clear();
         synopsis2->insertPlainText(xmlLivre.value("synopsis"));
+        commentaire2->clear();
         commentaire2->insertPlainText(xmlLivre.value("commentaire"));
         prete->setChecked(((xmlLivre.value("prete") == "True") ? true : false));
         empruntable->setChecked(((xmlLivre.value("empruntable") == "True") ? true : false));
-        ebook1->setChecked(((xmlLivre.value("ebook") == "True") ? true : false));
-        mapper_delete->setMapping(button_delete, xmlLivre.value("id").toInt());
-        mapper_edit->setMapping(button_edit, xmlLivre.value("id").toInt());*/
+        ebook->setChecked(((xmlLivre.value("ebook") == "True") ? true : false));
+        mapperDelete->setMapping(buttonDelete, xmlLivre.value("id").toInt());
+        mapperEdit->setMapping(buttonEdit, xmlLivre.value("id").toInt());
     }
     else{
         //SQL
