@@ -42,6 +42,7 @@ void SettingsDialog::accept(){
         insSettingsManager->setSettings(DBBase, ui->lineEdit_base->text());
     }
     insSettingsManager->setSettings(OpenInTab, ui->checkBox_ongletPrincipal->isChecked());
+    insSettingsManager->setSettings(DownPics, ui->checkBoxImages->isChecked());
     this->close();
 }
 
@@ -69,26 +70,47 @@ void SettingsDialog::prepareUi(){
         ui->lineEdit_pass->setText(insSettingsManager->getSettings(DBPass).toString());
     }
     ui->checkBox_ongletPrincipal->setChecked(insSettingsManager->getSettings(OpenInTab).toBool());
+    ui->checkBoxImages->setChecked(insSettingsManager->getSettings(DownPics).toBool());
     return;
 }
 
 void SettingsDialog::manageCheck(int zone){
     if(zone == 1){
+        int resultat = this->alerteType();
+        if(resultat == QMessageBox::Cancel || resultat == QMessageBox::No){
+            ui->groupBox_sqlite->setChecked(false);
+            return;
+        }
         ui->groupBox_mysql->setChecked(false);
         ui->groupBox_xml->setChecked(false);
         ui->horizontalLayout_3->setEnabled(false);
     }
     else if(zone == 2){
+        int resultat = this->alerteType();
+        if(resultat == QMessageBox::Cancel || resultat == QMessageBox::No){
+            ui->groupBox_mysql->setChecked(false);
+            return;
+        }
         ui->groupBox_sqlite->setChecked(false);
         ui->groupBox_xml->setChecked(false);
         ui->horizontalLayout_3->setEnabled(false);
     }
     else{
+        int resultat = this->alerteType();
+        if(resultat == QMessageBox::Cancel || resultat == QMessageBox::No){
+            ui->groupBox_xml->setChecked(false);
+            return;
+        }
         ui->groupBox_sqlite->setChecked(false);
         ui->groupBox_mysql->setChecked(false);
         ui->horizontalLayout_3->setEnabled(true);
     }
     return;
+}
+
+int SettingsDialog::alerteType(){
+    int resultat = QMessageBox::warning(this, "ATTENTION", "Si vous changez le type de collection, la collection actuelle sera arrêtée et une nouvelle collection sera entamée.\nVoulez-vous continuer?", QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+    return resultat;
 }
 
 void SettingsDialog::exportForGCStar(){

@@ -28,6 +28,7 @@ private slots:
     
 private:
     void prepareUi();
+    int alerteType();
 
 
     Ui::SettingsDialog *ui;

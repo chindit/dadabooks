@@ -3,8 +3,8 @@
 SettingsManager::SettingsManager(QObject *parent) :
     QObject(parent)
 {
-    names = new QString[12];
-    settings = new QVariant[12];
+    names = new QString[13];
+    settings = new QVariant[13];
 
     names[AutoAuteur] = "AutoAuteur";
     names[AutoEditeur] = "AutoEditeur";
@@ -18,6 +18,7 @@ SettingsManager::SettingsManager(QObject *parent) :
     names[DBBase] = "MariaDB_base";
     names[Initialized] = "isInitialized";
     names[OpenInTab] = "ouvrirOngletPrincipal";
+    names[DownPics] = "telechargerImages";
 
     loadSettings();
 
@@ -53,6 +54,7 @@ void SettingsManager::loadSettings(){
     settings[DBBase] = options.value(names[DBBase], "DadaBooks");
     settings[Initialized] = options.value(names[Initialized], false);
     settings[OpenInTab] = options.value(names[OpenInTab], false);
+    settings[DownPics] = options.value(names[DownPics], false);
     return;
 }
 

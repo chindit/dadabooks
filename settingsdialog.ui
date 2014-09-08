@@ -231,6 +231,9 @@
        </item>
        <item>
         <widget class="QCheckBox" name="checkBoxImages">
+         <property name="toolTip">
+          <string>Si cette case est cochée, les images seront stockées sur le disque dur plutôt que d'être téléchargées</string>
+         </property>
          <property name="text">
           <string>Téléchager les images</string>
          </property>
