@@ -242,7 +242,7 @@ void DadaBooks::preparePreview(){
             id = insXmlManager->getIdByTitle(ui->listWidget_accueil->selectedItems().first()->text());
     }
     else{
-        QSqlQuery resultat = insSqlManager->query("SELECT id FROM livres WHERE titre=\""+ui->listWidget_accueil->currentItem()->text()+"\"");
+        QSqlQuery resultat = insSqlManager->query("SELECT id FROM livres WHERE titre=\""+ui->listWidget_accueil->currentItem()->text().replace("\"", "\\\"")+"\"");
         resultat.first();
         id = resultat.record().value("id").toInt();
     }
