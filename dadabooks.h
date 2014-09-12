@@ -4,6 +4,7 @@
 #include <QCheckBox>
 #include <QGridLayout>
 #include <QMainWindow>
+#include <QProcess>
 #include <QTextEdit>
 
 #include "addbook.h"

@@ -790,18 +790,15 @@ void DadaBooks::about(){
 void DadaBooks::openNewColl(){
     //Pour créer une nouvelle collection, on vire la référence de l'ancienne
     insSettingsManager->setSettings(Fichier, "");
-    //Et on rapelle les fonctions d'initialisation
-    FirstLaunch *insFirstLaunch = new FirstLaunch;
-    insFirstLaunch->exec();
-    delete insFirstLaunch;
+    insSettingsManager->setSettings(Xml, true);
+    insSettingsManager->setSettings(MariaDB, false);
+    insSettingsManager->setSettings(Sqlite, false);
+    insSettingsManager->setSettings(Initialized, false);
 
-    //On recharge les paramètres
-    insSettingsManager->loadSettings();
-    insSettingsManager->setSettings(Initialized, true);
-    if(insSettingsManager->getSettings(Fichier).toString().isEmpty() && !insSettingsManager->getSettings(MariaDB).toBool()){
-        this->openFile();
-    }
-    return;
+    //Et on relance le programme
+    QProcess::startDetached(QApplication::applicationFilePath());
+    this->~DadaBooks();
+    QCoreApplication::quit();
 }
 
 //Affiche les étiquettes du livre fourni en paramètre
