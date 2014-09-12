@@ -4,19 +4,20 @@
 EditBook::EditBook(QWidget *parent) : QDialog(parent), ui(new Ui::EditBook){
     ui->setupUi(this);
     idEdit = 0;
-    insAddAuteur = new AddAuteur(this);
-    insAddEditeur = new AddEditeur(this);
     insSettingsManager = new SettingsManager(this);
     if(insSettingsManager->getSettings(Xml).toBool()){
         insXml = new XmlManager;
     }
     else{
         insSql = new SqlManager();
+        insAddAuteur = new AddAuteur(this);
+        insAddEditeur = new AddEditeur(this);
+        connect(ui->pushButton_auteur, SIGNAL(clicked()), insAddAuteur, SLOT(show()));
+        connect(insAddAuteur, SIGNAL(makeClose(int, QString)), this, SLOT(updateAuteurs(int, QString)));
+        connect(ui->pushButton_editeur, SIGNAL(clicked()), insAddEditeur, SLOT(show()));
+        connect(insAddEditeur, SIGNAL(makeClose(int, QString)), this, SLOT(updateEditeurs(int, QString)));
     }
-    connect(ui->pushButton_auteur, SIGNAL(clicked()), insAddAuteur, SLOT(show()));
-    connect(insAddAuteur, SIGNAL(makeClose(int, QString)), this, SLOT(updateAuteurs(int, QString)));
-    connect(ui->pushButton_editeur, SIGNAL(clicked()), insAddEditeur, SLOT(show()));
-    connect(insAddEditeur, SIGNAL(makeClose(int, QString)), this, SLOT(updateEditeurs(int, QString)));
+
     connect(ui->pushButton_emplacement, SIGNAL(clicked()), this, SLOT(uploadEbook()));
 }
 
@@ -26,10 +27,10 @@ EditBook::~EditBook(){
     }
     else{
         delete insSql;
+        delete insAddAuteur;
+        delete insAddEditeur;
     }
     delete ui;
-    delete insAddAuteur;
-    delete insAddEditeur;
     delete insSettingsManager;
 }
 
@@ -78,13 +79,46 @@ void EditBook::accept(){
     note = ui->horizontalSlider_note->value();
     QString req1;
     int idLivre = -1;
+
+    QString nomImage = ui->label_image_texte->text();
+    //Stockage de l'image en local en cas de besoin
+    if(!insSettingsManager->getSettings(MariaDB).toBool() && insSettingsManager->getSettings(DownPics).toBool()){
+        //On vérifie que le dossier existe
+        QString chemin = insSettingsManager->getSettings(Fichier).toString();
+        chemin = chemin.left(chemin.lastIndexOf("/")+1);
+        QDir dossierImage; dossierImage.setPath(chemin+".dadabooksImages");
+        if(!dossierImage.exists()){
+            dossierImage.mkdir(chemin+".dadabooksImages");
+        }
+
+        //Et on télécharge les images
+        QNetworkAccessManager nw_manager;
+        QNetworkRequest request(ui->label_image_texte->text());
+        QNetworkReply *reponse = nw_manager.get(request);
+        QEventLoop eventLoop;
+        connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
+        eventLoop.exec();
+        QPixmap image;
+        image.loadFromData(reponse->readAll());
+        int width = image.width();
+        if(width > 150){
+            float coef = (float)width / 150;
+            int result = image.width()/coef;
+            image = image.scaledToWidth(result);
+        }
+        QDateTime timestamp; timestamp = QDateTime::currentDateTime();
+        nomImage = chemin+".dadabooksImages/"+QString::number(timestamp.toTime_t())+".png";
+        image.save(nomImage);
+    }
+
     if(!insSettingsManager->getSettings(Xml).toBool()){
         if(idEdit == 0){
             req1 = "INSERT INTO livres(titre, ISBN, auteur, coauteurs, synopsis, couverture, editeur, annee, pages, edition, langue, classement, exemplaires, commentaire, lu, note, empruntable, pret, ebook, emplacement) VALUES(\""+ui->lineEdit_titre->text().replace("\"", "\\\"")+"\", \""+ui->lineEdit_ISBN->text()+"\", "+QString::number(id_auteur)+", \""+this->guillemets(ui->lineEdit_coauteurs->text())+"\", \""+this->guillemets(ui->plainTextEdit_resume->toPlainText())+"\", \""+ui->label_image_texte->text()+"\", "+QString::number(id_editeur)+", '"+QString::number(annee)+"', "+QString::number(pages)+", "+QString::number(edition)+", \""+this->guillemets(ui->lineEdit_langue->text())+"\", \""+this->guillemets(ui->lineEdit_classement->text())+"\", "+QString::number(exemplaires)+", \""+this->guillemets(ui->plainTextEdit_commentaire->toPlainText())+"\", "+QString::number(lu)+", "+QString::number(note)+", "+QString::number(empruntable)+", "+QString::number(pret)+", "+QString::number(ebook)+", \""+ui->lineEdit_emplacement->text()+"\");";
         }
         else{
-            req1 = "UPDATE livres SET titre = \""+this->guillemets(ui->lineEdit_titre->text())+"\", ISBN = \""+ui->lineEdit_ISBN->text()+"\", auteur = "+QString::number(id_auteur)+", coauteurs = \""+this->guillemets(ui->lineEdit_coauteurs->text())+"\", synopsis = \""+this->guillemets(ui->plainTextEdit_resume->toPlainText())+"\", couverture = \""+ui->label_image_texte->text()+"\", editeur = "+QString::number(id_editeur)+", annee = '"+QString::number(annee)+"', pages = "+QString::number(pages)+", edition = "+QString::number(edition)+", langue = \""+this->guillemets(ui->lineEdit_langue->text())+"\", classement = \""+this->guillemets(ui->lineEdit_classement->text())+"\", exemplaires = "+QString::number(exemplaires)+", commentaire = \""+this->guillemets(ui->plainTextEdit_commentaire->toPlainText())+"\", lu = "+QString::number(lu)+", note = "+QString::number(note)+", empruntable = "+QString::number(empruntable)+", pret = "+QString::number(pret)+", ebook = "+QString::number(ebook)+", emplacement = \""+ui->lineEdit_emplacement->text()+"\" WHERE id="+QString::number(idEdit)+";";
+            req1 = "UPDATE livres SET titre = \""+this->guillemets(ui->lineEdit_titre->text())+"\", ISBN = \""+ui->lineEdit_ISBN->text()+"\", auteur = "+QString::number(id_auteur)+", coauteurs = \""+this->guillemets(ui->lineEdit_coauteurs->text())+"\", synopsis = \""+this->guillemets(ui->plainTextEdit_resume->toPlainText())+"\", couverture = \""+nomImage+"\", editeur = "+QString::number(id_editeur)+", annee = '"+QString::number(annee)+"', pages = "+QString::number(pages)+", edition = "+QString::number(edition)+", langue = \""+this->guillemets(ui->lineEdit_langue->text())+"\", classement = \""+this->guillemets(ui->lineEdit_classement->text())+"\", exemplaires = "+QString::number(exemplaires)+", commentaire = \""+this->guillemets(ui->plainTextEdit_commentaire->toPlainText())+"\", lu = "+QString::number(lu)+", note = "+QString::number(note)+", empruntable = "+QString::number(empruntable)+", pret = "+QString::number(pret)+", ebook = "+QString::number(ebook)+", emplacement = \""+ui->lineEdit_emplacement->text()+"\" WHERE id="+QString::number(idEdit)+";";
         }
+
         QSqlQuery res1 = insSql->query(req1);
         idLivre = (idEdit == 0) ? res1.lastInsertId().toInt() : idEdit;
         QString etiquette = ui->comboBox_etiquette->currentText();
@@ -126,7 +160,7 @@ void EditBook::accept(){
         livre.insert("auteur", ui->lineEdit_auteur->text());
         livre.insert("editeur", ui->lineEdit_editeur->text());
         livre.insert("coauteur", ui->lineEdit_coauteurs->text());
-        livre.insert("couverture", ui->label_image_texte->text());
+        livre.insert("couverture", nomImage);
         livre.insert("pages", QString::number(ui->spinBox_pages->value()));
         livre.insert("edition", QString::number(ui->spinBox_edition->value()));
         livre.insert("langue", ui->lineEdit_langue->text());
@@ -223,19 +257,30 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
     ui->label_note->setText(QString::number(livre.value("note").toInt())+"/20");
 
     //Récupération de l'image
-    QNetworkAccessManager nw_manager;
-    QNetworkRequest request(livre.value("couverture"));
-    QNetworkReply *reponse = nw_manager.get(request);
-    QEventLoop eventLoop;
-    connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
-    eventLoop.exec();
     QPixmap image;
-    image.loadFromData(reponse->readAll());
-    int width = image.width();
-    if(width > 150){
-        float coef = (float)width / 150;
-        int result = image.width()/coef;
-        image = image.scaledToWidth(result);
+    if(!livre.value("couverture").startsWith("http")){
+        QFile fichierImage(livre.value("couverture"));
+        if(!fichierImage.exists()){
+            QMessageBox::information(this, "Image introuvable", "Une erreur est survenue, la jaquette de ce livre ne peut être trouvée");
+        }
+        else{
+            image.load(livre.value("couverture"));
+        }
+    }
+    else{
+        QNetworkAccessManager nw_manager;
+        QNetworkRequest request(livre.value("couverture"));
+        QNetworkReply *reponse = nw_manager.get(request);
+        QEventLoop eventLoop;
+        connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
+        eventLoop.exec();
+        image.loadFromData(reponse->readAll());
+        int width = image.width();
+        if(width > 150){
+            float coef = (float)width / 150;
+            int result = image.width()/coef;
+            image = image.scaledToWidth(result);
+        }
     }
     ui->label_image->setPixmap(image);
     ui->label_image_texte->setText(livre.value("couverture"));

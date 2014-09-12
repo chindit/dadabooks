@@ -194,6 +194,7 @@ void DadaBooks::setListeLivres(){
         for(int i=0; i<resultat.size(); i++){
             ui->listWidget_accueil->addItem(resultat.at(i).value("titre"));
         }
+        ui->listWidget_accueil->sortItems();
     }
     else{
         while(res1.next()){  //Dans le cas où la BDD est en SQL (lite)
@@ -389,14 +390,25 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
         titre2 = new QLabel(xmlLivre.value("titre"));
         isbn2 = new QLabel(xmlLivre.value("isbn"));
         coauteurs2 = new QLabel(xmlLivre.value("coauteurs"));
-        QNetworkAccessManager nw_manager;
-        QNetworkRequest request(xmlLivre.value("couverture"));
-        QNetworkReply *reponse = nw_manager.get(request);
-        QEventLoop eventLoop;
-        connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
-        eventLoop.exec();
-        QByteArray data = reponse->readAll();
-        loader.loadFromData(data);
+        if(!xmlLivre.value("couverture").startsWith("http")){
+            QFile fichierImage(xmlLivre.value("couverture"));
+            if(!fichierImage.exists()){
+                QMessageBox::information(this, "Image introuvable", "Une erreur est survenue, la jaquette de ce livre ne peut être trouvée");
+            }
+            else{
+                loader.load(xmlLivre.value("couverture"));
+            }
+        }
+        else{
+            QNetworkAccessManager nw_manager;
+            QNetworkRequest request(xmlLivre.value("couverture"));
+            QNetworkReply *reponse = nw_manager.get(request);
+            QEventLoop eventLoop;
+            connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
+            eventLoop.exec();
+            QByteArray data = reponse->readAll();
+            loader.loadFromData(data);
+        }
         int width = loader.width();
         if(width > 150){
             float coef = (float)width / 150;
@@ -429,14 +441,25 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
         titre2 = new QLabel(res1.record().value("titre").toString());
         isbn2 = new QLabel(res1.record().value("isbn").toString());
         coauteurs2 = new QLabel(res1.record().value("coauteurs").toString());
-        QNetworkAccessManager nw_manager;
-        QNetworkRequest request(res1.record().value("couverture").toString());
-        QNetworkReply *reponse = nw_manager.get(request);
-        QEventLoop eventLoop;
-        connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
-        eventLoop.exec();
-        QByteArray data = reponse->readAll();
-        loader.loadFromData(data);
+        if(!res1.record().value("couverture").toString().startsWith("http")){
+            QFile fichierImage(res1.record().value("couverture").toString());
+            if(!fichierImage.exists()){
+                QMessageBox::information(this, "Image introuvable", "Une erreur est survenue, la jaquette de ce livre ne peut être trouvée");
+            }
+            else{
+                loader.load(res1.record().value("couverture").toString());
+            }
+        }
+        else{
+            QNetworkAccessManager nw_manager;
+            QNetworkRequest request(res1.record().value("couverture").toString());
+            QNetworkReply *reponse = nw_manager.get(request);
+            QEventLoop eventLoop;
+            connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
+            eventLoop.exec();
+            QByteArray data = reponse->readAll();
+            loader.loadFromData(data);
+        }
         int width = loader.width();
         if(width > 150){
             float coef = (float)width / 150;
@@ -907,15 +930,26 @@ void DadaBooks::intabPreview(int id){
         titre2->setText(xmlLivre.value("titre"));
         isbn2->setText(xmlLivre.value("isbn"));
         coauteurs2->setText(xmlLivre.value("coauteurs"));
-        QNetworkAccessManager nw_manager;
-        QNetworkRequest request(xmlLivre.value("couverture"));
-        QNetworkReply *reponse = nw_manager.get(request);
-        QEventLoop eventLoop;
-        connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
-        eventLoop.exec();
-        QByteArray data = reponse->readAll();
         QPixmap loader;
-        loader.loadFromData(data);
+        if(!xmlLivre.value("couverture").startsWith("http")){
+            QFile fichierImage(xmlLivre.value("couverture"));
+            if(!fichierImage.exists()){
+                QMessageBox::information(this, "Image introuvable", "Une erreur est survenue, la jaquette de ce livre ne peut être trouvée");
+            }
+            else{
+                loader.load(xmlLivre.value("couverture"));
+            }
+        }
+        else{
+            QNetworkAccessManager nw_manager;
+            QNetworkRequest request(xmlLivre.value("couverture"));
+            QNetworkReply *reponse = nw_manager.get(request);
+            QEventLoop eventLoop;
+            connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
+            eventLoop.exec();
+            QByteArray data = reponse->readAll();
+            loader.loadFromData(data);
+        }
         int width = loader.width();
         if(width > 150){
             float coef = (float)width / 150;
@@ -953,15 +987,27 @@ void DadaBooks::intabPreview(int id){
         titre2->setText(res1.record().value("titre").toString());
         isbn2->setText(res1.record().value("isbn").toString());
         coauteurs2->setText(res1.record().value("coauteurs").toString());
-        QNetworkAccessManager nw_manager;
-        QNetworkRequest request(res1.record().value("couverture").toString());
-        QNetworkReply *reponse = nw_manager.get(request);
-        QEventLoop eventLoop;
-        connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
-        eventLoop.exec();
-        QByteArray data = reponse->readAll();
+
         QPixmap loader;
-        loader.loadFromData(data);
+        if(!res1.record().value("couverture").toString().startsWith("http")){
+            QFile fichierImage(res1.record().value("couverture").toString());
+            if(!fichierImage.exists()){
+                QMessageBox::information(this, "Image introuvable", "Une erreur est survenue, la jaquette de ce livre ne peut être trouvée");
+            }
+            else{
+                loader.load(res1.record().value("couverture").toString());
+            }
+        }
+        else{
+            QNetworkAccessManager nw_manager;
+            QNetworkRequest request(res1.record().value("couverture").toString());
+            QNetworkReply *reponse = nw_manager.get(request);
+            QEventLoop eventLoop;
+            connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
+            eventLoop.exec();
+            QByteArray data = reponse->readAll();
+            loader.loadFromData(data);
+        }
         int width = loader.width();
         if(width > 150){
             float coef = (float)width / 150;
