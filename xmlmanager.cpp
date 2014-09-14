@@ -30,7 +30,7 @@ QList< QMultiMap<QString,QString> > XmlManager::readBase(int id){
     QDomNode noeud = racine.firstChild();
     while(!noeud.isNull()){
         livre = noeud.toElement();
-        if(livre.tagName() == "livre"){
+        if(livre.tagName() == "livre" || livre.tagName() == "film"){
             QMultiMap<QString, QString> book;
             book.insert("id", livre.attribute("id"));
             tab = livre.childNodes();
@@ -71,12 +71,12 @@ void XmlManager::deleteBook(int id){
 
 bool XmlManager::writeBase(QList<QMultiMap<QString, QString> > base){
     QDomDocument doc;
-    QDomElement livres = doc.createElement("livres");
+    QDomElement livres = doc.createElement((QString::compare(insManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) == 0) ? "films" : "livres");
     doc.appendChild(livres);
 
     for(int i=0; i<base.size(); i++){
         QMultiMap<QString, QString> livreActuel = base.at(i);
-        QDomElement livre = doc.createElement("livre");
+        QDomElement livre = doc.createElement((QString::compare(insManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) == 0) ? "film" : "livre");
         livres.appendChild(livre);
         livre.setAttribute("id", livreActuel.value("id"));
 

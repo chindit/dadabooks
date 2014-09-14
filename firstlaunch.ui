@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>532</width>
-    <height>322</height>
+    <width>584</width>
+    <height>373</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,6 +18,68 @@
     <normaloff>:/programme/images/icone.png</normaloff>:/programme/images/icone.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="8" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>Je veux une collection en</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonXML">
+       <property name="text">
+        <string>XML</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonSQLite">
+       <property name="text">
+        <string>SQLite</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonSQL">
+       <property name="text">
+        <string>MySQL</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="9" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="label_9">
+       <property name="text">
+        <string>Je possède déjà une collection que je souhaite importer</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonSkip">
+       <property name="text">
+        <string>Passer cette étape</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
    <item row="0" column="0">
     <widget class="QLabel" name="label">
      <property name="font">
@@ -36,56 +98,6 @@
      </property>
     </widget>
    </item>
-   <item row="9" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QLabel" name="label_9">
-       <property name="text">
-        <string>Je possède déjà une bibliothèque que je souhaite importer</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="buttonSkip">
-       <property name="text">
-        <string>Passer cette étape</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="8" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="label_8">
-       <property name="text">
-        <string>Je veux une bibliothèque en</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="buttonXML">
-       <property name="text">
-        <string>XML</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="buttonSQLite">
-       <property name="text">
-        <string>SQLite</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="buttonSQL">
-       <property name="text">
-        <string>MySQL</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
    <item row="1" column="0">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
@@ -101,7 +113,7 @@
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>DadaBooks est simple et pratique à utiliser, il vous aidera à conserver votre bibliothèque ordonnée et vous permettra de trouver un livre en un seul clic.</string>
+        <string>DadaBooks est simple et pratique à utiliser, il vous aidera à conserver vos collections ordonnées et vous permettra de trouver un livre ou un film en un seul clic.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -111,7 +123,7 @@
      <item>
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>Pour gérer votre bibliothèque, plusieurs formats sont proposés:</string>
+        <string>Pour gérer votre collection, plusieurs formats sont proposés:</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -131,7 +143,7 @@
      <item>
       <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>2)SQLite : Pratique pour une grande collection, dispose de foncionnalités avancées comme la gestion d'auteurs de manière séparée.</string>
+        <string>2)SQLite : Pratique pour une grande collection, dispose de foncionnalités avancées comme la gestion d'auteurs/acteurs de manière séparée.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -145,6 +157,42 @@
        </property>
        <property name="wordWrap">
         <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="10" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QLabel" name="label_10">
+       <property name="text">
+        <string>Ma collection contiendra des </string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboBox_Type">
+       <item>
+        <property name="text">
+         <string>Livres</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Films</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="11" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QPushButton" name="buttonGo">
+       <property name="text">
+        <string>GO!</string>
        </property>
       </widget>
      </item>

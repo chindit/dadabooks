@@ -1,7 +1,7 @@
 #ifndef SETTINGSMANAGER_H
 #define SETTINGSMANAGER_H
 
-enum Setting { AutoAuteur, AutoEditeur, Sqlite, MariaDB, DBHost, DBUser, DBPass, DBBase, Xml, Fichier, Initialized, OpenInTab, DownPics };
+enum Setting { AutoAuteur, AutoEditeur, Sqlite, MariaDB, DBHost, DBUser, DBPass, DBBase, Xml, Fichier, Initialized, OpenInTab, DownPics, Type };
 
 #include <QObject>
 #include <QMessageBox>

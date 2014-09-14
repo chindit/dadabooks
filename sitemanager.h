@@ -16,7 +16,7 @@ public:
     explicit SiteManager(QObject *parent = 0);
     ~SiteManager();
     static SiteManager * instance();
-    QStringList getPluginList();
+    QStringList getPluginList(QString type=QString());
     QList< QMultiMap<QString,QString> > makeSearch(QString search, QString site);
     QMultiMap<QString,QString> getBook( QString id, QString site );
     

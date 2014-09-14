@@ -26,6 +26,7 @@ private slots:
     void setSQL();
     void setSkip();
     void saveSQLParams();
+    void accept();
 
 private:
     QString getDirName();

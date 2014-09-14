@@ -30,6 +30,7 @@ private:
     Ui::AddBook *ui;
     EditBook *insEditBook;
     SiteManager *insSiteManager;
+    SettingsManager *insSettingsManager;
 };
 
 #endif // NV_LIVRE_H

@@ -27,10 +27,10 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     }
 
     if(insSettingsManager->getSettings(Xml).toBool())
-            insXmlManager = new XmlManager();
-        else{
-            insSqlManager = new SqlManager();
-}
+        insXmlManager = new XmlManager();
+    else
+        insSqlManager = new SqlManager();
+
     insEditBook = new EditBook;
     insSettingsDialog = new SettingsDialog;
 
@@ -164,7 +164,7 @@ void DadaBooks::setListeLivres(){
     ui->tableWidget->clear();
     ui->tableWidget->setColumnCount(5);
     QStringList liste_headers;
-    liste_headers << "ID" << "Titre" << "Auteur" << "Éditeur" << "Année";
+    liste_headers << "ID" << "Titre" << ((QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) != 0) ? "Auteur" : "Directeur") << ((QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) != 0) ? "Éditeur" : "Acteurs") << "Année";
     ui->tableWidget->setHorizontalHeaderLabels(liste_headers);
 
     if(insSettingsManager->getSettings(Xml).toBool()){  //Dans le cas où la BDD est en XML
@@ -180,8 +180,14 @@ void DadaBooks::setListeLivres(){
             QTableWidgetItem *item4 = new QTableWidgetItem();
             item0->setText(resultat.at(resultat.size()-1-i).value("id"));
             item1->setText(resultat.at(resultat.size()-1-i).value("titre"));
-            item2->setText(resultat.at(resultat.size()-1-i).value("auteur"));
-            item3->setText(resultat.at(resultat.size()-1-i).value("editeur"));
+            if(QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) != 0){
+                item2->setText(resultat.at(resultat.size()-1-i).value("auteur"));
+                item3->setText(resultat.at(resultat.size()-1-i).value("editeur"));
+            }
+            else{
+                item2->setText(resultat.at(resultat.size()-1-i).value("directeur"));
+                item3->setText(resultat.at(resultat.size()-1-i).value("acteurs"));
+            }
             item4->setText(resultat.at(resultat.size()-1-i).value("annee"));
             ui->tableWidget->setItem(0, 0, item0);
             ui->tableWidget->setItem(0, 1, item1);
@@ -797,7 +803,6 @@ void DadaBooks::openNewColl(){
 
     //Et on relance le programme
     QProcess::startDetached(QApplication::applicationFilePath());
-    this->~DadaBooks();
     QCoreApplication::quit();
 }
 
@@ -843,6 +848,9 @@ void DadaBooks::showEtiquette(const int &id){
 
 //Affiche le livre sélectionné dans l'onglet principal
 void DadaBooks::intabPreview(int id){
+    //On détecte s'il s'agit d'un livre ou d'un film
+    bool films = ((QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) != 0) ? false : true);
+
     //En premier lieu, on cache les 3 éléments de l'accueil
     if(!ui->label_image->isHidden()){
         ui->label_image->setHidden(true);
@@ -850,36 +858,36 @@ void DadaBooks::intabPreview(int id){
         ui->label_2->setHidden(true);
 
         //On prépare les éléments
-        //QLabel *titre_fen, *id1, *id2, *titre, *titre2, *isbn, *isbn2, *coauteurs, *coauteurs2, *synopsis, *couverture, *couverture2, *pages, *pages2, *edition, *edition2, *langue, *langue2, *classement, *classement2, *exemplaires, *exemplaires2, *commentaire, *annee, *annee2, *auteur, *auteur2, *editeur, *editeur2, *note1, *note2, *ebook2, *ebook3;
         titre_fen = new QLabel();
         id1 = new QLabel("ID");
         id2 = new QLabel();
         titre = new QLabel("Titre");
         titre2 = new QLabel();
-        isbn = new QLabel("ISBN");
+        isbn = new QLabel((films) ? "" : "ISBN");
         isbn2 = new QLabel();
-        coauteurs = new QLabel("Co-auteur(s)");
+        coauteurs = new QLabel((films) ? "Titre original" : "Co-auteur(s)");
         coauteurs2 = new QLabel();
         synopsis = new QLabel("Résumé");
         couverture = new QLabel("Couverture");
         couverture2 = new QLabel();
-        pages = new QLabel("Nombre de pages");
+        pages = new QLabel((films) ? "Durée" : "Nombre de pages");
         pages2 = new QLabel();
-        edition = new QLabel("Édition");
+        edition = new QLabel((films) ? "Nationalité" : "Édition");
         edition2 = new QLabel();
-        langue = new QLabel("Langue de publication");
+        langue = new QLabel("Langue");
         langue2 = new QLabel();
-        exemplaires = new QLabel("Nombre d'exemplaires");
+        exemplaires = new QLabel((films) ? "": "Nombre d'exemplaires");
         exemplaires2 = new QLabel();
         commentaire = new QLabel("Commentaire");
         classement = new QLabel("Classement");
         classement2 = new QLabel();
-        annee = new QLabel("Année de publication");
+        QString stringAnnee = "Année de "; stringAnnee.append((films) ? "production" : "publication");
+        annee = new QLabel(stringAnnee);
         annee2 = new QLabel();
-        auteur = new QLabel("Auteur");
+        auteur = new QLabel((films) ? "Directeur" : "Auteur");
         auteur2 = new QLabel();
-        editeur = new QLabel("Éditeur");
-        editeur2 = new QLabel();
+        editeur = new QLabel((films) ? "Acteurs" : "Éditeur");
+        editeur2 = new QLabel(); editeur2->setWordWrap(true);
         note1 = new QLabel("Note");
         note2 = new QLabel();
         ebook2 = new QLabel("Emplacement");
@@ -888,9 +896,9 @@ void DadaBooks::intabPreview(int id){
         empruntable->setEnabled(false);
         prete = new QCheckBox("En prêt");
         prete->setEnabled(false);
-        lu = new QCheckBox("Lu");
+        lu = new QCheckBox((films) ? "Vu" : "Lu");
         lu->setEnabled(false);
-        ebook = new QCheckBox("Ebook");
+        ebook = new QCheckBox((films) ? "Fichier" : "Ebook");
         ebook->setEnabled(false);
         buttonEdit = new QPushButton;
         buttonEdit->setFlat(true);
@@ -913,8 +921,6 @@ void DadaBooks::intabPreview(int id){
         connect(mapperEdit, SIGNAL(mapped(int)), this, SLOT(editLivre(int)));
     }
     else{
-        /*delete layoutEtiquettesLivres;
-        layoutEtiquettesLivres = new QHBoxLayout;*/
         layoutEtiquettesLivres->removeItem(layoutEtiquettesLivres->takeAt(0));
     }
 
@@ -925,12 +931,13 @@ void DadaBooks::intabPreview(int id){
         titre_fen->setText(xmlLivre.value("titre"));
         id2->setText(xmlLivre.value("id"));
         titre2->setText(xmlLivre.value("titre"));
-        isbn2->setText(xmlLivre.value("isbn"));
-        coauteurs2->setText(xmlLivre.value("coauteurs"));
+        if(!films)
+            isbn2->setText(xmlLivre.value("isbn"));
+        coauteurs2->setText(xmlLivre.value((films) ? "titreOriginal" : "coauteurs"));
         QPixmap loader;
         if(!xmlLivre.value("couverture").startsWith("http")){
             QFile fichierImage(xmlLivre.value("couverture"));
-            if(!fichierImage.exists()){
+            if(!fichierImage.exists() && !xmlLivre.value("couverture").isEmpty()){
                 QMessageBox::information(this, "Image introuvable", "Une erreur est survenue, la jaquette de ce livre ne peut être trouvée");
             }
             else{
@@ -954,14 +961,15 @@ void DadaBooks::intabPreview(int id){
             loader = loader.scaledToWidth(result);
         }
         couverture2->setPixmap(loader);
-        pages2->setText(xmlLivre.value("pages"));
-        edition2->setText(xmlLivre.value("edition"));
+        pages2->setText(xmlLivre.value((films) ? "duree" : "pages"));
+        edition2->setText(xmlLivre.value((films) ? "pays" : "edition"));
         langue2->setText(xmlLivre.value("langue"));
-        exemplaires2->setText(xmlLivre.value("exemplaires"));
+        if(!films)
+            exemplaires2->setText(xmlLivre.value("exemplaires"));
         classement2->setText(xmlLivre.value("classement"));
         annee2->setText(xmlLivre.value("annee"));
-        auteur2->setText(xmlLivre.value("auteur"));
-        editeur2->setText(xmlLivre.value("editeur"));
+        auteur2->setText(xmlLivre.value((films) ? "directeur" : "auteur"));
+        editeur2->setText(xmlLivre.value((films) ? "acteurs" : "editeur"));
         note2->setText(xmlLivre.value("note")+"/20");
         ebook3->setText(xmlLivre.value("emplacement", ""));
         synopsis2->clear();
@@ -970,7 +978,8 @@ void DadaBooks::intabPreview(int id){
         commentaire2->insertPlainText(xmlLivre.value("commentaire"));
         prete->setChecked(((xmlLivre.value("prete") == "True") ? true : false));
         empruntable->setChecked(((xmlLivre.value("empruntable") == "True") ? true : false));
-        ebook->setChecked(((xmlLivre.value("ebook") == "True") ? true : false));
+        ebook->setChecked(((xmlLivre.value((films) ? "fichier" : "ebook") == "True") ? true : false));
+        lu->setChecked(((xmlLivre.value((films) ? "vu" : "lu") == "True") ? true : false));
         mapperDelete->setMapping(buttonDelete, xmlLivre.value("id").toInt());
         mapperEdit->setMapping(buttonEdit, xmlLivre.value("id").toInt());
     }
@@ -1107,6 +1116,7 @@ void DadaBooks::intabPreview(int id){
     ui->gridLayoutPrincipal->addItem(spacer, 11, 1, 1, 3, Qt::AlignHCenter);
 }
 
+//Affiche la liste des livres/films qui contiennent l'étiquette TAG
 void DadaBooks::openTagList(QString tag){
     bool resultat = false;
     int id = tag.toInt(&resultat);

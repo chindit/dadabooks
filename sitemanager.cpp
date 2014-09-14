@@ -29,10 +29,17 @@ SiteManager * SiteManager::instance()
     return m_instance;
 }
 
-QStringList SiteManager::getPluginList(){
+QStringList SiteManager::getPluginList(QString type){
     QStringList liste;
     foreach(Plugin * pg, pluginList){
-        liste.append(pg->getName());
+        if(!type.isEmpty()){
+            if(pg->getName().contains("film")){
+                liste.append(pg->getName());
+            }
+        }
+        else{
+            liste.append(pg->getName());
+        }
     }
     return liste;
 }

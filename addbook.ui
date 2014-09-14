@@ -40,7 +40,7 @@
      <number>5</number>
     </property>
     <item alignment="Qt::AlignHCenter">
-     <widget class="QLabel" name="label">
+     <widget class="QLabel" name="labelTitre">
       <property name="font">
        <font>
         <pointsize>20</pointsize>
@@ -119,7 +119,7 @@
      </widget>
     </item>
     <item alignment="Qt::AlignTop">
-     <widget class="QPushButton" name="pushButton_mamuel">
+     <widget class="QPushButton" name="buttonManuel">
       <property name="text">
        <string>Ajouter manuellement un ouvrage</string>
       </property>
@@ -185,7 +185,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButton_mamuel</sender>
+   <sender>buttonManuel</sender>
    <signal>clicked()</signal>
    <receiver>AddBook</receiver>
    <slot>addManualBook()</slot>

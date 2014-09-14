@@ -8,14 +8,26 @@ AddBook::AddBook(QWidget *parent) : QDialog(parent), ui(new Ui::AddBook){
 
     insEditBook = new EditBook;
     insSiteManager = new SiteManager;
-    //Ajout des sites disponibles
-    ui->comboBox_recherche->addItems(insSiteManager->getPluginList());
+    insSettingsManager = new SettingsManager;
+
+    //Si c'est des films, on change
+    if(insSettingsManager->getSettings(Type).toString() == "films"){
+        ui->labelTitre->setText("Ajouter un nouveau film");
+        ui->lineEdit_recherche->setText("Titre, acteur, directeur");
+        ui->buttonManuel->setText("Ajouter manuellement un film");
+        ui->comboBox_recherche->addItems(insSiteManager->getPluginList("films"));
+    }
+    else{
+        //Ajout des sites disponibles
+        ui->comboBox_recherche->addItems(insSiteManager->getPluginList());
+    }
 }
 
 AddBook::~AddBook(){
     delete ui;
     delete insEditBook;
     delete insSiteManager;
+    delete insSettingsManager;
 }
 
 void AddBook::addInternetBook(){
@@ -34,5 +46,6 @@ void AddBook::addInternetBook(){
 void AddBook::addManualBook(){
     insEditBook->setManual();
     insEditBook->show();
+    this->close();
     return;
 }
