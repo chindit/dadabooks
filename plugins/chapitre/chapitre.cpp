@@ -172,6 +172,11 @@ QString Chapitre::getName(){
     return nom;
 }
 
+QString Chapitre::getType(){
+    QString type = "livres";
+    return type;
+}
+
 //#if QT_VERSION < 0x050000
 //Q_EXPORT_PLUGIN2(chapitre, Chapitre)
 //#endif // QT_VERSION < 0x050000

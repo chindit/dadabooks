@@ -44,10 +44,14 @@ void PreviewBook::setTable(QList<QMultiMap<QString, QString> > elem){
         item1->setData(Qt::DecorationRole, image);
         QTableWidgetItem *item2 = new QTableWidgetItem(elem.at(row).value("titre"));
         QTableWidgetItem *item3 = new QTableWidgetItem(elem.at(row).value("auteur"));
-        QTableWidgetItem *item4= new QTableWidgetItem(elem.at(row).value("editeur"));
+        QTableWidgetItem *item4 = new QTableWidgetItem(elem.at(row).value("editeur"));
         QTableWidgetItem *item5 = new QTableWidgetItem(elem.at(row).value("annee"));
         QTableWidgetItem *item6 = new QTableWidgetItem();
         item6->setData(Qt::DecorationRole, image2);
+        //WARNING : J'ignore pourquoi cette condition est nécessaire mais sans elle,
+        // le dernier résultat ne s'affiche pas.  Encore un mystère de l'informatique.
+        if(row == (elem.size()-1))
+            ui->tableWidget->insertRow(row);
         ui->tableWidget->setItem(row, 0, item1);
         ui->tableWidget->setItem(row, 1, item2);
         ui->tableWidget->setItem(row, 2, item3);

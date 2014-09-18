@@ -23,6 +23,7 @@ public:
     QList< QMultiMap<QString,QString> > makeSearch(QString search);
     QMultiMap<QString,QString> getBook( QString id );
     QString getName();
+    QString getType();
 };
 
 #endif // AMAZON_H

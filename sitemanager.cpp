@@ -33,7 +33,7 @@ QStringList SiteManager::getPluginList(QString type){
     QStringList liste;
     foreach(Plugin * pg, pluginList){
         if(!type.isEmpty()){
-            if(pg->getName().contains("film")){
+            if(QString::compare(pg->getType(), type)==0){
                 liste.append(pg->getName());
             }
         }

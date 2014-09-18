@@ -157,3 +157,8 @@ QString Amazon::getName(){
     QString nom = "Amazon.com";
     return nom;
 }
+
+QString Amazon::getType(){
+    QString type = "livres";
+    return type;
+}
