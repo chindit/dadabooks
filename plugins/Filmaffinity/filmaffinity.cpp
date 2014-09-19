@@ -79,7 +79,112 @@ QList< QMultiMap<QString, QString> > Filmaffinity::makeSearch(QString search){
 
 QMultiMap<QString,QString> Filmaffinity::getBook( QString id ){
     QMultiMap<QString, QString> film;
-    film.insert("id", id);
+
+    QNetworkAccessManager nw_manager;
+    QNetworkRequest request(id);
+    QNetworkReply *reponse = nw_manager.get(request);
+    QEventLoop eventLoop;
+    QObject::connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
+    eventLoop.exec();
+    QByteArray data = reponse->readAll();
+    QString contenu_page(data);
+
+    //Titre
+    QString titre = contenu_page.right(contenu_page.size()-contenu_page.indexOf("main-title"));
+    titre = titre.right(titre.size()-titre.indexOf("name\">")-6);
+    titre = titre.left(titre.indexOf("<"));
+
+    //Titre original
+    QString titreOriginal = contenu_page.right(contenu_page.size()-contenu_page.indexOf("Título original"));
+    titreOriginal = titreOriginal.right(titreOriginal.size()-titreOriginal.indexOf("<dd>")-4);
+    titreOriginal = titreOriginal.left(titreOriginal.indexOf("</dd>"));
+
+    //Année
+    QString annee = contenu_page.right(contenu_page.size()-contenu_page.indexOf("Año"));
+    annee = annee.right(annee.size()-annee.indexOf("<dd>")-4);
+    annee = annee.left(annee.indexOf("</dd>"));
+
+    //Durée
+    QString duree = contenu_page.right(contenu_page.size()-contenu_page.indexOf("Duración"));
+    duree = duree.right(duree.size()-duree.indexOf("<dd>")-4);
+    duree = duree.left(duree.indexOf("</dd>"));
+
+    //Pays
+    QString pays = contenu_page.right(contenu_page.size()-contenu_page.indexOf("País"));
+    pays = pays.right(pays.size()-pays.indexOf("</span>")-7);
+    pays = pays.left(pays.indexOf("</dd>"));
+    if(pays.contains("<a href")){
+        pays = pays.remove(0, pays.indexOf(">"));
+        pays = pays.remove(pays.indexOf("<"), pays.size());
+    }
+    if(pays.startsWith("&nbsp;")){
+        pays = pays.remove(0, pays.indexOf(";")+1);
+    }
+
+    //Directeur
+    QString directeur = contenu_page.right(contenu_page.size()-contenu_page.indexOf("<dt>Director"));
+    directeur = directeur.right(directeur.size()-directeur.indexOf("<dd>")-4);
+    directeur = directeur.left(directeur.indexOf("</dd>"));
+    if(directeur.contains("<a href")){
+        directeur = directeur.remove(0, directeur.indexOf(">")+1);
+        directeur = directeur.remove(directeur.indexOf("<"), directeur.size());
+    }
+
+    //Acteurs
+    QString acteursTemp = contenu_page.right(contenu_page.size()-contenu_page.indexOf("<dt>Reparto"));
+    acteursTemp = acteursTemp.right(acteursTemp.size()-acteursTemp.indexOf("<dd>")-4);
+    acteursTemp = acteursTemp.left(acteursTemp.indexOf("</dd>"));
+    QStringList acteursList = acteursTemp.split(",");
+    QString acteurs;
+    foreach(QString item, acteursList){
+        if(item.contains("<a href")){
+            QString manoeuvre = item.remove(0, item.indexOf(">")+1);
+            manoeuvre.resize(manoeuvre.indexOf("<"));
+            acteurs.append(manoeuvre.trimmed());
+            acteurs.append(", ");
+        }
+    }
+    if(acteurs.endsWith(", ")){
+        acteurs.resize(acteurs.size()-2);
+    }
+
+    //Genre
+    QString genreTemp = contenu_page.right(contenu_page.size()-contenu_page.indexOf("<dt>Género"));
+    genreTemp = genreTemp.right(genreTemp.size()-genreTemp.indexOf("<dd>")-4);
+    genreTemp = genreTemp.left(genreTemp.indexOf("</dd>"));
+    QRegExp exp("`\">(.*?)</a>`");
+    exp.indexIn(genreTemp);
+    QStringList genreList = exp.capturedTexts();
+    QString genres;
+    foreach(QString item, genreList){
+        if(item.contains("<a href")){
+            QString manoeuvre = item.remove(0, item.indexOf(">")+1);
+            if(item.contains("<a href")){
+                //Dans le cas où on a viré un <span> mais pas le lien
+                manoeuvre = manoeuvre.remove(0, manoeuvre.indexOf(">")+1);
+            }
+            manoeuvre.resize(manoeuvre.indexOf("<"));
+            genres.append(manoeuvre);
+            genres.append(", ");
+        }
+    }
+    if(genres.endsWith(", ")){
+        genres.resize(acteurs.size()-2);
+    }
+
+    //Synopsis
+    QString synopsis = contenu_page.right(contenu_page.size()-contenu_page.indexOf("<dt>Sinopsis"));
+    synopsis = synopsis.right(synopsis.size()-synopsis.indexOf("<dd>")-4);
+    synopsis = synopsis.left(synopsis.indexOf("</dd>"));
+    //On vire les parenthèses
+    synopsis = synopsis.replace("([a-zA-Z0-9]{0,})", "");
+    synopsis = synopsis.trimmed();
+
+    //Image
+    QString image = contenu_page.right(contenu_page.size()-contenu_page.indexOf("og:image"));
+    image = image.right(image.size()-image.indexOf("=\"")-2);
+    image = image.left(image.indexOf("\""));
+
     return film;
 }
 
