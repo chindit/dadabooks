@@ -23,6 +23,7 @@ void PreviewBook::setTable(QList<QMultiMap<QString, QString> > elem){
     waiting->show();
     tableau = elem;
     ui->label_nombre->setText(QString::number(elem.size()));
+    ui->tableWidget->clear();
     ui->tableWidget->setRowCount(elem.size()-1);
     ui->tableWidget->setColumnCount(6);
     QStringList liste_headers;
