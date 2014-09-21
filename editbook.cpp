@@ -262,7 +262,7 @@ void EditBook::accept(){
             film.insert("synopsis", ui->editResume->toPlainText());
             film.insert("annee", QString::number(ui->spinBoxAnnee->value()));
             film.insert("duree", QString::number(ui->spinBoxDuree->value()));
-            film.insert("type", ui->lineEditType->text());
+            film.insert("genre", ui->lineEditType->text());
             film.insert("pays", ui->lineEditNationalite->text());
             film.insert("langue", ui->lineEditLangue->text());
             film.insert("classement", ui->lineEditClassement->text());

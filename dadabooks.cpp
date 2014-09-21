@@ -99,6 +99,9 @@ DadaBooks::~DadaBooks(){
         delete commentaire2;
         delete mapperDelete;
         delete mapperEdit;
+        delete listWidget;
+        delete listGenresWidget;
+        delete buttonListWidgets;
     }
     delete ui;
     delete insAddBook;
@@ -136,6 +139,10 @@ void DadaBooks::getBook(QString id){
 
 //Actualise l'onglet courant
 void DadaBooks::updateOnglet(int id){
+    //On ne fait rien s'il s'agit de l'onglet principal
+    if(insSettingsManager->getSettings(OpenInTab).toBool()){
+        return;
+    }
     if(idOngletEdit >= 0){
         ui->tabWidget->removeTab(idOngletEdit);
         this->activatePreview(id, false, true);
@@ -863,7 +870,7 @@ void DadaBooks::intabPreview(int id){
         id2 = new QLabel();
         titre = new QLabel("Titre");
         titre2 = new QLabel();
-        isbn = new QLabel((films) ? "" : "ISBN");
+        isbn = new QLabel((films) ? "Genre" : "ISBN");
         isbn2 = new QLabel();
         coauteurs = new QLabel((films) ? "Titre original" : "Co-auteur(s)");
         coauteurs2 = new QLabel();
@@ -913,12 +920,20 @@ void DadaBooks::intabPreview(int id){
         layoutEtiquettesLivres = new QHBoxLayout;
         listeEtiquettes = new QLabel();
         layoutEtiquettesLivres->addWidget(listeEtiquettes);
+        listWidget = new QListWidget;
+        listGenresWidget = new QListWidget;
+        buttonListWidgets = new QPushButton;
+        buttonListWidgets->setIcon(QIcon(":/boutons/images/plus.png"));
+        buttonListWidgets->setFlat(true);
+        buttonListWidgets->setFixedSize(25, 25);
+        buttonListWidgets->setCheckable(true);
 
         connect(listeEtiquettes, SIGNAL(linkActivated(QString)), this, SLOT(openTagList(QString)));
         connect(buttonDelete, SIGNAL(clicked()), mapperDelete, SLOT(map()));
         connect(buttonEdit, SIGNAL(clicked()), mapperEdit, SLOT(map()));
         connect(mapperDelete, SIGNAL(mapped(int)), this, SLOT(deleteLivre(int)));
         connect(mapperEdit, SIGNAL(mapped(int)), this, SLOT(editLivre(int)));
+        connect(buttonListWidgets, SIGNAL(clicked(bool)), this, SLOT(expandIntabContent(bool)));
     }
     else{
         layoutEtiquettesLivres->removeItem(layoutEtiquettesLivres->takeAt(0));
@@ -981,6 +996,18 @@ void DadaBooks::intabPreview(int id){
         lu->setChecked(((xmlLivre.value((films) ? "vu" : "lu") == "True") ? true : false));
         mapperDelete->setMapping(buttonDelete, xmlLivre.value("id").toInt());
         mapperEdit->setMapping(buttonEdit, xmlLivre.value("id").toInt());
+        if(films){
+            listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            QStringList acteurs = xmlLivre.value("acteurs").split(",");
+            foreach(QString item, acteurs){
+                listWidget->addItem(item.trimmed());
+            }
+            listGenresWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            QStringList genres = xmlLivre.value("genre").split(",");
+            foreach(QString item, genres){
+                listGenresWidget->addItem(item.trimmed());
+            }
+        }
     }
     else{
         //SQL
@@ -1076,12 +1103,14 @@ void DadaBooks::intabPreview(int id){
     ui->gridLayoutPrincipal->addLayout(layout_id, 2, 1, 1, 2, Qt::AlignLeft);
     ui->gridLayoutPrincipal->addWidget(titre, 2, 3);
     ui->gridLayoutPrincipal->addWidget(titre2, 2, 4);
-    ui->gridLayoutPrincipal->addWidget(isbn, 7, 3);
-    ui->gridLayoutPrincipal->addWidget(isbn2, 7, 4);
+    if(!films){
+        ui->gridLayoutPrincipal->addWidget(isbn, 7, 3);
+        ui->gridLayoutPrincipal->addWidget(isbn2, 7, 4);
+    }
     ui->gridLayoutPrincipal->addWidget(coauteurs, 3, 3);
     ui->gridLayoutPrincipal->addWidget(coauteurs2, 3, 4);
-    ui->gridLayoutPrincipal->addWidget(synopsis, 12, 0);
-    ui->gridLayoutPrincipal->addWidget(synopsis2, 13, 0, 1, 3);
+    ui->gridLayoutPrincipal->addWidget(synopsis, 14, 0);
+    ui->gridLayoutPrincipal->addWidget(synopsis2, 15, 0, 1, 3);
     ui->gridLayoutPrincipal->addWidget(pages, 5, 1);
     ui->gridLayoutPrincipal->addWidget(pages2, 5, 2);
     ui->gridLayoutPrincipal->addWidget(edition, 5, 3);
@@ -1090,16 +1119,18 @@ void DadaBooks::intabPreview(int id){
     ui->gridLayoutPrincipal->addWidget(langue2, 6, 2);
     ui->gridLayoutPrincipal->addWidget(exemplaires, 6, 3);
     ui->gridLayoutPrincipal->addWidget(exemplaires2, 6, 4);
-    ui->gridLayoutPrincipal->addWidget(commentaire, 12, 3, 1, 1, Qt::AlignLeft);
-    ui->gridLayoutPrincipal->addWidget(commentaire2, 13, 3, 1, 2);
+    ui->gridLayoutPrincipal->addWidget(commentaire, 14, 3, 1, 1, Qt::AlignLeft);
+    ui->gridLayoutPrincipal->addWidget(commentaire2, 15, 3, 1, 2);
     ui->gridLayoutPrincipal->addWidget(classement, 7, 1);
     ui->gridLayoutPrincipal->addWidget(classement2, 7, 2);
     ui->gridLayoutPrincipal->addWidget(annee, 4, 3);
     ui->gridLayoutPrincipal->addWidget(annee2, 4, 4);
     ui->gridLayoutPrincipal->addWidget(auteur, 3, 1);
     ui->gridLayoutPrincipal->addWidget(auteur2, 3, 2);
-    ui->gridLayoutPrincipal->addWidget(editeur, 4, 1);
-    ui->gridLayoutPrincipal->addWidget(editeur2, 4, 2);
+    if(!films){
+        ui->gridLayoutPrincipal->addWidget(editeur, 4, 1);
+        ui->gridLayoutPrincipal->addWidget(editeur2, 4, 2);
+    }
     ui->gridLayoutPrincipal->addWidget(empruntable, 8, 1, 1, 2, Qt::AlignLeft);
     ui->gridLayoutPrincipal->addWidget(empruntable, 8, 2, 1, 1, Qt::AlignLeft);
     ui->gridLayoutPrincipal->addWidget(lu, 8, 3, 1, 2, Qt::AlignLeft);
@@ -1111,8 +1142,18 @@ void DadaBooks::intabPreview(int id){
     ui->gridLayoutPrincipal->addWidget(note1, 10, 1);
     ui->gridLayoutPrincipal->addWidget(note2, 10, 2);
     ui->gridLayoutPrincipal->addLayout(layoutEtiquettesLivres, 10, 3, 1, 2, Qt::AlignLeft);
-    QSpacerItem *spacer = new QSpacerItem(10, 100, QSizePolicy::Minimum, QSizePolicy::Minimum);
+    if(films){
+        ui->gridLayoutPrincipal->addWidget(buttonListWidgets, 12, 0);
+        ui->gridLayoutPrincipal->addWidget(editeur, 12, 1, 1, 2, Qt::AlignLeft);
+        ui->gridLayoutPrincipal->addWidget(listWidget, 13, 1, 1, 2);
+        ui->gridLayoutPrincipal->addWidget(isbn, 12, 3, 1, 2, Qt::AlignLeft);
+        ui->gridLayoutPrincipal->addWidget(listGenresWidget, 13, 3, 1, 2);
+        listWidget->setHidden(true); listGenresWidget->setHidden(true);
+    }
+    QSpacerItem *spacer = new QSpacerItem(15, 100, QSizePolicy::Minimum, QSizePolicy::Minimum);
+    QSpacerItem *spacer2 = new QSpacerItem(10, 100, QSizePolicy::Minimum, QSizePolicy::Minimum);
     ui->gridLayoutPrincipal->addItem(spacer, 11, 1, 1, 3, Qt::AlignHCenter);
+    ui->gridLayoutPrincipal->addItem(spacer2, 16, 1, 1, 3, Qt::AlignHCenter);
 }
 
 //Affiche la liste des livres/films qui contiennent l'étiquette TAG
@@ -1121,5 +1162,19 @@ void DadaBooks::openTagList(QString tag){
     int id = tag.toInt(&resultat);
     if(resultat){
         this->showEtiquette(id);
+    }
+}
+
+//Affiche ou cache les auteurs et les genres en cas de prévisualisation dans l'onglet courant
+void DadaBooks::expandIntabContent(bool status){
+    if(status){
+        buttonListWidgets->setIcon(QIcon(":/boutons/images/moins.png"));
+        listGenresWidget->setHidden(false);
+        listWidget->setHidden(false);
+    }
+    else{
+        buttonListWidgets->setIcon(QIcon(":/boutons/images/plus.png"));
+        listGenresWidget->setHidden(true);
+        listWidget->setHidden(true);
     }
 }

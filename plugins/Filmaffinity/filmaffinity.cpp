@@ -234,15 +234,15 @@ QMultiMap<QString,QString> Filmaffinity::getBook( QString id ){
     image = image.right(image.size()-image.indexOf("=\"")-2);
     image = image.left(image.indexOf("\""));
 
-    film.insert("titre", titre);
-    film.insert("titreOriginal", titreOriginal);
+    film.insert("titre", titre.trimmed());
+    film.insert("titreOriginal", titreOriginal.trimmed());
     film.insert("annee", annee);
     film.insert("duree", duree);
-    film.insert("pays", pays);
-    film.insert("directeur", directeur);
-    film.insert("acteurs", acteurs);
+    film.insert("pays", pays.trimmed());
+    film.insert("directeur", directeur.trimmed());
+    film.insert("acteurs", acteurs.trimmed());
     film.insert("genres", genres);
-    film.insert("synopsis", synopsis);
+    film.insert("synopsis", synopsis.trimmed());
     film.insert("langue", "Castellano");
     film.insert("couverture", image);
 
