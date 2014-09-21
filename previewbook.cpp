@@ -2,11 +2,13 @@
 #include "ui_previewbook.h"
 
 PreviewBook::PreviewBook(QWidget *parent) : QDialog(parent), ui(new Ui::PreviewBook){
+    insSettingsManager = new SettingsManager();
     ui->setupUi(this);
 }
 
 PreviewBook::~PreviewBook(){
     delete ui;
+    delete insSettingsManager;
 }
 
 void PreviewBook::setTable(QList<QMultiMap<QString, QString> > elem){
@@ -27,7 +29,7 @@ void PreviewBook::setTable(QList<QMultiMap<QString, QString> > elem){
     ui->tableWidget->setRowCount(elem.size()-1);
     ui->tableWidget->setColumnCount(6);
     QStringList liste_headers;
-    liste_headers << "Image" << "Titre" << "Auteur" << "Éditeur" << "Année" << "Enregistrer";
+    liste_headers << "Image" << "Titre" << ((QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) != 0) ? "Auteur" : "Directeur") << ((QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) != 0) ? "Éditeur" : "Acteurs") << "Année" << "Enregistrer";
     ui->tableWidget->setHorizontalHeaderLabels(liste_headers);
     for (int row = 0; row < elem.size(); ++row) {
         bar->setValue((row*100)/elem.size());

@@ -2,19 +2,71 @@
 
 
 QList< QMultiMap<QString, QString> > Filmaffinity::makeSearch(QString search){
-    QNetworkAccessManager nw_manager;
     QString base_url = "http://www.filmaffinity.com/es/search.php?stext=";
     base_url.append(search.replace(" ", "+"));
-    QNetworkRequest request(base_url);
-    QNetworkReply *reponse = nw_manager.get(request);
-    QEventLoop eventLoop;
-    QObject::connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
-    eventLoop.exec();
-    QByteArray data = reponse->readAll();
-    QString contenu_page(data);
+    QString contenu_page = this->download(base_url);
 
     //Tableau des données
     QList< QMultiMap<QString, QString> > contenu;
+
+    if(contenu_page.contains("Reparto") && contenu_page.contains("Director")){
+        //On a trouvé directement le titre, on passe à l'édition
+        QString url = contenu_page.right(contenu_page.size()-contenu_page.indexOf("og:url"));
+        url = url.right(url.size()-url.indexOf("=\"")-2);
+        url = url.left(url.indexOf("\""));
+        QMultiMap<QString, QString> film;
+        film.insert("id", url);
+        //Titre
+        QString titre = contenu_page.right(contenu_page.size()-contenu_page.indexOf("main-title"));
+        titre = titre.right(titre.size()-titre.indexOf("name\">")-6);
+        titre = titre.left(titre.indexOf("<"));
+
+        //Année
+        QString annee = contenu_page.right(contenu_page.size()-contenu_page.indexOf("Año"));
+        annee = annee.right(annee.size()-annee.indexOf("<dd>")-4);
+        annee = annee.left(annee.indexOf("</dd>"));
+
+        //Directeur
+        QString directeur = contenu_page.right(contenu_page.size()-contenu_page.indexOf("<dt>Director"));
+        directeur = directeur.right(directeur.size()-directeur.indexOf("<dd>")-4);
+        directeur = directeur.left(directeur.indexOf("</dd>"));
+        if(directeur.contains("<a href")){
+            directeur = directeur.remove(0, directeur.indexOf(">")+1);
+            directeur = directeur.remove(directeur.indexOf("<"), directeur.size());
+        }
+
+        //Image
+        QString image = contenu_page.right(contenu_page.size()-contenu_page.indexOf("og:image"));
+        image = image.right(image.size()-image.indexOf("=\"")-2);
+        image = image.left(image.indexOf("\""));
+
+        //Acteurs
+        QString acteursTemp = contenu_page.right(contenu_page.size()-contenu_page.indexOf("<dt>Reparto"));
+        acteursTemp = acteursTemp.right(acteursTemp.size()-acteursTemp.indexOf("<dd>")-4);
+        acteursTemp = acteursTemp.left(acteursTemp.indexOf("</dd>"));
+        QStringList acteursList = acteursTemp.split(",");
+        QString acteurs;
+        foreach(QString item, acteursList){
+            if(item.contains("<a href")){
+                QString manoeuvre = item.remove(0, item.indexOf(">")+1);
+                manoeuvre.resize(manoeuvre.indexOf("<"));
+                acteurs.append(manoeuvre.trimmed());
+                acteurs.append(", ");
+            }
+        }
+        if(acteurs.endsWith(", ")){
+            acteurs.resize(acteurs.size()-2);
+        }
+
+        film.insert("image", image);
+        film.insert("titre", titre);
+        film.insert("auteur", directeur);
+        film.insert("editeur", acteurs);
+        film.insert("annee", annee);
+        contenu.append(film);
+
+        return contenu;
+    }
 
     while(contenu_page.indexOf("movie-card movie-card-1", 0, Qt::CaseInsensitive) > 0){
         contenu_page = contenu_page.right(contenu_page.size()-contenu_page.indexOf("movie-card movie-card-1"));
@@ -80,14 +132,7 @@ QList< QMultiMap<QString, QString> > Filmaffinity::makeSearch(QString search){
 QMultiMap<QString,QString> Filmaffinity::getBook( QString id ){
     QMultiMap<QString, QString> film;
 
-    QNetworkAccessManager nw_manager;
-    QNetworkRequest request(id);
-    QNetworkReply *reponse = nw_manager.get(request);
-    QEventLoop eventLoop;
-    QObject::connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
-    eventLoop.exec();
-    QByteArray data = reponse->readAll();
-    QString contenu_page(data);
+    QString contenu_page = this->download(id);
 
     //Titre
     QString titre = contenu_page.right(contenu_page.size()-contenu_page.indexOf("main-title"));
@@ -108,6 +153,10 @@ QMultiMap<QString,QString> Filmaffinity::getBook( QString id ){
     QString duree = contenu_page.right(contenu_page.size()-contenu_page.indexOf("Duración"));
     duree = duree.right(duree.size()-duree.indexOf("<dd>")-4);
     duree = duree.left(duree.indexOf("</dd>"));
+    //On extrait juste le nombre de minutes
+    QRegExp regDuree("(\\d{2,})");
+    regDuree.indexIn(duree);
+    duree = regDuree.cap();
 
     //Pays
     QString pays = contenu_page.right(contenu_page.size()-contenu_page.indexOf("País"));
@@ -152,7 +201,7 @@ QMultiMap<QString,QString> Filmaffinity::getBook( QString id ){
     QString genreTemp = contenu_page.right(contenu_page.size()-contenu_page.indexOf("<dt>Género"));
     genreTemp = genreTemp.right(genreTemp.size()-genreTemp.indexOf("<dd>")-4);
     genreTemp = genreTemp.left(genreTemp.indexOf("</dd>"));
-    QRegExp exp("`\">(.*?)</a>`");
+    QRegExp exp(">\\.?</a>");
     exp.indexIn(genreTemp);
     QStringList genreList = exp.capturedTexts();
     QString genres;
@@ -185,6 +234,17 @@ QMultiMap<QString,QString> Filmaffinity::getBook( QString id ){
     image = image.right(image.size()-image.indexOf("=\"")-2);
     image = image.left(image.indexOf("\""));
 
+    film.insert("titre", titre);
+    film.insert("titre_original", titreOriginal);
+    film.insert("annee", annee);
+    film.insert("duree", duree);
+    film.insert("pays", pays);
+    film.insert("directeur", directeur);
+    film.insert("acteurs", acteurs);
+    film.insert("genres", genres);
+    film.insert("synopsis", synopsis);
+    film.insert("langue", "Castellano");
+
     return film;
 }
 
@@ -201,3 +261,25 @@ QString Filmaffinity::getType(){
 #if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(Filmaffinity, Filmaffinity)
 #endif // QT_VERSION < 0x050000
+
+QString Filmaffinity::download(QString url){
+    QNetworkAccessManager nw_manager;
+    QNetworkRequest request(url);
+    QNetworkReply *reponse = nw_manager.get(request);
+    QEventLoop eventLoop;
+    QObject::connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
+    eventLoop.exec();
+    QByteArray data = reponse->readAll();
+    QString contenu_page(data);
+
+    QVariant possibleRedirectUrl = reponse->attribute(QNetworkRequest::RedirectionTargetAttribute);
+    if(!possibleRedirectUrl.toUrl().isEmpty()){
+        QString newUrl = possibleRedirectUrl.toUrl().toString();
+        if(!newUrl.startsWith("http")){
+            newUrl.prepend("http://www.filmaffinity.com");
+        }
+        contenu_page = this->download(newUrl);
+    }
+    return contenu_page;
+}
+

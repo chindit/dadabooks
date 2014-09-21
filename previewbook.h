@@ -9,6 +9,8 @@
 #include <QProgressBar>
 #include <QMessageBox>
 
+#include "settingsmanager.h"
+
 namespace Ui {
 class PreviewBook;
 }
@@ -30,6 +32,7 @@ private slots:
 
 private:
     Ui::PreviewBook *ui;
+    SettingsManager *insSettingsManager;
     QList<QMultiMap<QString, QString> > tableau;
 };
 

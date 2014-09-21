@@ -24,6 +24,9 @@ public:
     QMultiMap<QString,QString> getBook( QString id );
     QString getName();
     QString getType();
+
+private:
+    QString download(QString url);
 };
 
 #endif // FILMAFFINITY_H

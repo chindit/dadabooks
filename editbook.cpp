@@ -281,83 +281,102 @@ void EditBook::uploadImage(){
 }
 
 void EditBook::updateUi(QMultiMap<QString, QString> livre){
-    ui->lineEdit_titre->setText(livre.value("titre"));
-    ui->lineEdit_auteur->setText(livre.value("auteur"));
-    ui->lineEdit_editeur->setText(livre.value("editeur"));
-    ui->spinBox_annee->setValue(livre.value("annee").toInt());
-    ui->lineEdit_ISBN->setText(livre.value("isbn"));
-    ui->lineEdit_langue->setText(livre.value("langue"));
-    ui->spinBox_pages->setValue(livre.value("pages").toInt());
-    ui->plainTextEdit_resume->clear();
-    ui->plainTextEdit_resume->insertPlainText(livre.value("synopsis"));
-    ui->lineEdit_coauteurs->setText(livre.value("coauteurs", ""));
-    ui->spinBox_edition->setValue(livre.value("edition", "1").toInt());
-    ui->spinBox_exemplaires->setValue(livre.value("exemplaires", "1").toInt());
-    ui->plainTextEdit_commentaire->clear();
-    ui->plainTextEdit_commentaire->insertPlainText(livre.value("commentaire", ""));
-    ui->lineEdit_classement->setText(livre.value("classement", ""));
-    if(livre.value("empruntable", "0").toInt() == 1)
-        ui->checkBox_empruntable->setChecked(true);
-    if(livre.value("prete", "0").toInt() == 1)
-        ui->checkBox_prete->setChecked(true);
-    if(livre.value("lu").toInt() == 1)
-        ui->checkBox_lu->setChecked(true);
-    if(livre.value("ebook").toInt() == 1){
-        ui->checkBox_ebook->setChecked(true);
-        ui->lineEdit_emplacement->setText(livre.value("emplacement"));
-        ui->pushButton_emplacement->setEnabled(true);
-    }
-    ui->horizontalSlider_note->setValue(livre.value("note").toInt());
-    ui->label_note->setText(QString::number(livre.value("note").toInt())+"/20");
+    //On détecte s'il s'agit d'un livre ou d'un film
+    bool films = ((QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) != 0) ? false : true);
 
-    //Récupération de l'image
-    QPixmap image;
-    if(!livre.value("couverture").startsWith("http")){
-        QFile fichierImage(livre.value("couverture"));
-        if(!fichierImage.exists()){
-            QMessageBox::information(this, "Image introuvable", "Une erreur est survenue, la jaquette de ce livre ne peut être trouvée");
+    if(!films){
+        ui->lineEdit_titre->setText(livre.value("titre"));
+        ui->lineEdit_auteur->setText(livre.value("auteur"));
+        ui->lineEdit_editeur->setText(livre.value("editeur"));
+        ui->spinBox_annee->setValue(livre.value("annee").toInt());
+        ui->lineEdit_ISBN->setText(livre.value("isbn"));
+        ui->lineEdit_langue->setText(livre.value("langue"));
+        ui->spinBox_pages->setValue(livre.value("pages").toInt());
+        ui->plainTextEdit_resume->clear();
+        ui->plainTextEdit_resume->insertPlainText(livre.value("synopsis"));
+        ui->lineEdit_coauteurs->setText(livre.value("coauteurs", ""));
+        ui->spinBox_edition->setValue(livre.value("edition", "1").toInt());
+        ui->spinBox_exemplaires->setValue(livre.value("exemplaires", "1").toInt());
+        ui->plainTextEdit_commentaire->clear();
+        ui->plainTextEdit_commentaire->insertPlainText(livre.value("commentaire", ""));
+        ui->lineEdit_classement->setText(livre.value("classement", ""));
+        if(livre.value("empruntable", "0").toInt() == 1)
+            ui->checkBox_empruntable->setChecked(true);
+        if(livre.value("prete", "0").toInt() == 1)
+            ui->checkBox_prete->setChecked(true);
+        if(livre.value("lu").toInt() == 1)
+            ui->checkBox_lu->setChecked(true);
+        if(livre.value("ebook").toInt() == 1){
+            ui->checkBox_ebook->setChecked(true);
+            ui->lineEdit_emplacement->setText(livre.value("emplacement"));
+            ui->pushButton_emplacement->setEnabled(true);
+        }
+        ui->horizontalSlider_note->setValue(livre.value("note").toInt());
+        ui->label_note->setText(QString::number(livre.value("note").toInt())+"/20");
+
+        //Récupération de l'image
+        QPixmap image;
+        if(!livre.value("couverture").startsWith("http")){
+            QFile fichierImage(livre.value("couverture"));
+            if(!fichierImage.exists()){
+                QMessageBox::information(this, "Image introuvable", "Une erreur est survenue, la jaquette de ce livre ne peut être trouvée");
+            }
+            else{
+                image.load(livre.value("couverture"));
+            }
         }
         else{
-            image.load(livre.value("couverture"));
+            QNetworkAccessManager nw_manager;
+            QNetworkRequest request(livre.value("couverture"));
+            QNetworkReply *reponse = nw_manager.get(request);
+            QEventLoop eventLoop;
+            connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
+            eventLoop.exec();
+            image.loadFromData(reponse->readAll());
+            int width = image.width();
+            if(width > 150){
+                float coef = (float)width / 150;
+                int result = image.width()/coef;
+                image = image.scaledToWidth(result);
+            }
+        }
+        ui->label_image->setPixmap(image);
+        ui->label_image_texte->setText(livre.value("couverture"));
+        ui->label_image_texte->setMaximumWidth(150);
+        ui->label_image_texte->setVisible(true);
+        if((livre.value("xml", "-1").toInt() == 1) || insSettingsManager->getSettings(Xml).toBool()){
+            ui->comboBox_auteur->setVisible(false);
+            ui->comboBox_editeur->setVisible(false);
+            ui->pushButton_edit_auteur->setVisible(false);
+            ui->pushButton_edit_editeur->setVisible(false);
+            ui->pushButton_auteur->setVisible(false);
+            ui->pushButton_editeur->setVisible(false);
+            ui->label_etiquette->setVisible(false);
+            ui->comboBox_etiquette->setVisible(false);
+        }
+        else{//Pas XML -> SQL
+            this->getAuteur(livre.value("auteur"));
+            this->getEditeur(livre.value("editeur"));
+            //Màj des étiquettes
+            QSqlQuery resultat = insSql->query("SELECT id,nom FROM etiquettes");
+            while(resultat.next()){
+                ui->comboBox_etiquette->addItem(resultat.record().value("nom").toString(), resultat.record().value("id"));
+            }
         }
     }
     else{
-        QNetworkAccessManager nw_manager;
-        QNetworkRequest request(livre.value("couverture"));
-        QNetworkReply *reponse = nw_manager.get(request);
-        QEventLoop eventLoop;
-        connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
-        eventLoop.exec();
-        image.loadFromData(reponse->readAll());
-        int width = image.width();
-        if(width > 150){
-            float coef = (float)width / 150;
-            int result = image.width()/coef;
-            image = image.scaledToWidth(result);
-        }
-    }
-    ui->label_image->setPixmap(image);
-    ui->label_image_texte->setText(livre.value("couverture"));
-    ui->label_image_texte->setMaximumWidth(150);
-    ui->label_image_texte->setVisible(true);
-    if((livre.value("xml", "-1").toInt() == 1) || insSettingsManager->getSettings(Xml).toBool()){
-        ui->comboBox_auteur->setVisible(false);
-        ui->comboBox_editeur->setVisible(false);
-        ui->pushButton_edit_auteur->setVisible(false);
-        ui->pushButton_edit_editeur->setVisible(false);
-        ui->pushButton_auteur->setVisible(false);
-        ui->pushButton_editeur->setVisible(false);
-        ui->label_etiquette->setVisible(false);
-        ui->comboBox_etiquette->setVisible(false);
-    }
-    else{//Pas XML -> SQL
-        this->getAuteur(livre.value("auteur"));
-        this->getEditeur(livre.value("editeur"));
-        //Màj des étiquettes
-        QSqlQuery resultat = insSql->query("SELECT id,nom FROM etiquettes");
-        while(resultat.next()){
-            ui->comboBox_etiquette->addItem(resultat.record().value("nom").toString(), resultat.record().value("id"));
-        }
+        //FILM
+        ui->lineEditTitre->setText(livre.value("titre"));
+        ui->lineEditOriginal->setText(livre.value("titre_original"));
+        ui->lineEditDirecteur->setText(livre.value("directeur"));
+        ui->lineEditActeurs->setText(livre.value("acteurs"));
+        ui->editResume->clear();
+        ui->editResume->setPlainText(livre.value("synopsis"));
+        ui->spinBoxAnnee->setValue(livre.value("annee").toInt());
+        ui->spinBoxDuree->setValue(livre.value("duree").toInt());
+        ui->lineEditType->setText(livre.value("genres"));
+        ui->lineEditNationalite->setText(livre.value("pays"));
+        ui->lineEditLangue->setText(livre.value("langue"));
     }
     return;
 }
