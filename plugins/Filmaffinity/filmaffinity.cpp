@@ -235,7 +235,7 @@ QMultiMap<QString,QString> Filmaffinity::getBook( QString id ){
     image = image.left(image.indexOf("\""));
 
     film.insert("titre", titre);
-    film.insert("titre_original", titreOriginal);
+    film.insert("titreOriginal", titreOriginal);
     film.insert("annee", annee);
     film.insert("duree", duree);
     film.insert("pays", pays);
@@ -244,6 +244,7 @@ QMultiMap<QString,QString> Filmaffinity::getBook( QString id ){
     film.insert("genres", genres);
     film.insert("synopsis", synopsis);
     film.insert("langue", "Castellano");
+    film.insert("couverture", image);
 
     return film;
 }

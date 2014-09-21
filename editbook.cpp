@@ -1,14 +1,18 @@
 #include "editbook.h"
 #include "ui_editbook.h"
 
+//Constructeur
 EditBook::EditBook(QWidget *parent) : QDialog(parent), ui(new Ui::EditBook){
-    ui->setupUi(this);
-    idEdit = 0;
-    insSettingsManager = new SettingsManager(this);
+    //Initialisations
+    ui->setupUi(this); //UI
+    idEdit = 0; //(int) Contient d'ID de l'élément dans le cas d'une édition
+    insSettingsManager = new SettingsManager(this); //SettingsManager
     if(insSettingsManager->getSettings(Xml).toBool()){
-        insXml = new XmlManager;
+        insXml = new XmlManager; //Si la collection est en SQL, on initialise le lecteur XML
     }
     else{
+        //Sinon, la collection est de type basse de données.  On initialise le driver SQL et on active les
+        //plugins AddAuteur et AddEditeurs, réservés aux bases de données
         insSql = new SqlManager();
         insAddAuteur = new AddAuteur(this);
         insAddEditeur = new AddEditeur(this);
@@ -20,15 +24,17 @@ EditBook::EditBook(QWidget *parent) : QDialog(parent), ui(new Ui::EditBook){
 
     //Gestion des films
     if(insSettingsManager->getSettings(Type).toString() == "films"){
-        ui->stackedWidget->setCurrentIndex(1);
-        ui->labelTitreGeneral->setText("Édition du film");
+        ui->stackedWidget->setCurrentIndex(1); //On change l'éditeur de «livres à film» (onglet 2)
+        ui->labelTitreGeneral->setText("Édition du film"); //Et on change le titre
     }
     else{
         connect(ui->pushButton_emplacement, SIGNAL(clicked()), this, SLOT(uploadEbook()));
     }
 }
 
+//Destructeur
 EditBook::~EditBook(){
+    //Suppression des plugins XML ou SQL
     if(insSettingsManager->getSettings(Xml).toBool()){
         delete insXml;
     }
@@ -37,12 +43,21 @@ EditBook::~EditBook(){
         delete insAddAuteur;
         delete insAddEditeur;
     }
+    //Suppression des autres pointeurs
     delete ui;
     delete insSettingsManager;
 }
 
+//Enregistre l'item en cours d'édition ou le met à jour
 void EditBook::accept(){
+    //---------------------------
+    //LIVRES
+    //---------------------------
     if(QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) != 0){
+        /*
+         * Dans le cas où il s'agit d'une base SQL ET que les plugins auteurs et éditeurs sont activés, on vérifie que
+         * les champs correspondants sont bien remplis.
+         */
         int id_auteur = 0, id_editeur = 0;
         //1)Vérification de la présence de l'auteur
         if(ui->comboBox_auteur->currentText().isEmpty() && !insSettingsManager->getSettings(Xml).toBool()){
@@ -79,6 +94,11 @@ void EditBook::accept(){
             QMessageBox::critical(this, "Impossible d'ajouter le livre", "Nous sommes désolé mais il est impossible d'ajouter un livre qui ne possède pas de titre");
             return;
         }
+
+        /*
+         * Préparation des variables
+         * Récupération et traitement des éléments insérés
+         */
         int annee, pages, edition, exemplaires, empruntable, pret, lu, note, ebook;
         annee = ui->spinBox_annee->value();
         pages = ui->spinBox_pages->value();
@@ -92,6 +112,8 @@ void EditBook::accept(){
         QString req1;
         int idLivre = -1;
 
+        //Pour rappel, l'image est AFFICHÉE dans un QLabel et son URL est INDIQUÉE dans un autre.
+        //On récupère bien entendu l'URL
         QString nomImage = ui->label_image_texte->text();
         //Stockage de l'image en local en cas de besoin
         if(!insSettingsManager->getSettings(MariaDB).toBool() && insSettingsManager->getSettings(DownPics).toBool()){
@@ -124,7 +146,7 @@ void EditBook::accept(){
         }
 
         if(!insSettingsManager->getSettings(Xml).toBool()){
-            if(idEdit == 0){
+            if(idEdit == 0){ //Si pas d'édition->INSERT
                 req1 = "INSERT INTO livres(titre, ISBN, auteur, coauteurs, synopsis, couverture, editeur, annee, pages, edition, langue, classement, exemplaires, commentaire, lu, note, empruntable, pret, ebook, emplacement) VALUES(\""+ui->lineEdit_titre->text().replace("\"", "\\\"")+"\", \""+ui->lineEdit_ISBN->text()+"\", "+QString::number(id_auteur)+", \""+this->guillemets(ui->lineEdit_coauteurs->text())+"\", \""+this->guillemets(ui->plainTextEdit_resume->toPlainText())+"\", \""+ui->label_image_texte->text()+"\", "+QString::number(id_editeur)+", '"+QString::number(annee)+"', "+QString::number(pages)+", "+QString::number(edition)+", \""+this->guillemets(ui->lineEdit_langue->text())+"\", \""+this->guillemets(ui->lineEdit_classement->text())+"\", "+QString::number(exemplaires)+", \""+this->guillemets(ui->plainTextEdit_commentaire->toPlainText())+"\", "+QString::number(lu)+", "+QString::number(note)+", "+QString::number(empruntable)+", "+QString::number(pret)+", "+QString::number(ebook)+", \""+ui->lineEdit_emplacement->text()+"\");";
             }
             else{
@@ -165,7 +187,10 @@ void EditBook::accept(){
 
         }
         else{
-            //XML
+            /*
+             * Pour le XML, il suffit de remplir un QMultiMap.  Le plugin XML se chargera de tout
+             */
+
             QMultiMap<QString, QString> livre;
             livre.insert("titre", ui->lineEdit_titre->text());
             livre.insert("isbn", ui->lineEdit_ISBN->text());
@@ -193,21 +218,32 @@ void EditBook::accept(){
                 insXml->addBook(livre);
             }
             else{
+                //La mise à jour est simple: on vire le vieil item et on insère le nouveau
                 livre.insert("id", QString::number(idEdit));
                 insXml->deleteBook(idEdit);
                 insXml->addBook(livre);
             }
         }
         if(idEdit > 0){
+            /*
+             * Émission du signal d'édition
+             * Ce signal permet à l'élément de se rafraichir dans l'onglet ouvert
+             */
             emit editDone(idEdit);
             idEdit = 0;
         }
         else{
+            /*
+             * Émission du signal d'ajout terminé
+             * Dans ce cas, la collection sera réactualisée pour afficher immédiatement le nouvel élément
+             */
             emit bookAdded();
         }
     }
     else{
-        //C'es un FILM
+        //---------------------------
+        //FILMS
+        //---------------------------
 
         //1)Vérification du titre
         if(ui->lineEditTitre->text().isEmpty()){
@@ -230,6 +266,7 @@ void EditBook::accept(){
             film.insert("pays", ui->lineEditNationalite->text());
             film.insert("langue", ui->lineEditLangue->text());
             film.insert("classement", ui->lineEditClassement->text());
+            film.insert("sousTitres", ui->lineEditSousTitres->text());
             film.insert("commentaire", ui->editCommentaire->toPlainText());
             film.insert("note", QString::number(ui->horizontalSlider->value()));
             film.insert("couverture", ui->labelTxtImage->text());
@@ -254,12 +291,19 @@ void EditBook::accept(){
         else{
             //SQL
         }
-
+        if(idEdit > 0){
+            emit editDone(idEdit);
+            idEdit = 0;
+        }
+        else{
+            emit bookAdded();
+        }
     }
     this->close();
     return;
 }
 
+//Dans le cas où il ne s'agit pas d'un remplissage automatique, on affiche quelques outils pour l'édition manuelle
 void EditBook::setManual(){
     if(ui->stackedWidget->currentIndex() == 1){
         ui->labelImage->setText("<a href=\"#\">Cliquez ici pour ajouter une jaquette</a>");
@@ -271,6 +315,7 @@ void EditBook::setManual(){
     }
 }
 
+//Upload une image locale comme jaquette
 void EditBook::uploadImage(){
     QString image = QFileDialog::getOpenFileName(this, "Choisir une photo", QString(), "Images (*.png *.gif *.jpg *.jpeg)");
     if(ui->stackedWidget->currentIndex() == 1)
@@ -280,6 +325,7 @@ void EditBook::uploadImage(){
     return;
 }
 
+//Mets à jour l'UI avec le tableau fourni en paramètre
 void EditBook::updateUi(QMultiMap<QString, QString> livre){
     //On détecte s'il s'agit d'un livre ou d'un film
     bool films = ((QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) != 0) ? false : true);
@@ -367,7 +413,7 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
     else{
         //FILM
         ui->lineEditTitre->setText(livre.value("titre"));
-        ui->lineEditOriginal->setText(livre.value("titre_original"));
+        ui->lineEditOriginal->setText(livre.value("titreOriginal"));
         ui->lineEditDirecteur->setText(livre.value("directeur"));
         ui->lineEditActeurs->setText(livre.value("acteurs"));
         ui->editResume->clear();
@@ -377,10 +423,39 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
         ui->lineEditType->setText(livre.value("genres"));
         ui->lineEditNationalite->setText(livre.value("pays"));
         ui->lineEditLangue->setText(livre.value("langue"));
+        ui->labelTxtImage->setText(livre.value("couverture"));
+        //Récupération de l'image
+        QPixmap image;
+        if(!livre.value("couverture").startsWith("http")){
+            QFile fichierImage(livre.value("couverture"));
+            if(!fichierImage.exists()){
+                QMessageBox::information(this, "Image introuvable", "Une erreur est survenue, la jaquette de ce livre ne peut être trouvée");
+            }
+            else{
+                image.load(livre.value("couverture"));
+            }
+        }
+        else{
+            QNetworkAccessManager nw_manager;
+            QNetworkRequest request(livre.value("couverture"));
+            QNetworkReply *reponse = nw_manager.get(request);
+            QEventLoop eventLoop;
+            connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
+            eventLoop.exec();
+            image.loadFromData(reponse->readAll());
+            int width = image.width();
+            if(width > 150){
+                float coef = (float)width / 150;
+                int result = image.width()/coef;
+                image = image.scaledToWidth(result);
+            }
+        }
+        ui->labelImage->setPixmap(image);
     }
     return;
 }
 
+//Sélectionne tous les auteurs correspondant au paramètre
 void EditBook::getAuteur(QString nom){
     QString req1 = "SELECT id, nom FROM auteurs WHERE nom LIKE ";
     req1 += "'%"+nom.replace(" ", "%") +"%';";
@@ -395,6 +470,7 @@ void EditBook::getAuteur(QString nom){
     }
 }
 
+//Sélectionne tous les éditeurs correspondant au paramètre
 void EditBook::getEditeur(QString nom){
     QString req1 = "SELECT id, nom FROM editeurs WHERE nom LIKE ";
     req1 += "\"%"+nom.replace(" ", "%") +"%\";";
@@ -408,6 +484,7 @@ void EditBook::getEditeur(QString nom){
         ui->pushButton_edit_editeur->setText("Actualiser");
     }
 }
+
 
 void EditBook::setAuteur(bool editeur){
     QString id = "SELECT id,nom FROM ";
@@ -470,18 +547,21 @@ void EditBook::setEditeur(){
     this->setAuteur(true);
 }
 
+//Met à jour la liste des auteurs
 void EditBook::updateAuteurs(int id, QString nom){
     ui->comboBox_auteur->clear();
     ui->comboBox_auteur->addItem(nom, id);
     insAddAuteur->close();
 }
 
+//Met à jour la liste des éditeurs
 void EditBook::updateEditeurs(int id, QString nom){
     ui->comboBox_editeur->clear();
     ui->comboBox_editeur->addItem(nom, id);
     insAddEditeur->close();
 }
 
+//Récupère l'ID de l'auteur ou de l'éditeur actuels
 int EditBook::getId(bool editeur){
     QString id = "SELECT id FROM ";
     if(editeur){
@@ -504,11 +584,13 @@ int EditBook::getId(bool editeur){
     return idl;
 }
 
+//Stocke l'ID de l'item édité
 void EditBook::setId(int id){
     idEdit = id;
     return;
 }
 
+//Modifie le type de guillemets pour les rendres compatibles avec SQL
 QString EditBook::guillemets(QString input){
     QString output = input;
     bool close = false;
@@ -527,11 +609,13 @@ QString EditBook::guillemets(QString input){
     return output;
 }
 
+//[OBSOLETE]Met à jour la note selon le slider
 void EditBook::updateNote(int value){
     ui->label_note->setText(QString::number(value)+"/20");
     return;
 }
 
+//Lie l'ebook (ou le film) avec l'item
 void EditBook::uploadEbook(){
     QString ebook = QFileDialog::getOpenFileName(this, "Sélectionnez le fichier", QDir::homePath());
     ui->lineEdit_emplacement->setText(ebook);

@@ -417,6 +417,20 @@
      </widget>
      <widget class="QWidget" name="film">
       <layout class="QGridLayout" name="gridLayout_3">
+       <item row="8" column="0">
+        <widget class="QLabel" name="label_12">
+         <property name="text">
+          <string>Nationalité</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Résumé</string>
+         </property>
+        </widget>
+       </item>
        <item row="4" column="1">
         <widget class="QPlainTextEdit" name="editResume"/>
        </item>
@@ -448,21 +462,14 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="lineEditTitre"/>
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="lineEditActeurs"/>
        </item>
        <item row="2" column="1">
         <widget class="QLineEdit" name="lineEditDirecteur"/>
        </item>
-       <item row="3" column="1">
-        <widget class="QLineEdit" name="lineEditActeurs"/>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="label_8">
-         <property name="text">
-          <string>Résumé</string>
-         </property>
-        </widget>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="lineEditTitre"/>
        </item>
        <item row="6" column="0">
         <widget class="QLabel" name="label_10">
@@ -471,15 +478,15 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="0">
-        <widget class="QLabel" name="label_12">
-         <property name="text">
-          <string>Nationalité</string>
-         </property>
-        </widget>
-       </item>
        <item row="7" column="1">
         <widget class="QLineEdit" name="lineEditType"/>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>Type</string>
+         </property>
+        </widget>
        </item>
        <item row="5" column="1">
         <widget class="QSpinBox" name="spinBoxAnnee">
@@ -494,10 +501,10 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="0">
-        <widget class="QLabel" name="label_11">
+       <item row="12" column="0">
+        <widget class="QLabel" name="label_13">
          <property name="text">
-          <string>Type</string>
+          <string>Options</string>
          </property>
         </widget>
        </item>
@@ -511,41 +518,34 @@
          </property>
         </widget>
        </item>
-       <item row="11" column="0">
-        <widget class="QLabel" name="label_13">
-         <property name="text">
-          <string>Options</string>
-         </property>
-        </widget>
-       </item>
        <item row="8" column="1">
         <widget class="QLineEdit" name="lineEditNationalite"/>
        </item>
-       <item row="10" column="0">
+       <item row="11" column="0">
         <widget class="QLabel" name="label_14">
          <property name="text">
           <string>Classement</string>
          </property>
         </widget>
        </item>
-       <item row="14" column="0">
+       <item row="15" column="0">
         <widget class="QLabel" name="label_16">
          <property name="text">
           <string>Fichier</string>
          </property>
         </widget>
        </item>
-       <item row="10" column="1">
+       <item row="11" column="1">
         <widget class="QLineEdit" name="lineEditClassement"/>
        </item>
-       <item row="13" column="0">
+       <item row="14" column="0">
         <widget class="QLabel" name="label_15">
          <property name="text">
           <string>Commentaire</string>
          </property>
         </widget>
        </item>
-       <item row="13" column="1">
+       <item row="14" column="1">
         <widget class="QTextEdit" name="editCommentaire"/>
        </item>
        <item row="0" column="2">
@@ -555,14 +555,33 @@
          </property>
         </widget>
        </item>
-       <item row="15" column="2">
+       <item row="16" column="2">
         <widget class="QLabel" name="labelTxtImage">
+         <property name="maximumSize">
+          <size>
+           <width>200</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="text">
           <string>TextLabel</string>
          </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
-       <item row="15" column="0" colspan="2">
+       <item row="13" column="0">
+        <widget class="QLabel" name="label_21">
+         <property name="text">
+          <string>Étiquettes</string>
+         </property>
+        </widget>
+       </item>
+       <item row="13" column="1">
+        <widget class="QComboBox" name="comboBox"/>
+       </item>
+       <item row="16" column="0" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
           <widget class="QCheckBox" name="checkBoxVu">
@@ -600,17 +619,7 @@
          </item>
         </layout>
        </item>
-       <item row="12" column="0">
-        <widget class="QLabel" name="label_21">
-         <property name="text">
-          <string>Étiquettes</string>
-         </property>
-        </widget>
-       </item>
-       <item row="12" column="1">
-        <widget class="QComboBox" name="comboBox"/>
-       </item>
-       <item row="2" column="2" rowspan="13">
+       <item row="2" column="2" rowspan="14">
         <widget class="QLabel" name="labelImage">
          <property name="maximumSize">
           <size>
@@ -626,7 +635,17 @@
          </property>
         </widget>
        </item>
-       <item row="14" column="1">
+       <item row="9" column="0">
+        <widget class="QLabel" name="label_19">
+         <property name="text">
+          <string>Langue</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="1">
+        <widget class="QLineEdit" name="lineEditLangue"/>
+       </item>
+       <item row="15" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_7">
          <item>
           <widget class="QCheckBox" name="checkBoxFichier">
@@ -661,7 +680,7 @@
          </item>
         </layout>
        </item>
-       <item row="11" column="1">
+       <item row="12" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_8">
          <item>
           <widget class="QCheckBox" name="checkBoxPrete">
@@ -679,16 +698,6 @@
          </item>
         </layout>
        </item>
-       <item row="9" column="0">
-        <widget class="QLabel" name="label_19">
-         <property name="text">
-          <string>Langue</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="1">
-        <widget class="QLineEdit" name="lineEditLangue"/>
-       </item>
        <item row="1" column="0">
         <widget class="QLabel" name="label_20">
          <property name="text">
@@ -698,6 +707,16 @@
        </item>
        <item row="1" column="1">
         <widget class="QLineEdit" name="lineEditOriginal"/>
+       </item>
+       <item row="10" column="0">
+        <widget class="QLabel" name="label_23">
+         <property name="text">
+          <string>Sous-titres</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="1">
+        <widget class="QLineEdit" name="lineEditSousTitres"/>
        </item>
       </layout>
      </widget>

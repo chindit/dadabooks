@@ -876,7 +876,7 @@ void DadaBooks::intabPreview(int id){
         edition2 = new QLabel();
         langue = new QLabel("Langue");
         langue2 = new QLabel();
-        exemplaires = new QLabel((films) ? "": "Nombre d'exemplaires");
+        exemplaires = new QLabel((films) ? "Sous-titres": "Nombre d'exemplaires");
         exemplaires2 = new QLabel();
         commentaire = new QLabel("Commentaire");
         classement = new QLabel("Classement");
@@ -964,8 +964,7 @@ void DadaBooks::intabPreview(int id){
         pages2->setText(xmlLivre.value((films) ? "duree" : "pages"));
         edition2->setText(xmlLivre.value((films) ? "pays" : "edition"));
         langue2->setText(xmlLivre.value("langue"));
-        if(!films)
-            exemplaires2->setText(xmlLivre.value("exemplaires"));
+        exemplaires2->setText(xmlLivre.value((films) ? "sousTitres" : "exemplaires"));
         classement2->setText(xmlLivre.value("classement"));
         annee2->setText(xmlLivre.value("annee"));
         auteur2->setText(xmlLivre.value((films) ? "directeur" : "auteur"));
