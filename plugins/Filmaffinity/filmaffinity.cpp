@@ -201,12 +201,17 @@ QMultiMap<QString,QString> Filmaffinity::getBook( QString id ){
     QString genreTemp = contenu_page.right(contenu_page.size()-contenu_page.indexOf("<dt>Género"));
     genreTemp = genreTemp.right(genreTemp.size()-genreTemp.indexOf("<dd>")-4);
     genreTemp = genreTemp.left(genreTemp.indexOf("</dd>"));
-    QRegExp exp(">\\.?</a>");
-    exp.indexIn(genreTemp);
-    QStringList genreList = exp.capturedTexts();
+    QRegExp exp("\">(.*)</a>");
+    exp.setMinimal(true);
+    int position = genreTemp.indexOf(exp);
+    QStringList genreList;
+    while(position > -1){
+        genreList.append(exp.cap(1));
+        position = genreTemp.indexOf(exp, position+exp.cap(1).count());
+    }
     QString genres;
     foreach(QString item, genreList){
-        if(item.contains("<a href")){
+        /*if(item.contains("<a href")){
             QString manoeuvre = item.remove(0, item.indexOf(">")+1);
             if(item.contains("<a href")){
                 //Dans le cas où on a viré un <span> mais pas le lien
@@ -215,11 +220,14 @@ QMultiMap<QString,QString> Filmaffinity::getBook( QString id ){
             manoeuvre.resize(manoeuvre.indexOf("<"));
             genres.append(manoeuvre);
             genres.append(", ");
-        }
+        }*/
+        genres.append(item);
+        genres.append(",");
     }
-    if(genres.endsWith(", ")){
-        genres.resize(acteurs.size()-2);
+    if(genres.endsWith(",")){
+        genres.resize(genres.size()-1);
     }
+
 
     //Synopsis
     QString synopsis = contenu_page.right(contenu_page.size()-contenu_page.indexOf("<dt>Sinopsis"));
