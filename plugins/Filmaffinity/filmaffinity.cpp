@@ -211,16 +211,6 @@ QMultiMap<QString,QString> Filmaffinity::getBook( QString id ){
     }
     QString genres;
     foreach(QString item, genreList){
-        /*if(item.contains("<a href")){
-            QString manoeuvre = item.remove(0, item.indexOf(">")+1);
-            if(item.contains("<a href")){
-                //Dans le cas où on a viré un <span> mais pas le lien
-                manoeuvre = manoeuvre.remove(0, manoeuvre.indexOf(">")+1);
-            }
-            manoeuvre.resize(manoeuvre.indexOf("<"));
-            genres.append(manoeuvre);
-            genres.append(", ");
-        }*/
         genres.append(item);
         genres.append(",");
     }

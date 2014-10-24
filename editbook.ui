@@ -417,6 +417,16 @@
      </widget>
      <widget class="QWidget" name="film">
       <layout class="QGridLayout" name="gridLayout_3">
+       <item row="6" column="0">
+        <widget class="QLabel" name="label_10">
+         <property name="text">
+          <string>Durée (en min)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="lineEditDirecteur"/>
+       </item>
        <item row="8" column="0">
         <widget class="QLabel" name="label_12">
          <property name="text">
@@ -448,12 +458,8 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="label_9">
-         <property name="text">
-          <string>Année</string>
-         </property>
-        </widget>
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="lineEditActeurs"/>
        </item>
        <item row="3" column="0">
         <widget class="QLabel" name="label_7">
@@ -462,21 +468,15 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
-        <widget class="QLineEdit" name="lineEditActeurs"/>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLineEdit" name="lineEditDirecteur"/>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Année</string>
+         </property>
+        </widget>
        </item>
        <item row="0" column="1">
         <widget class="QLineEdit" name="lineEditTitre"/>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="label_10">
-         <property name="text">
-          <string>Durée (en min)</string>
-         </property>
-        </widget>
        </item>
        <item row="7" column="1">
         <widget class="QLineEdit" name="lineEditType"/>
@@ -501,13 +501,6 @@
          </property>
         </widget>
        </item>
-       <item row="12" column="0">
-        <widget class="QLabel" name="label_13">
-         <property name="text">
-          <string>Options</string>
-         </property>
-        </widget>
-       </item>
        <item row="6" column="1">
         <widget class="QSpinBox" name="spinBoxDuree">
          <property name="maximum">
@@ -515,6 +508,13 @@
          </property>
          <property name="value">
           <number>90</number>
+         </property>
+        </widget>
+       </item>
+       <item row="12" column="0">
+        <widget class="QLabel" name="label_13">
+         <property name="text">
+          <string>Options</string>
          </property>
         </widget>
        </item>
@@ -572,14 +572,34 @@
         </widget>
        </item>
        <item row="13" column="0">
-        <widget class="QLabel" name="label_21">
+        <widget class="QLabel" name="labelEtiquettes">
          <property name="text">
           <string>Étiquettes</string>
          </property>
         </widget>
        </item>
-       <item row="13" column="1">
-        <widget class="QComboBox" name="comboBox"/>
+       <item row="2" column="2" rowspan="14">
+        <widget class="QLabel" name="labelImage">
+         <property name="maximumSize">
+          <size>
+           <width>250</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0">
+        <widget class="QLabel" name="label_19">
+         <property name="text">
+          <string>Langue</string>
+         </property>
+        </widget>
        </item>
        <item row="16" column="0" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -619,31 +639,15 @@
          </item>
         </layout>
        </item>
-       <item row="2" column="2" rowspan="14">
-        <widget class="QLabel" name="labelImage">
-         <property name="maximumSize">
-          <size>
-           <width>250</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="0">
-        <widget class="QLabel" name="label_19">
-         <property name="text">
-          <string>Langue</string>
-         </property>
-        </widget>
-       </item>
        <item row="9" column="1">
         <widget class="QLineEdit" name="lineEditLangue"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_20">
+         <property name="text">
+          <string>Titre original</string>
+         </property>
+        </widget>
        </item>
        <item row="15" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -698,16 +702,6 @@
          </item>
         </layout>
        </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_20">
-         <property name="text">
-          <string>Titre original</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="lineEditOriginal"/>
-       </item>
        <item row="10" column="0">
         <widget class="QLabel" name="label_23">
          <property name="text">
@@ -715,8 +709,18 @@
          </property>
         </widget>
        </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="lineEditOriginal"/>
+       </item>
        <item row="10" column="1">
         <widget class="QLineEdit" name="lineEditSousTitres"/>
+       </item>
+       <item row="13" column="1">
+        <widget class="QComboBox" name="comboBoxEtiquettes">
+         <property name="editable">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

@@ -155,7 +155,7 @@ void EditBook::accept(){
 
             QSqlQuery res1 = insSql->query(req1);
             idLivre = (idEdit == 0) ? res1.lastInsertId().toInt() : idEdit;
-            QString etiquette = ui->comboBox_etiquette->currentText();
+            QString etiquette = ui->comboBoxEtiquettes->currentText();
             QStringList etiquettes;
             if(etiquette.contains(",")){
                 etiquettes = etiquette.split(",");
@@ -397,8 +397,8 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
             ui->pushButton_edit_editeur->setVisible(false);
             ui->pushButton_auteur->setVisible(false);
             ui->pushButton_editeur->setVisible(false);
-            ui->label_etiquette->setVisible(false);
-            ui->comboBox_etiquette->setVisible(false);
+            ui->labelEtiquettes->setVisible(false);
+            ui->comboBoxEtiquettes->setVisible(false);
         }
         else{//Pas XML -> SQL
             this->getAuteur(livre.value("auteur"));
@@ -406,7 +406,7 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
             //Màj des étiquettes
             QSqlQuery resultat = insSql->query("SELECT id,nom FROM etiquettes");
             while(resultat.next()){
-                ui->comboBox_etiquette->addItem(resultat.record().value("nom").toString(), resultat.record().value("id"));
+                ui->comboBoxEtiquettes->addItem(resultat.record().value("nom").toString(), resultat.record().value("id"));
             }
         }
     }

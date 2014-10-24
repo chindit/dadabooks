@@ -168,7 +168,9 @@ void DadaBooks::setListeLivres(){
     }
 
     //Nettoyage & préparation du widget
-    ui->tableWidget->clear();
+    while(ui->tableWidget->rowCount() > 0){
+        ui->tableWidget->removeRow(0);
+    }
     ui->tableWidget->setColumnCount(5);
     QStringList liste_headers;
     liste_headers << "ID" << "Titre" << ((QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) != 0) ? "Auteur" : "Directeur") << ((QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) != 0) ? "Éditeur" : "Acteurs") << "Année";
