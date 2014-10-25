@@ -1,4 +1,6 @@
 #include "filmaffinity.h"
+#include <cstdio>
+#include <iostream>
 
 
 QList< QMultiMap<QString, QString> > Filmaffinity::makeSearch(QString search){
@@ -6,10 +8,18 @@ QList< QMultiMap<QString, QString> > Filmaffinity::makeSearch(QString search){
     base_url.append(search.replace(" ", "+"));
     QString contenu_page = this->download(base_url);
 
+    if(contenu_page.contains("<div class=\"see-all-button\">Ver todos")){
+        base_url = "http://www.filmaffinity.com/es/search.php?stype=title&stext=";
+        base_url.append(search.replace(" ", "+"));
+        contenu_page = this->download(base_url);
+    }
+    std::freopen("output.txt", "w",stdout);
+    std::cout<<contenu_page.toStdString();
+
     //Tableau des données
     QList< QMultiMap<QString, QString> > contenu;
 
-    if(contenu_page.contains("Reparto") && contenu_page.contains("Director")){
+    if(contenu_page.contains("Reparto</dt>") && contenu_page.contains("Director")){
         //On a trouvé directement le titre, on passe à l'édition
         QString url = contenu_page.right(contenu_page.size()-contenu_page.indexOf("og:url"));
         url = url.right(url.size()-url.indexOf("=\"")-2);
