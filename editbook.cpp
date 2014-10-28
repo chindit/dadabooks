@@ -116,7 +116,7 @@ void EditBook::accept(){
         //On récupère bien entendu l'URL
         QString nomImage = ui->label_image_texte->text();
         //Stockage de l'image en local en cas de besoin
-        if(!insSettingsManager->getSettings(MariaDB).toBool() && insSettingsManager->getSettings(DownPics).toBool()){
+        if(!insSettingsManager->getSettings(MariaDB).toBool() && insSettingsManager->getSettings(DownPics).toBool() && nomImage.contains("http")){
             //On vérifie que le dossier existe
             QString chemin = insSettingsManager->getSettings(Fichier).toString();
             chemin = chemin.left(chemin.lastIndexOf("/")+1);
@@ -231,8 +231,8 @@ void EditBook::accept(){
         }
 
         //Téléchargement de l'image si besoin
-        QString nomImage = ui->label_image_texte->text();
-        if(!insSettingsManager->getSettings(MariaDB).toBool() && insSettingsManager->getSettings(DownPics).toBool()){
+        QString nomImage = ui->labelTxtImage->text();
+        if(!insSettingsManager->getSettings(MariaDB).toBool() && insSettingsManager->getSettings(DownPics).toBool() && nomImage.contains("http")){
             //On vérifie que le dossier existe
             QString chemin = insSettingsManager->getSettings(Fichier).toString();
             chemin = chemin.left(chemin.lastIndexOf("/")+1);
@@ -241,40 +241,84 @@ void EditBook::accept(){
         }
 
         //2)On stocke tout en SQL ou XML
-        if(insSettingsManager->getSettings(Xml).toBool()){
-            //XML
-            QMultiMap<QString, QString> film;
-            film.insert("titre", ui->lineEditTitre->text());
-            film.insert("titreOriginal", ui->lineEditOriginal->text());
-            film.insert("directeur", ui->lineEditDirecteur->text());
-            film.insert("acteurs", ui->lineEditActeurs->text());
-            film.insert("synopsis", ui->editResume->toPlainText());
-            film.insert("annee", QString::number(ui->spinBoxAnnee->value()));
-            film.insert("duree", QString::number(ui->spinBoxDuree->value()));
-            film.insert("genre", ui->lineEditType->text());
-            film.insert("pays", ui->lineEditNationalite->text());
-            film.insert("langue", ui->lineEditLangue->text());
-            film.insert("classement", ui->lineEditClassement->text());
-            film.insert("sousTitres", ui->lineEditSousTitres->text());
-            film.insert("commentaire", ui->editCommentaire->toPlainText());
-            film.insert("note", QString::number(ui->horizontalSlider->value()));
-            film.insert("couverture", nomImage);
-            film.insert("empruntable", ((ui->checkBoxEmpruntable->isChecked()) ? "True" : "False"));
-            film.insert("prete", ((ui->checkBoxPrete->isChecked()) ? "True" : "False"));
-            film.insert("vu", ((ui->checkBoxVu->isChecked()) ? "True" : "False"));
-            film.insert("fichier", ((ui->checkBoxFichier->isChecked()) ? "True" : "False"));
-            if(ui->checkBoxFichier->isChecked())
-                film.insert("emplacement", ui->lineEditEmplacement->text());
+        if(!insSettingsManager->getSettings(Xml).toBool()){
+            if(!insSettingsManager->getSettings(Xml).toBool()){
+                int idFilm = -1;
+                QString req1;
+                if(idEdit == 0){ //Si pas d'édition->INSERT
+                    req1 = "INSERT INTO films(titre, titre_original, directeur, acteurs, synopsis, annee, duree, genre, pays, langue, classement, sous_titres, commentaire, note, jaquette, empruntable, prete, vu, fichier, emplacement, qualite) VALUES(\""+this->guillemets(ui->lineEditTitre->text())+"\", \""+this->guillemets(ui->lineEditOriginal->text())+"\", \""+this->guillemets(ui->lineEditDirecteur->text())+"\", \""+this->guillemets(ui->lineEditActeurs->text())+"\", \""+this->guillemets(ui->editResume->toPlainText())+"\", "+QString::number(ui->spinBoxAnnee->value())+", "+QString::number(ui->spinBoxDuree->value())+", \""+this->guillemets(ui->lineEditType->text())+"\", \""+this->guillemets(ui->lineEditNationalite->text())+"\", \""+this->guillemets(ui->lineEditLangue->text())+"\", \""+this->guillemets(ui->lineEditClassement->text())+"\", \""+this->guillemets(ui->lineEditSousTitres->text())+"\", \""+this->guillemets(ui->editCommentaire->toPlainText())+"\", "+QString::number(ui->horizontalSlider->value())+", \""+nomImage+"\", "+((ui->checkBoxEmpruntable->isChecked()) ? QString::number(1) : QString::number(0))+", "+((ui->checkBoxPrete->isChecked()) ? QString::number(1) : QString::number(0))+", "+((ui->checkBoxVu->isChecked()) ? QString::number(1) : QString::number(0))+", "+((ui->checkBoxFichier->isChecked()) ? QString::number(1) : QString::number(0))+", \""+this->guillemets(ui->lineEditEmplacement->text())+"\", \"\")";
+                }
+                else{
+                    //req1 = "UPDATE films SET titre = \""+this->guillemets(ui->lineEdit_titre->text())+"\", ISBN = \""+ui->lineEdit_ISBN->text()+"\", auteur = "+QString::number(id_auteur)+", coauteurs = \""+this->guillemets(ui->lineEdit_coauteurs->text())+"\", synopsis = \""+this->guillemets(ui->plainTextEdit_resume->toPlainText())+"\", couverture = \""+nomImage+"\", editeur = "+QString::number(id_editeur)+", annee = '"+QString::number(annee)+"', pages = "+QString::number(pages)+", edition = "+QString::number(edition)+", langue = \""+this->guillemets(ui->lineEdit_langue->text())+"\", classement = \""+this->guillemets(ui->lineEdit_classement->text())+"\", exemplaires = "+QString::number(exemplaires)+", commentaire = \""+this->guillemets(ui->plainTextEdit_commentaire->toPlainText())+"\", lu = "+QString::number(lu)+", note = "+QString::number(note)+", empruntable = "+QString::number(empruntable)+", pret = "+QString::number(pret)+", ebook = "+QString::number(ebook)+", emplacement = \""+ui->lineEdit_emplacement->text()+"\" WHERE id="+QString::number(idEdit)+";";
+                }
+                QMessageBox::information(this, "e", req1);
+                QSqlQuery res1 = insSql->query(req1);
+                idFilm = (idEdit == 0) ? res1.lastInsertId().toInt() : idEdit;
+                QString etiquette = ui->comboBoxEtiquettes->currentText();
+                QStringList etiquettes;
+                if(etiquette.contains(",")){
+                    etiquettes = etiquette.split(",");
+                }
+                else
+                    etiquettes.append(etiquette);
+                if(!etiquette.isEmpty()){
+                    int id = -1;
+                    //On vire les vieilles étiquettes
+                    insSql->query("DELETE FROM liste_etiquettes WHERE id_livre="+QString::number(idFilm));
+                    for(int i=0; i<etiquettes.size(); i++){
+                        req1 = "SELECT id FROM etiquettes WHERE nom=\""+etiquettes.at(i).trimmed()+"\"";
+                        res1 = insSql->query(req1);
+                        if(res1.size() < 1){
+                            req1 = "INSERT INTO etiquettes(nom) VALUES(\""+etiquettes.at(i)+"\")";
+                            res1 = insSql->query(req1);
+                            id = res1.lastInsertId().toInt();
+                        }
+                        else{
+                            //On a déjà une id
+                            res1.first();
+                            id = res1.record().value("id").toInt();
+                        }
+                        //On insère le lien dans la BDD
+                        req1 = "INSERT INTO liste_etiquettes(id_livre, id_etiquette) VALUES("+QString::number(idFilm)+", "+QString::number(id)+");";
+                        res1 = insSql->query(req1);
+                    }
+                }
 
-            //On ajoute si pas d'édition
-            if(idEdit == 0){
-                insXml->addBook(film);
             }
             else{
-                //Sinon on supprime le précédent et on ajoute le nouveau
-                film.insert("id", QString::number(idEdit));
-                insXml->deleteBook(idEdit);
-                insXml->addBook(film);
+                //XML
+                QMultiMap<QString, QString> film;
+                film.insert("titre", ui->lineEditTitre->text());
+                film.insert("titreOriginal", ui->lineEditOriginal->text());
+                film.insert("directeur", ui->lineEditDirecteur->text());
+                film.insert("acteurs", ui->lineEditActeurs->text());
+                film.insert("synopsis", ui->editResume->toPlainText());
+                film.insert("annee", QString::number(ui->spinBoxAnnee->value()));
+                film.insert("duree", QString::number(ui->spinBoxDuree->value()));
+                film.insert("genre", ui->lineEditType->text());
+                film.insert("pays", ui->lineEditNationalite->text());
+                film.insert("langue", ui->lineEditLangue->text());
+                film.insert("classement", ui->lineEditClassement->text());
+                film.insert("sousTitres", ui->lineEditSousTitres->text());
+                film.insert("commentaire", ui->editCommentaire->toPlainText());
+                film.insert("note", QString::number(ui->horizontalSlider->value()));
+                film.insert("couverture", nomImage);
+                film.insert("empruntable", ((ui->checkBoxEmpruntable->isChecked()) ? "True" : "False"));
+                film.insert("prete", ((ui->checkBoxPrete->isChecked()) ? "True" : "False"));
+                film.insert("vu", ((ui->checkBoxVu->isChecked()) ? "True" : "False"));
+                film.insert("fichier", ((ui->checkBoxFichier->isChecked()) ? "True" : "False"));
+                if(ui->checkBoxFichier->isChecked())
+                    film.insert("emplacement", ui->lineEditEmplacement->text());
+                //On ajoute si pas d'édition
+                if(idEdit == 0){
+                    insXml->addBook(film);
+                }
+                else{
+                    //Sinon on supprime le précédent et on ajoute le nouveau
+                    film.insert("id", QString::number(idEdit));
+                    insXml->deleteBook(idEdit);
+                    insXml->addBook(film);
+                }
             }
         }
         else{

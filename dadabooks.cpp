@@ -156,6 +156,7 @@ void DadaBooks::updateOnglet(int id){
 void DadaBooks::setListeLivres(){
     QList<QMultiMap<QString, QString> > resultat;
     QSqlQuery res1;
+    bool films = false;
     //XML
     if(insSettingsManager->getSettings(Xml).toBool()){
         insXmlManager = new XmlManager;
@@ -163,7 +164,13 @@ void DadaBooks::setListeLivres(){
     }
     else{
         //SQL
-        QString req1 = "SELECT livres.id, livres.titre, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id ORDER BY livres.id DESC LIMIT 0, 25";
+        QString req1;
+        if(insSettingsManager->getSettings(Type).toString() == "livres")
+            req1 = "SELECT livres.id, livres.titre, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id ORDER BY livres.id DESC LIMIT 0, 25";
+        else{
+            req1 = "SELECT * FROM films ORDER BY id DESC LIMIT 0, 25";
+            films = true;
+        }
         res1 = insSqlManager->query(req1);
     }
 
@@ -221,8 +228,8 @@ void DadaBooks::setListeLivres(){
             QTableWidgetItem *item4 = new QTableWidgetItem();
             item0->setText(res1.record().value("id").toString());
             item1->setText(res1.record().value("titre").toString());
-            item2->setText(res1.record().value("nom").toString());
-            item3->setText(res1.record().value("nom_editeur").toString());
+            item2->setText(res1.record().value((films) ? "directeur" : "nom").toString());
+            item3->setText(res1.record().value((films) ? "acteurs" : "nom_editeur").toString());
             item4->setText(res1.record().value("annee").toString());
             ui->tableWidget->setItem(0, 0, item0);
             ui->tableWidget->setItem(0, 1, item1);
@@ -231,7 +238,7 @@ void DadaBooks::setListeLivres(){
             ui->tableWidget->setItem(0, 4, item4);
         }
         //Et l'accueil
-        QString req2 = "SELECT livres.titre FROM livres ORDER BY livres.id";
+        QString req2 = (films) ? "SELECT films.titre FROM films ORDER BY films.id" : "SELECT livres.titre FROM livres ORDER BY livres.id";
         QSqlQuery res2 = insSqlManager->query(req2);
         ui->listWidget_accueil->clear();
         while(res2.next()){
