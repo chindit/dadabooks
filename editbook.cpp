@@ -121,28 +121,7 @@ void EditBook::accept(){
             QString chemin = insSettingsManager->getSettings(Fichier).toString();
             chemin = chemin.left(chemin.lastIndexOf("/")+1);
             QDir dossierImage; dossierImage.setPath(chemin+".dadabooksImages");
-            if(!dossierImage.exists()){
-                dossierImage.mkdir(chemin+".dadabooksImages");
-            }
-
-            //Et on télécharge les images
-            QNetworkAccessManager nw_manager;
-            QNetworkRequest request(ui->label_image_texte->text());
-            QNetworkReply *reponse = nw_manager.get(request);
-            QEventLoop eventLoop;
-            connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
-            eventLoop.exec();
-            QPixmap image;
-            image.loadFromData(reponse->readAll());
-            int width = image.width();
-            if(width > 150){
-                float coef = (float)width / 150;
-                int result = image.width()/coef;
-                image = image.scaledToWidth(result);
-            }
-            QDateTime timestamp; timestamp = QDateTime::currentDateTime();
-            nomImage = chemin+".dadabooksImages/"+QString::number(timestamp.toTime_t())+".png";
-            image.save(nomImage);
+            nomImage = ToolsManager::downloadFile(ui->labelTxtImage->text(), dossierImage);
         }
 
         if(!insSettingsManager->getSettings(Xml).toBool()){
@@ -251,6 +230,16 @@ void EditBook::accept(){
             return;
         }
 
+        //Téléchargement de l'image si besoin
+        QString nomImage = ui->label_image_texte->text();
+        if(!insSettingsManager->getSettings(MariaDB).toBool() && insSettingsManager->getSettings(DownPics).toBool()){
+            //On vérifie que le dossier existe
+            QString chemin = insSettingsManager->getSettings(Fichier).toString();
+            chemin = chemin.left(chemin.lastIndexOf("/")+1);
+            QDir dossierImage; dossierImage.setPath(chemin+".dadabooksImages");
+            nomImage = ToolsManager::downloadFile(ui->labelTxtImage->text(), dossierImage);
+        }
+
         //2)On stocke tout en SQL ou XML
         if(insSettingsManager->getSettings(Xml).toBool()){
             //XML
@@ -269,7 +258,7 @@ void EditBook::accept(){
             film.insert("sousTitres", ui->lineEditSousTitres->text());
             film.insert("commentaire", ui->editCommentaire->toPlainText());
             film.insert("note", QString::number(ui->horizontalSlider->value()));
-            film.insert("couverture", ui->labelTxtImage->text());
+            film.insert("couverture", nomImage);
             film.insert("empruntable", ((ui->checkBoxEmpruntable->isChecked()) ? "True" : "False"));
             film.insert("prete", ((ui->checkBoxPrete->isChecked()) ? "True" : "False"));
             film.insert("vu", ((ui->checkBoxVu->isChecked()) ? "True" : "False"));
@@ -465,7 +454,6 @@ void EditBook::getAuteur(QString nom){
         ui->comboBox_auteur->addItem(res1.record().value("nom").toString(), res1.record().value("id"));
     }
     if(ui->comboBox_auteur->count() == 0){
-        //ui->pushButton_edit_auteur->setEnabled(false);
         ui->pushButton_edit_auteur->setText("Actualiser");
     }
 }

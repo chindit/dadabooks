@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     sqlmanager.cpp \
     previewbook.cpp \
     settingsdialog.cpp \
-    firstlaunch.cpp
+    firstlaunch.cpp \
+    toolsmanager.cpp
 
 HEADERS  += dadabooks.h \
     settingsmanager.h \
@@ -36,7 +37,8 @@ HEADERS  += dadabooks.h \
     sqlmanager.h \
     previewbook.h \
     settingsdialog.h \
-    firstlaunch.h
+    firstlaunch.h \
+    toolsmanager.h
 
 FORMS    += dadabooks.ui \
     addbook.ui \

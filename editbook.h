@@ -11,6 +11,7 @@
 #include "addediteur.h"
 #include "sqlmanager.h"
 #include "settingsmanager.h"
+#include "toolsmanager.h"
 #include "xmlmanager.h"
 
 namespace Ui {
