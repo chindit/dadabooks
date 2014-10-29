@@ -59,6 +59,7 @@ QSqlQuery SqlManager::query(QString req){
     if(!temp.lastError().isValid())
         return temp;
     else{
+        qDebug() << temp.lastQuery();
         QMessageBox::critical(0, "Erreur lors de la requête", "La requête n'a pu être effectuée.  Voici le message retourné : \n"+temp.lastError().text());
         return temp;
     }

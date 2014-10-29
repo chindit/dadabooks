@@ -620,7 +620,7 @@ void DadaBooks::editLivre(int id){
     if(!films)
         req1 = "SELECT livres.id, livres.titre, livres.ISBN, livres.coauteurs, livres.synopsis, livres.couverture, livres.pages, livres.edition, livres.langue, livres.classement, livres.exemplaires, livres.commentaire, livres.note, livres.lu, livres.empruntable, livres.pret, livres.ebook, livres.emplacement, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id WHERE livres.id = "+QString::number(id)+";";
     else
-        req1 = "SELECT * FROM films WHERE films.id=";
+        req1 = "SELECT * FROM films WHERE films.id="+QString::number(id)+";";
 
     if(insSettingsManager->getSettings(Xml).toBool()){
         //XML
@@ -632,16 +632,16 @@ void DadaBooks::editLivre(int id){
         res1.next();
         livre.insert("couverture", res1.record().value((films) ? "jaquette" : "couverture").toString());
         livre.insert("titre", res1.record().value("titre").toString());
-        livre.insert("auteur", res1.record().value((films) ? "directeur" : "nom").toString());
-        livre.insert("editeur", res1.record().value((films) ? "acteurs" : "nom_editeur").toString());
+        livre.insert((films) ? "directeur" : "auteur", res1.record().value((films) ? "directeur" : "nom").toString());
+        livre.insert((films) ? "acteurs" : "editeur", res1.record().value((films) ? "acteurs" : "nom_editeur").toString());
         livre.insert("annee", res1.record().value("annee").toString());
-        livre.insert("isbn", res1.record().value((films) ? "genre" : "isbn").toString());
+        livre.insert((films) ? "genre": "isbn", res1.record().value((films) ? "genre" : "isbn").toString());
         livre.insert("langue", res1.record().value("langue").toString());
-        livre.insert("pages", res1.record().value((films) ? "duree" : "pages").toString());
+        livre.insert((films) ? "duree" : "pages", res1.record().value((films) ? "duree" : "pages").toString());
         livre.insert("synopsis", res1.record().value("synopsis").toString());
-        livre.insert("coauteurs", res1.record().value((films) ? "titre_original" : "coauteurs").toString());
-        livre.insert("edition", res1.record().value((films) ? "pays" : "edition").toString());
-        livre.insert("exemplaires", res1.record().value((films) ? "sous_titres" : "exemplaires").toString());
+        livre.insert((films) ? "titreOriginal" : "coauteurs", res1.record().value((films) ? "titre_original" : "coauteurs").toString());
+        livre.insert((films) ? "pays" : "edition", res1.record().value((films) ? "pays" : "edition").toString());
+        livre.insert((films) ? "sousTitres" : "exemplaires", res1.record().value((films) ? "sous_titres" : "exemplaires").toString());
         livre.insert("commentaire", res1.record().value("commentaire").toString());
         livre.insert("classement", res1.record().value("classement").toString());
         livre.insert("empruntable", res1.record().value("empruntable").toString());
@@ -735,13 +735,13 @@ void DadaBooks::makeSearch(){
                 if(termes.at(i).size() > 3){
                     temp.append(" OR (films.titre LIKE \"%");
                     temp.append(termes.at(i));
-                    temp.append(" OR (films.annee LIKE \"%");
+                    temp.append("%\") OR (films.annee LIKE \"%");
                     temp.append(termes.at(i));
-                    temp.append(" OR (films.directeur LIKE \"%");
+                    temp.append("%\") OR (films.directeur LIKE \"%");
                     temp.append(termes.at(i));
-                    temp.append(" OR (films.acteurs LIKE \"%");
+                    temp.append("%\") OR (films.acteurs LIKE \"%");
                     temp.append(termes.at(i));
-                    temp.append(" OR (films.synopsis LIKE \"%");
+                    temp.append("%\") OR (films.synopsis LIKE \"%");
                     temp.append(termes.at(i));
                     temp.append("%\")");
                 }
@@ -779,8 +779,8 @@ void DadaBooks::makeSearch(){
             QTableWidgetItem *item4 = new QTableWidgetItem();
             item0->setText(res1.record().value("id").toString());
             item1->setText(res1.record().value("titre").toString());
-            item2->setText(res1.record().value("nom").toString());
-            item3->setText(res1.record().value("nom_editeur").toString());
+            item2->setText(res1.record().value((films) ? "directeur" : "nom").toString());
+            item3->setText(res1.record().value((films) ? "acteurs" : "nom_editeur").toString());
             item4->setText(res1.record().value("annee").toString());
             table->setItem(0, 0, item0);
             table->setItem(0, 1, item1);

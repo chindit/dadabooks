@@ -453,7 +453,7 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
         ui->editResume->setPlainText(livre.value("synopsis"));
         ui->spinBoxAnnee->setValue(livre.value("annee").toInt());
         ui->spinBoxDuree->setValue(livre.value("duree").toInt());
-        ui->lineEditType->setText(livre.value("genres"));
+        ui->lineEditType->setText(livre.value("genre"));
         ui->lineEditNationalite->setText(livre.value("pays"));
         ui->lineEditLangue->setText(livre.value("langue"));
         ui->labelTxtImage->setText(livre.value("couverture"));
