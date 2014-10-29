@@ -13,18 +13,18 @@ SqlManager::SqlManager(){
             instance.exec(requete);
             requete = "CREATE TABLE IF NOT EXISTS `liste_etiquettes` (`id` INTEGER PRIMARY KEY, `id_livre` INTEGER NOT NULL, `id_etiquette` INTEGER NOT NULL)";
             instance.exec(requete);
-            requete = "CREATE TABLE IF NOT EXISTS `films` (`id` int(11),`titre` varchar(250) NOT NULL,`titre_original` varchar(250) NOT NULL,`directeur` varchar(100) NOT NULL,`acteurs` varchar(1000) NOT NULL,`synopsis` text NOT NULL,`annee` year(4) NOT NULL,`duree` int(4) NOT NULL,`genre` varchar(500) NOT NULL,`pays` varchar(150) NOT NULL,`langue` varchar(100) NOT NULL,`classement` varchar(100) NOT NULL,`sous_titres` varchar(200) NOT NULL,`commentaire` text NOT NULL,`note` int(2) NOT NULL,`jaquette` varchar(150) NOT NULL,`empruntable` tinyint(1) NOT NULL DEFAULT '1',`prete` tinyint(1) NOT NULL DEFAULT '0',`vu` tinyint(1) NOT NULL DEFAULT '0',`fichier` tinyint(1) NOT NULL DEFAULT '0',`emplacement` varchar(250) NOT NULL,`qualite` varchar(100) NOT NULL)";
+            requete = "CREATE TABLE IF NOT EXISTS `films` (`id` INTEGER PRIMARY KEY,`titre` VARCHAR(250) NOT NULL,`titre_original` VARCHAR(250) NOT NULL,`directeur` VARCHAR(100) NOT NULL,`acteurs` VARCHAR(1000) NOT NULL,`synopsis` TEXT NOT NULL,`annee` YEAR(4) NOT NULL,`duree` INTEGER NOT NULL,`genre` VARCHAR(500) NOT NULL,`pays` VARCHAR(150) NOT NULL,`langue` VARCHAR(100) NOT NULL,`classement` VARCHAR(100) NOT NULL,`sous_titres` VARCHAR(200) NOT NULL,`commentaire` TEXT NOT NULL,`note` INTEGER NOT NULL,`jaquette` VARCHAR(150) NOT NULL,`empruntable` TINYINT NOT NULL DEFAULT '1',`prete` TINYINT NOT NULL DEFAULT '0',`vu` TINYINT NOT NULL DEFAULT '0',`fichier` TINYINT NOT NULL DEFAULT '0',`emplacement` VARCHAR(250) NOT NULL,`qualite` VARCHAR(100) NOT NULL)";
             instance.exec(requete);
-            if(insManager->getSettings(MariaDB).toBool()){
+            //if(insManager->getSettings(MariaDB).toBool()){
                 instance.exec("ALTER TABLE `etiquettes` CHANGE `id` `id` INT(3) NOT NULL AUTO_INCREMENT;");
                 instance.exec("ALTER TABLE `liste_etiquettes` CHANGE `id` `id` INT(5) NOT NULL AUTO_INCREMENT;");
                 instance.exec("ALTER TABLE `films` CHANGE `id` `id` INT(11) NOT NULL AUTO_INCREMENT;");
-            }
+            /*}
             else{
                 instance.exec("ALTER TABLE `etiquettes` CHANGE `id` `id` INT(3) NOT NULL AUTOINCREMENT;");
                 instance.exec("ALTER TABLE `liste_etiquettes` CHANGE `id` `id` INT(5) NOT NULL AUTOINCREMENT;");
                 instance.exec("ALTER TABLE `films` CHANGE `id` `id` INT(11) NOT NULL AUTOINCREMENT;");
-            }
+            }*/
         }
     }
     else{

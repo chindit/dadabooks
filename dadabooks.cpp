@@ -265,7 +265,11 @@ void DadaBooks::preparePreview(){
             id = insXmlManager->getIdByTitle(ui->listWidget_accueil->selectedItems().first()->text());
     }
     else{
-        QSqlQuery resultat = insSqlManager->query("SELECT id FROM livres WHERE titre=\""+ui->listWidget_accueil->currentItem()->text().replace("\"", "\\\"")+"\"");
+        QSqlQuery resultat;
+        if(insSettingsManager->getSettings(Type).toString() == "livres")
+            resultat = insSqlManager->query("SELECT id FROM livres WHERE titre=\""+ui->listWidget_accueil->currentItem()->text().replace("\"", "\\\"")+"\"");
+        else
+            resultat = insSqlManager->query("SELECT id FROM films WHERE titre=\""+ui->listWidget_accueil->currentItem()->text().replace("\"", "\\\"")+"\"");
         resultat.first();
         id = resultat.record().value("id").toInt();
     }
@@ -306,7 +310,11 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
     QGridLayout *layout_onglet = new QGridLayout(nv_onglet);
     nv_onglet->setLayout(layout_onglet);
 
-    QString req1 = "SELECT livres.id, livres.titre, livres.ISBN, livres.coauteurs, livres.synopsis, livres.couverture, livres.pages, livres.edition, livres.langue, livres.classement, livres.exemplaires, livres.commentaire, livres.lu, livres.note, livres.empruntable, livres.pret, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id WHERE livres.id = ";
+    QString req1;
+    if(!films)
+        req1 = "SELECT livres.id, livres.titre, livres.ISBN, livres.coauteurs, livres.synopsis, livres.couverture, livres.pages, livres.edition, livres.langue, livres.classement, livres.exemplaires, livres.commentaire, livres.lu, livres.note, livres.empruntable, livres.pret, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id WHERE livres.id = ";
+    else
+        req1 = "SELECT * FROM films WHERE films.id=";
     QString real_id;
     if(search || idOk){
         real_id = QString::number(id)+";";
@@ -468,20 +476,20 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
         titre_fen = new QLabel(res1.record().value("titre").toString());
         id2 = new QLabel(res1.record().value("id").toString());
         titre2 = new QLabel(res1.record().value("titre").toString());
-        isbn2 = new QLabel(res1.record().value("isbn").toString());
-        coauteurs2 = new QLabel(res1.record().value("coauteurs").toString());
-        if(!res1.record().value("couverture").toString().startsWith("http")){
-            QFile fichierImage(res1.record().value("couverture").toString());
+        isbn2 = new QLabel(res1.record().value(((films) ? "genre" : "isbn")).toString());
+        coauteurs2 = new QLabel(res1.record().value(((films) ? "titre_original" : "coauteurs")).toString());
+        if(!res1.record().value((films) ? "jaquette" : "couverture").toString().startsWith("http")){
+            QFile fichierImage(res1.record().value((films) ? "jaquette" : "couverture").toString());
             if(!fichierImage.exists()){
                 QMessageBox::information(this, "Image introuvable", "Une erreur est survenue, la jaquette de ce livre ne peut être trouvée");
             }
             else{
-                loader.load(res1.record().value("couverture").toString());
+                loader.load(res1.record().value((films) ? "jaquette" : "couverture").toString());
             }
         }
         else{
             QNetworkAccessManager nw_manager;
-            QNetworkRequest request(res1.record().value("couverture").toString());
+            QNetworkRequest request(res1.record().value((films) ? "jaquette" : "couverture").toString());
             QNetworkReply *reponse = nw_manager.get(request);
             QEventLoop eventLoop;
             connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
@@ -496,21 +504,23 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
             loader = loader.scaledToWidth(result);
         }
         couverture2->setPixmap(loader);
-        pages2 = new QLabel(res1.record().value("pages").toString());
-        edition2 = new QLabel(res1.record().value("edition").toString());
+        pages2 = new QLabel(res1.record().value((films) ? "duree" : "pages").toString());
+        edition2 = new QLabel(res1.record().value((films) ? "pays" : "edition").toString());
         langue2 = new QLabel(res1.record().value("langue").toString());
-        exemplaires2 = new QLabel(res1.record().value("exemplaires").toString());
+        exemplaires2 = new QLabel(res1.record().value((films) ? "sous_titres" : "exemplaires").toString());
         classement2 = new QLabel(res1.record().value("classement").toString());
         annee2 = new QLabel(res1.record().value("annee").toString());
-        auteur2 = new QLabel(res1.record().value("nom").toString());
-        editeur2 = new QLabel(res1.record().value("nom_editeur").toString());
+        auteur2 = new QLabel(res1.record().value((films) ? "directeur" : "nom").toString());
+        editeur2 = new QLabel(res1.record().value((films) ? "acteurs" : "nom_editeur").toString());
+        if(editeur2->text().size() > 50)
+            editeur2->setText(editeur2->text().left(editeur2->text().left(50).lastIndexOf(","))); //On coupe après le dernier nom qui fait moins de 50 caractères
         note2 = new QLabel(res1.record().value("note").toString()+"/20");
         synopsis2->insertPlainText(res1.record().value("synopsis").toString());
         commentaire2->insertPlainText(res1.record().value("commentaire").toString());
         ebook3 = new QLabel(res1.record().value("emplacement").toString());
         empruntable->setChecked(res1.record().value("empruntable").toBool());
         prete->setChecked(res1.record().value("pret").toBool());
-        ebook1->setChecked(res1.record().value("ebook").toBool());
+        ebook1->setChecked(res1.record().value((films) ? "fichier" : "ebook").toBool());
         mapper_delete->setMapping(button_delete, res1.record().value("id").toInt());
         mapper_edit->setMapping(button_edit, res1.record().value("id").toInt());
 
