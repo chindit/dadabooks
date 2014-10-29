@@ -615,7 +615,13 @@ void DadaBooks::closeTab(int tab){
 void DadaBooks::editLivre(int id){
     idOngletEdit = ui->tabWidget->currentIndex();
     QMultiMap<QString, QString> livre;
-    QString req1 = "SELECT livres.id, livres.titre, livres.ISBN, livres.coauteurs, livres.synopsis, livres.couverture, livres.pages, livres.edition, livres.langue, livres.classement, livres.exemplaires, livres.commentaire, livres.note, livres.lu, livres.empruntable, livres.pret, livres.ebook, livres.emplacement, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id WHERE livres.id = "+QString::number(id)+";";
+    QString req1;
+    bool films = (insSettingsManager->getSettings(Type).toString() == "films") ? true : false;
+    if(!films)
+        req1 = "SELECT livres.id, livres.titre, livres.ISBN, livres.coauteurs, livres.synopsis, livres.couverture, livres.pages, livres.edition, livres.langue, livres.classement, livres.exemplaires, livres.commentaire, livres.note, livres.lu, livres.empruntable, livres.pret, livres.ebook, livres.emplacement, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id WHERE livres.id = "+QString::number(id)+";";
+    else
+        req1 = "SELECT * FROM films WHERE films.id=";
+
     if(insSettingsManager->getSettings(Xml).toBool()){
         //XML
         livre = insXmlManager->getBook(id);
@@ -624,25 +630,25 @@ void DadaBooks::editLivre(int id){
     else{
         QSqlQuery res1 = insSqlManager->query(req1);
         res1.next();
-        livre.insert("couverture", res1.record().value("couverture").toString());
+        livre.insert("couverture", res1.record().value((films) ? "jaquette" : "couverture").toString());
         livre.insert("titre", res1.record().value("titre").toString());
-        livre.insert("auteur", res1.record().value("nom").toString());
-        livre.insert("editeur", res1.record().value("nom_editeur").toString());
+        livre.insert("auteur", res1.record().value((films) ? "directeur" : "nom").toString());
+        livre.insert("editeur", res1.record().value((films) ? "acteurs" : "nom_editeur").toString());
         livre.insert("annee", res1.record().value("annee").toString());
-        livre.insert("isbn", res1.record().value("isbn").toString());
+        livre.insert("isbn", res1.record().value((films) ? "genre" : "isbn").toString());
         livre.insert("langue", res1.record().value("langue").toString());
-        livre.insert("pages", res1.record().value("pages").toString());
+        livre.insert("pages", res1.record().value((films) ? "duree" : "pages").toString());
         livre.insert("synopsis", res1.record().value("synopsis").toString());
-        livre.insert("coauteurs", res1.record().value("coauteurs").toString());
-        livre.insert("edition", res1.record().value("edition").toString());
-        livre.insert("exemplaires", res1.record().value("exemplaires").toString());
+        livre.insert("coauteurs", res1.record().value((films) ? "titre_original" : "coauteurs").toString());
+        livre.insert("edition", res1.record().value((films) ? "pays" : "edition").toString());
+        livre.insert("exemplaires", res1.record().value((films) ? "sous_titres" : "exemplaires").toString());
         livre.insert("commentaire", res1.record().value("commentaire").toString());
         livre.insert("classement", res1.record().value("classement").toString());
         livre.insert("empruntable", res1.record().value("empruntable").toString());
         livre.insert("prete", res1.record().value("pret").toString());
         livre.insert("note", res1.record().value("note").toString());
         livre.insert("lu", res1.record().value("lu").toString());
-        livre.insert("ebook", res1.record().value("ebook").toString());
+        livre.insert("ebook", res1.record().value((films) ? "fichier" : "ebook").toString());
         livre.insert("emplacement", res1.record().value("emplacement").toString());
         livre.insert("xml", "0");
     }
@@ -659,15 +665,24 @@ void DadaBooks::deleteLivre(int id){
         titre = insXmlManager->getBook(id).value("titre");
     }
     else{
-        QString req1 = "SELECT titre FROM livres WHERE id = "+QString::number(id)+";";
+        QString req1;
+        if(insSettingsManager->getSettings(Type).toString() == "livres")
+            req1 = "SELECT titre FROM livres WHERE id = "+QString::number(id)+";";
+        else
+            req1 = "SELECT titre FROM films WHERE id = "+QString::number(id)+";";
         QSqlQuery res1 = insSqlManager->query(req1);
         res1.next();
         titre = res1.record().value("titre").toString();
     }
-    int reponse = QMessageBox::question(this, "Supprimer un livre", QString("Êtes-vous sûr de vouloir supprimer <i>%1</i>?").arg(titre), QMessageBox::Yes | QMessageBox::No);
+    QString titreBoite = QString("Supprimer un ")+((insSettingsManager->getSettings(Type).toString() == "livres") ? "livre" : "film");
+    int reponse = QMessageBox::question(this, titreBoite, QString("Êtes-vous sûr de vouloir supprimer <i>%1</i>?").arg(titre), QMessageBox::Yes | QMessageBox::No);
     if(reponse == QMessageBox::Yes){
         if(!insSettingsManager->getSettings(Xml).toBool()){
-            QString req1 = QString("DELETE FROM livres WHERE id = %1").arg(id);
+            QString req1;
+            if(insSettingsManager->getSettings(Type).toString() == "livres")
+                req1 = QString("DELETE FROM livres WHERE id = %1").arg(id);
+            else
+                req1 = QString("DELETE FROM films WHERE id = %1").arg(id);
             QSqlQuery res1 = insSqlManager->query(req1);
             res1.exec(req1);
         }
@@ -695,21 +710,41 @@ void DadaBooks::makeSearch(){
     }
     QStringList termes = recherche.split(" ");
     if(!insSettingsManager->getSettings(Xml).toBool()){
-        QString requete = "SELECT livres.id, livres.titre, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id WHERE";
-        QString temp;
-        for(int i=0; i<termes.size(); i++){
-            if(termes.at(i).size() > 3){
-                temp.append(" OR (livres.titre LIKE \"%");
-                temp.append(termes.at(i));
-                temp.append("%\") OR (livres.annee LIKE \"%");
-                temp.append(termes.at(i));
-                temp.append("%\") OR (auteurs.nom LIKE \"%");
-                temp.append(termes.at(i));
-                temp.append("%\") OR (editeurs.nom LIKE \"%");
-                temp.append(termes.at(i));
-                temp.append("%\") OR (livres.synopsis LIKE \"%");
-                temp.append(termes.at(i));
-                temp.append("%\")");
+        QString requete, temp;
+        if(insSettingsManager->getSettings(Type).toString() == "livres"){
+            requete = "SELECT livres.id, livres.titre, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id WHERE";
+            for(int i=0; i<termes.size(); i++){
+                if(termes.at(i).size() > 3){
+                    temp.append(" OR (livres.titre LIKE \"%");
+                    temp.append(termes.at(i));
+                    temp.append("%\") OR (livres.annee LIKE \"%");
+                    temp.append(termes.at(i));
+                    temp.append("%\") OR (auteurs.nom LIKE \"%");
+                    temp.append(termes.at(i));
+                    temp.append("%\") OR (editeurs.nom LIKE \"%");
+                    temp.append(termes.at(i));
+                    temp.append("%\") OR (livres.synopsis LIKE \"%");
+                    temp.append(termes.at(i));
+                    temp.append("%\")");
+                }
+            }
+        }
+        else{
+            requete = "SELECT films.id, films.titre, films.annee, films.directeur, films.acteurs FROM films WHERE";
+            for(int i=0; i<termes.size(); ++i){
+                if(termes.at(i).size() > 3){
+                    temp.append(" OR (films.titre LIKE \"%");
+                    temp.append(termes.at(i));
+                    temp.append(" OR (films.annee LIKE \"%");
+                    temp.append(termes.at(i));
+                    temp.append(" OR (films.directeur LIKE \"%");
+                    temp.append(termes.at(i));
+                    temp.append(" OR (films.acteurs LIKE \"%");
+                    temp.append(termes.at(i));
+                    temp.append(" OR (films.synopsis LIKE \"%");
+                    temp.append(termes.at(i));
+                    temp.append("%\")");
+                }
             }
         }
         temp = temp.right(temp.size()-3);
@@ -727,7 +762,8 @@ void DadaBooks::makeSearch(){
     QTableWidget *table = new QTableWidget(nv_onglet);
     table->setColumnCount(5);
     QStringList liste_headers;
-    liste_headers << "ID" << "Titre" << "Auteur" << "Éditeur" << "Année";
+    bool films = ((QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) != 0) ? false : true);
+    liste_headers << "ID" << "Titre" << ((films) ? "Directeur" : "Auteur") << ((films) ? "Acteurs" : "Éditeur") << "Année";
     table->setHorizontalHeaderLabels(liste_headers);
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(table, 0, 0);
@@ -840,14 +876,19 @@ void DadaBooks::openNewColl(){
 
 //Affiche les étiquettes du livre fourni en paramètre
 void DadaBooks::showEtiquette(const int &id){
-    QSqlQuery requete = insSqlManager->query("SELECT livres.id, livres.titre, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN liste_etiquettes ON livres.id=liste_etiquettes.id_livre LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id WHERE liste_etiquettes.id_etiquette="+QString::number(id)+" ORDER BY id DESC");
+    QSqlQuery requete;
+    bool films = insSettingsManager->getSettings(Type).toString() == "films";
+    if(!films)
+        requete = insSqlManager->query("SELECT livres.id, livres.titre, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN liste_etiquettes ON livres.id=liste_etiquettes.id_livre LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id WHERE liste_etiquettes.id_etiquette="+QString::number(id)+" ORDER BY id DESC");
+    else
+        requete = insSqlManager->query("SELECT * FROM films LEFT JOIN liste_etiquettes ON films.id=liste_etiquette.id_livre WHERE liste_etiquettes.id_etiquette="+QString::number(id)+" ORDER BY id DESC");
 
     QWidget *nv_onglet = new QWidget(ui->tabWidget);
     ui->tabWidget->addTab(nv_onglet, "Recherche...");
     QTableWidget *table = new QTableWidget(nv_onglet);
     table->setColumnCount(5);
     QStringList liste_headers;
-    liste_headers << "ID" << "Titre" << "Auteur" << "Éditeur" << "Année";
+    liste_headers << "ID" << "Titre" << ((films) ? "Directeur" : "Auteur") << ((films) ? "Acteurs" : "Éditeur") << "Année";
     table->setHorizontalHeaderLabels(liste_headers);
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(table, 0, 0);
@@ -862,8 +903,8 @@ void DadaBooks::showEtiquette(const int &id){
         QTableWidgetItem *item4 = new QTableWidgetItem();
         item0->setText(requete.record().value("id").toString());
         item1->setText(requete.record().value("titre").toString());
-        item2->setText(requete.record().value("nom").toString());
-        item3->setText(requete.record().value("nom_editeur").toString());
+        item2->setText(requete.record().value((films) ? "directeur" : "nom").toString());
+        item3->setText(requete.record().value((films) ? "acteurs" : "nom_editeur").toString());
         item4->setText(requete.record().value("annee").toString());
         table->setItem(0, 0, item0);
         table->setItem(0, 1, item1);
@@ -1036,28 +1077,32 @@ void DadaBooks::intabPreview(int id){
     }
     else{
         //SQL
-        QString req1 = "SELECT livres.id, livres.titre, livres.ISBN, livres.coauteurs, livres.synopsis, livres.couverture, livres.pages, livres.edition, livres.langue, livres.classement, livres.exemplaires, livres.commentaire, livres.lu, livres.note, livres.empruntable, livres.pret, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id WHERE livres.id="+QString::number(id);
+        QString req1;
+        if(!films)
+            req1 = "SELECT livres.id, livres.titre, livres.ISBN, livres.coauteurs, livres.synopsis, livres.couverture, livres.pages, livres.edition, livres.langue, livres.classement, livres.exemplaires, livres.commentaire, livres.lu, livres.note, livres.empruntable, livres.pret, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id WHERE livres.id="+QString::number(id);
+        else
+            req1 = "SELECT * FROM films WHERE films.id="+QString::number(id);
         QSqlQuery res1 = insSqlManager->query(req1);
         res1.first();
         titre_fen->setText(res1.record().value("titre").toString());
         id2->setText(res1.record().value("id").toString());
         titre2->setText(res1.record().value("titre").toString());
-        isbn2->setText(res1.record().value("isbn").toString());
-        coauteurs2->setText(res1.record().value("coauteurs").toString());
+        isbn2->setText(res1.record().value((films) ? "genre" : "isbn").toString());
+        coauteurs2->setText(res1.record().value((films) ? "titre_original" : "coauteurs").toString());
 
         QPixmap loader;
-        if(!res1.record().value("couverture").toString().startsWith("http")){
-            QFile fichierImage(res1.record().value("couverture").toString());
+        if(!res1.record().value((films) ? "jaquette" : "couverture").toString().startsWith("http")){
+            QFile fichierImage(res1.record().value((films) ? "jaquette" : "couverture").toString());
             if(!fichierImage.exists()){
                 QMessageBox::information(this, "Image introuvable", "Une erreur est survenue, la jaquette de ce livre ne peut être trouvée");
             }
             else{
-                loader.load(res1.record().value("couverture").toString());
+                loader.load(res1.record().value((films) ? "jaquette" : "couverture").toString());
             }
         }
         else{
             QNetworkAccessManager nw_manager;
-            QNetworkRequest request(res1.record().value("couverture").toString());
+            QNetworkRequest request(res1.record().value((films) ? "jaquette" : "couverture").toString());
             QNetworkReply *reponse = nw_manager.get(request);
             QEventLoop eventLoop;
             connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
@@ -1072,14 +1117,14 @@ void DadaBooks::intabPreview(int id){
             loader = loader.scaledToWidth(result);
         }
         couverture2->setPixmap(loader);
-        pages2->setText(res1.record().value("pages").toString());
-        edition2->setText(res1.record().value("edition").toString());
+        pages2->setText(res1.record().value((films) ? "duree" : "pages").toString());
+        edition2->setText(res1.record().value((films) ? "pays" : "edition").toString());
         langue2->setText(res1.record().value("langue").toString());
-        exemplaires2->setText(res1.record().value("exemplaires").toString());
+        exemplaires2->setText(res1.record().value((films) ? "sous_titres" : "exemplaires").toString());
         classement2->setText(res1.record().value("classement").toString());
         annee2->setText(res1.record().value("annee").toString());
-        auteur2->setText(res1.record().value("nom").toString());
-        editeur2->setText(res1.record().value("nom_editeur").toString());
+        auteur2->setText(res1.record().value((films) ? "directeur" : "nom").toString());
+        editeur2->setText(res1.record().value((films) ? "acteurs" : "nom_editeur").toString());
         note2->setText(res1.record().value("note").toString()+"/20");
         synopsis2->clear();
         synopsis2->insertPlainText(res1.record().value("synopsis").toString());
@@ -1088,10 +1133,22 @@ void DadaBooks::intabPreview(int id){
         ebook3->setText(res1.record().value("emplacement").toString());
         empruntable->setChecked(res1.record().value("empruntable").toBool());
         prete->setChecked(res1.record().value("pret").toBool());
-        ebook->setChecked(res1.record().value("ebook").toBool());
-        lu->setChecked(res1.record().value("lu").toBool());
+        ebook->setChecked(res1.record().value((films) ? "fichier" : "ebook").toBool());
+        lu->setChecked(res1.record().value((films) ? "vu" : "lu").toBool());
         mapperDelete->setMapping(buttonDelete, res1.record().value("id").toInt());
         mapperEdit->setMapping(buttonEdit, res1.record().value("id").toInt());
+        if(films){
+            listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            QStringList acteurs = res1.record().value("acteurs").toString().split(",");
+            foreach(QString item, acteurs){
+                listWidget->addItem(item.trimmed());
+            }
+            listGenresWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            QStringList genres = res1.record().value("genre").toString().split(",");
+            foreach(QString item, genres){
+                listGenresWidget->addItem(item.trimmed());
+            }
+        }
 
         //Stockage des étiquettes dans un layout propre
         QSqlQuery liste = insSqlManager->query("SELECT etiquettes.id,etiquettes.nom FROM etiquettes LEFT JOIN liste_etiquettes ON etiquettes.id=liste_etiquettes.id_etiquette WHERE liste_etiquettes.id_livre="+QString::number(id));
