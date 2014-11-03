@@ -53,56 +53,6 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
 
 //Destructeur
 DadaBooks::~DadaBooks(){
-    if(ui->label_image->isHidden()){
-        delete layoutEtiquettesLivres;
-        delete titre_fen;
-        delete id1;
-        delete id2;
-        delete titre;
-        delete titre2;
-        delete isbn;
-        delete isbn2;
-        delete coauteurs;
-        delete coauteurs2;
-        delete synopsis;
-        delete couverture;
-        delete couverture2;
-        delete pages;
-        delete pages2;
-        delete edition;
-        delete edition2;
-        delete langue;
-        delete langue2;
-        delete classement;
-        delete classement2;
-        delete exemplaires;
-        delete exemplaires2;
-        delete commentaire;
-        delete annee;
-        delete annee2;
-        delete auteur;
-        delete auteur2;
-        delete editeur;
-        delete editeur2;
-        delete note1;
-        delete note2;
-        delete ebook2;
-        delete ebook3;
-        delete listeEtiquettes;
-        delete empruntable;
-        delete prete;
-        delete lu;
-        delete ebook;
-        delete buttonEdit;
-        delete buttonDelete;
-        delete synopsis2;
-        delete commentaire2;
-        delete mapperDelete;
-        delete mapperEdit;
-        delete listWidget;
-        delete listGenresWidget;
-        delete buttonListWidgets;
-    }
     delete ui;
     delete insAddBook;
     delete insSiteManager;
@@ -238,7 +188,7 @@ void DadaBooks::setListeLivres(){
             ui->tableWidget->setItem(0, 4, item4);
         }
         //Et l'accueil
-        QString req2 = (films) ? "SELECT films.titre FROM films ORDER BY films.id" : "SELECT livres.titre FROM livres ORDER BY livres.id";
+        QString req2 = (films) ? "SELECT films.titre FROM films ORDER BY films.titre" : "SELECT livres.titre FROM livres ORDER BY livres.titre";
         QSqlQuery res2 = insSqlManager->query(req2);
         ui->listWidget_accueil->clear();
         while(res2.next()){
@@ -695,6 +645,12 @@ void DadaBooks::deleteLivre(int id){
         //On vire l'onglet
         this->closeTab(ui->tabWidget->currentIndex());
     }
+
+    //Si on est à l'accueil, on change le QStackedWidget sinon, on ferme l'onglet
+    if(ui->tabWidget->tabText(ui->tabWidget->currentIndex()) == "Accueil")
+        ui->stackedWidget->setCurrentIndex(0);
+    else
+        this->closeTab(ui->tabWidget->currentIndex());
     return;
 }
 
@@ -881,7 +837,7 @@ void DadaBooks::showEtiquette(const int &id){
     if(!films)
         requete = insSqlManager->query("SELECT livres.id, livres.titre, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN liste_etiquettes ON livres.id=liste_etiquettes.id_livre LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id WHERE liste_etiquettes.id_etiquette="+QString::number(id)+" ORDER BY id DESC");
     else
-        requete = insSqlManager->query("SELECT * FROM films LEFT JOIN liste_etiquettes ON films.id=liste_etiquette.id_livre WHERE liste_etiquettes.id_etiquette="+QString::number(id)+" ORDER BY id DESC");
+        requete = insSqlManager->query("SELECT * FROM films LEFT JOIN liste_etiquettes ON films.id=liste_etiquettes.id_livre WHERE liste_etiquettes.id_etiquette="+QString::number(id)+" ORDER BY id DESC");
 
     QWidget *nv_onglet = new QWidget(ui->tabWidget);
     ui->tabWidget->addTab(nv_onglet, "Recherche...");
@@ -921,321 +877,117 @@ void DadaBooks::showEtiquette(const int &id){
 
 //Affiche le livre sélectionné dans l'onglet principal
 void DadaBooks::intabPreview(int id){
-    //On détecte s'il s'agit d'un livre ou d'un film
+    //Détection du type de collection
     bool films = ((QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) != 0) ? false : true);
+    bool sql = !insSettingsManager->getSettings(Xml).toBool();
 
-    //En premier lieu, on cache les 3 éléments de l'accueil
-    if(!ui->label_image->isHidden()){
-        ui->label_image->setHidden(true);
-        ui->label->setHidden(true);
-        ui->label_2->setHidden(true);
-
-        //On prépare les éléments
-        titre_fen = new QLabel();
-        id1 = new QLabel("ID");
-        id2 = new QLabel();
-        titre = new QLabel("Titre");
-        titre2 = new QLabel();
-        isbn = new QLabel((films) ? "Genre" : "ISBN");
-        isbn2 = new QLabel();
-        coauteurs = new QLabel((films) ? "Titre original" : "Co-auteur(s)");
-        coauteurs2 = new QLabel();
-        synopsis = new QLabel("Résumé");
-        couverture = new QLabel("Couverture");
-        couverture2 = new QLabel();
-        pages = new QLabel((films) ? "Durée" : "Nombre de pages");
-        pages2 = new QLabel();
-        edition = new QLabel((films) ? "Nationalité" : "Édition");
-        edition2 = new QLabel();
-        langue = new QLabel("Langue");
-        langue2 = new QLabel();
-        exemplaires = new QLabel((films) ? "Sous-titres": "Nombre d'exemplaires");
-        exemplaires2 = new QLabel();
-        commentaire = new QLabel("Commentaire");
-        classement = new QLabel("Classement");
-        classement2 = new QLabel();
-        QString stringAnnee = "Année de "; stringAnnee.append((films) ? "production" : "publication");
-        annee = new QLabel(stringAnnee);
-        annee2 = new QLabel();
-        auteur = new QLabel((films) ? "Directeur" : "Auteur");
-        auteur2 = new QLabel();
-        editeur = new QLabel((films) ? "Acteurs" : "Éditeur");
-        editeur2 = new QLabel(); editeur2->setWordWrap(true);
-        note1 = new QLabel("Note");
-        note2 = new QLabel();
-        ebook2 = new QLabel("Emplacement");
-        ebook3 = new QLabel();
-        empruntable = new QCheckBox("Empruntable");
-        empruntable->setEnabled(false);
-        prete = new QCheckBox("En prêt");
-        prete->setEnabled(false);
-        lu = new QCheckBox((films) ? "Vu" : "Lu");
-        lu->setEnabled(false);
-        ebook = new QCheckBox((films) ? "Fichier" : "Ebook");
-        ebook->setEnabled(false);
-        buttonEdit = new QPushButton;
-        buttonEdit->setFlat(true);
-        buttonEdit->setIcon(QIcon(":/boutons/images/edit.png"));
-        buttonDelete = new QPushButton;
-        buttonDelete->setFlat(true);
-        buttonDelete->setIcon(QIcon(":/boutons/images/delete.png"));
-        synopsis2 = new QTextEdit;
-        commentaire2 = new QTextEdit;
-        mapperDelete = new QSignalMapper;
-        mapperEdit = new QSignalMapper;
-        layoutEtiquettesLivres = new QHBoxLayout;
-        listeEtiquettes = new QLabel();
-        layoutEtiquettesLivres->addWidget(listeEtiquettes);
-        listWidget = new QListWidget;
-        listGenresWidget = new QListWidget;
-        buttonListWidgets = new QPushButton;
-        buttonListWidgets->setIcon(QIcon(":/boutons/images/plus.png"));
-        buttonListWidgets->setFlat(true);
-        buttonListWidgets->setFixedSize(25, 25);
-        buttonListWidgets->setCheckable(true);
-
-        connect(listeEtiquettes, SIGNAL(linkActivated(QString)), this, SLOT(openTagList(QString)));
-        connect(buttonDelete, SIGNAL(clicked()), mapperDelete, SLOT(map()));
-        connect(buttonEdit, SIGNAL(clicked()), mapperEdit, SLOT(map()));
-        connect(mapperDelete, SIGNAL(mapped(int)), this, SLOT(deleteLivre(int)));
-        connect(mapperEdit, SIGNAL(mapped(int)), this, SLOT(editLivre(int)));
-        connect(buttonListWidgets, SIGNAL(clicked(bool)), this, SLOT(expandIntabContent(bool)));
-    }
-    else{
-        layoutEtiquettesLivres->removeItem(layoutEtiquettesLivres->takeAt(0));
-    }
-
-    if(insSettingsManager->getSettings(Xml).toBool()){
-        //XML
-        QMultiMap<QString, QString> xmlLivre;
-        xmlLivre = insXmlManager->getBook(id);
-        titre_fen->setText(xmlLivre.value("titre"));
-        id2->setText(xmlLivre.value("id"));
-        titre2->setText(xmlLivre.value("titre"));
-        if(!films)
-            isbn2->setText(xmlLivre.value("isbn"));
-        coauteurs2->setText(xmlLivre.value((films) ? "titreOriginal" : "coauteurs"));
-        QPixmap loader;
-        if(!xmlLivre.value("couverture").startsWith("http")){
-            QFile fichierImage(xmlLivre.value("couverture"));
-            if(!fichierImage.exists() && !xmlLivre.value("couverture").isEmpty()){
-                QMessageBox::information(this, "Image introuvable", "Une erreur est survenue, la jaquette de ce livre ne peut être trouvée");
-            }
-            else{
-                loader.load(xmlLivre.value("couverture"));
-            }
-        }
-        else{
-            QNetworkAccessManager nw_manager;
-            QNetworkRequest request(xmlLivre.value("couverture"));
-            QNetworkReply *reponse = nw_manager.get(request);
-            QEventLoop eventLoop;
-            connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
-            eventLoop.exec();
-            QByteArray data = reponse->readAll();
-            loader.loadFromData(data);
-        }
-        int width = loader.width();
-        if(width > 150){
-            float coef = (float)width / 150;
-            int result = loader.width()/coef;
-            loader = loader.scaledToWidth(result);
-        }
-        couverture2->setPixmap(loader);
-        pages2->setText(xmlLivre.value((films) ? "duree" : "pages"));
-        edition2->setText(xmlLivre.value((films) ? "pays" : "edition"));
-        langue2->setText(xmlLivre.value("langue"));
-        exemplaires2->setText(xmlLivre.value((films) ? "sousTitres" : "exemplaires"));
-        classement2->setText(xmlLivre.value("classement"));
-        annee2->setText(xmlLivre.value("annee"));
-        auteur2->setText(xmlLivre.value((films) ? "directeur" : "auteur"));
-        editeur2->setText(xmlLivre.value((films) ? "acteurs" : "editeur"));
-        note2->setText(xmlLivre.value("note")+"/20");
-        ebook3->setText(xmlLivre.value("emplacement", ""));
-        synopsis2->clear();
-        synopsis2->insertPlainText(xmlLivre.value("synopsis"));
-        commentaire2->clear();
-        commentaire2->insertPlainText(xmlLivre.value("commentaire"));
-        prete->setChecked(((xmlLivre.value("prete") == "True") ? true : false));
-        empruntable->setChecked(((xmlLivre.value("empruntable") == "True") ? true : false));
-        ebook->setChecked(((xmlLivre.value((films) ? "fichier" : "ebook") == "True") ? true : false));
-        lu->setChecked(((xmlLivre.value((films) ? "vu" : "lu") == "True") ? true : false));
-        mapperDelete->setMapping(buttonDelete, xmlLivre.value("id").toInt());
-        mapperEdit->setMapping(buttonEdit, xmlLivre.value("id").toInt());
-        if(films){
-            listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-            QStringList acteurs = xmlLivre.value("acteurs").split(",");
-            foreach(QString item, acteurs){
-                listWidget->addItem(item.trimmed());
-            }
-            listGenresWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-            QStringList genres = xmlLivre.value("genre").split(",");
-            foreach(QString item, genres){
-                listGenresWidget->addItem(item.trimmed());
-            }
-        }
-    }
-    else{
-        //SQL
+    //Récupération des données
+    QSqlQuery res1;
+    QMultiMap<QString, QString> xmlLivre;
+    if(sql){
         QString req1;
         if(!films)
             req1 = "SELECT livres.id, livres.titre, livres.ISBN, livres.coauteurs, livres.synopsis, livres.couverture, livres.pages, livres.edition, livres.langue, livres.classement, livres.exemplaires, livres.commentaire, livres.lu, livres.note, livres.empruntable, livres.pret, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id WHERE livres.id="+QString::number(id);
         else
             req1 = "SELECT * FROM films WHERE films.id="+QString::number(id);
-        QSqlQuery res1 = insSqlManager->query(req1);
+        res1 = insSqlManager->query(req1);
         res1.first();
-        titre_fen->setText(res1.record().value("titre").toString());
-        id2->setText(res1.record().value("id").toString());
-        titre2->setText(res1.record().value("titre").toString());
-        isbn2->setText(res1.record().value((films) ? "genre" : "isbn").toString());
-        coauteurs2->setText(res1.record().value((films) ? "titre_original" : "coauteurs").toString());
-
-        QPixmap loader;
-        if(!res1.record().value((films) ? "jaquette" : "couverture").toString().startsWith("http")){
-            QFile fichierImage(res1.record().value((films) ? "jaquette" : "couverture").toString());
-            if(!fichierImage.exists()){
-                QMessageBox::information(this, "Image introuvable", "Une erreur est survenue, la jaquette de ce livre ne peut être trouvée");
-            }
-            else{
-                loader.load(res1.record().value((films) ? "jaquette" : "couverture").toString());
-            }
-        }
-        else{
-            QNetworkAccessManager nw_manager;
-            QNetworkRequest request(res1.record().value((films) ? "jaquette" : "couverture").toString());
-            QNetworkReply *reponse = nw_manager.get(request);
-            QEventLoop eventLoop;
-            connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
-            eventLoop.exec();
-            QByteArray data = reponse->readAll();
-            loader.loadFromData(data);
-        }
-        int width = loader.width();
-        if(width > 150){
-            float coef = (float)width / 150;
-            int result = loader.width()/coef;
-            loader = loader.scaledToWidth(result);
-        }
-        couverture2->setPixmap(loader);
-        pages2->setText(res1.record().value((films) ? "duree" : "pages").toString());
-        edition2->setText(res1.record().value((films) ? "pays" : "edition").toString());
-        langue2->setText(res1.record().value("langue").toString());
-        exemplaires2->setText(res1.record().value((films) ? "sous_titres" : "exemplaires").toString());
-        classement2->setText(res1.record().value("classement").toString());
-        annee2->setText(res1.record().value("annee").toString());
-        auteur2->setText(res1.record().value((films) ? "directeur" : "nom").toString());
-        editeur2->setText(res1.record().value((films) ? "acteurs" : "nom_editeur").toString());
-        note2->setText(res1.record().value("note").toString()+"/20");
-        synopsis2->clear();
-        synopsis2->insertPlainText(res1.record().value("synopsis").toString());
-        commentaire2->clear();
-        commentaire2->insertPlainText(res1.record().value("commentaire").toString());
-        ebook3->setText(res1.record().value("emplacement").toString());
-        empruntable->setChecked(res1.record().value("empruntable").toBool());
-        prete->setChecked(res1.record().value("pret").toBool());
-        ebook->setChecked(res1.record().value((films) ? "fichier" : "ebook").toBool());
-        lu->setChecked(res1.record().value((films) ? "vu" : "lu").toBool());
-        mapperDelete->setMapping(buttonDelete, res1.record().value("id").toInt());
-        mapperEdit->setMapping(buttonEdit, res1.record().value("id").toInt());
-        if(films){
-            listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-            QStringList acteurs = res1.record().value("acteurs").toString().split(",");
-            foreach(QString item, acteurs){
-                listWidget->addItem(item.trimmed());
-            }
-            listGenresWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-            QStringList genres = res1.record().value("genre").toString().split(",");
-            foreach(QString item, genres){
-                listGenresWidget->addItem(item.trimmed());
-            }
-        }
-
-        //Stockage des étiquettes dans un layout propre
-        QSqlQuery liste = insSqlManager->query("SELECT etiquettes.id,etiquettes.nom FROM etiquettes LEFT JOIN liste_etiquettes ON etiquettes.id=liste_etiquettes.id_etiquette WHERE liste_etiquettes.id_livre="+QString::number(id));
-        QString test;
-        while(liste.next()){
-            QPushButton *etiquette = new QPushButton(liste.record().value("nom").toString());
-            etiquette->setFlat(true);
-            etiquette->setIcon(QIcon(":/boutons/images/etiquette.png"));
-            etiquette->setStyleSheet("text-decoration: underline;");
-            QSignalMapper *mappeurEtiquette = new QSignalMapper;
-            connect(etiquette, SIGNAL(clicked()), mappeurEtiquette, SLOT(map()));
-            mappeurEtiquette->setMapping(etiquette, liste.record().value("id").toInt());
-            connect(mappeurEtiquette, SIGNAL(mapped(const int &)), this, SLOT(showEtiquette(const int &)));
-            test.append("<img src=\":/boutons/images/etiquette_small.png\"><a href=\""+liste.record().value("id").toString()+"\">"+liste.record().value("nom").toString()+"</a>     ");
-        }
-        listeEtiquettes->setText(test);
     }
-    synopsis2->setReadOnly(true);
-    commentaire2->setReadOnly(true);
-    titre_fen->setFont(QFont("Ubuntu", 20, 0, false));
-
-
-    //-----------------------------------------------
-    //Mise en place dans le layout
-    //-----------------------------------------------
-    ui->gridLayoutPrincipal->addWidget(titre_fen, 0, 0, 1, 4, Qt::AlignHCenter);
-    QHBoxLayout *layout_buttons = new QHBoxLayout;
-    layout_buttons->addWidget(buttonEdit, 0, Qt::AlignRight | Qt::AlignTop);
-    layout_buttons->addWidget(buttonDelete, 0, Qt::AlignRight | Qt::AlignTop);
-    ui->gridLayoutPrincipal->addLayout(layout_buttons, 0, 4, 1, 1, Qt::AlignRight | Qt::AlignTop);
-    QHBoxLayout *layout_id = new QHBoxLayout;
-    layout_id->addWidget(id1);
-    layout_id->addWidget(id2);
-    ui->gridLayoutPrincipal->addLayout(layout_id, 2, 1, 1, 2, Qt::AlignLeft);
-    ui->gridLayoutPrincipal->addWidget(titre, 2, 3);
-    ui->gridLayoutPrincipal->addWidget(titre2, 2, 4);
-    if(!films){
-        ui->gridLayoutPrincipal->addWidget(isbn, 7, 3);
-        ui->gridLayoutPrincipal->addWidget(isbn2, 7, 4);
+    else{
+        xmlLivre = insXmlManager->getBook(id);
     }
-    ui->gridLayoutPrincipal->addWidget(coauteurs, 3, 3);
-    ui->gridLayoutPrincipal->addWidget(coauteurs2, 3, 4);
-    ui->gridLayoutPrincipal->addWidget(synopsis, 14, 0);
-    ui->gridLayoutPrincipal->addWidget(synopsis2, 15, 0, 1, 3);
-    ui->gridLayoutPrincipal->addWidget(pages, 5, 1);
-    ui->gridLayoutPrincipal->addWidget(pages2, 5, 2);
-    ui->gridLayoutPrincipal->addWidget(edition, 5, 3);
-    ui->gridLayoutPrincipal->addWidget(edition2, 5, 4);
-    ui->gridLayoutPrincipal->addWidget(langue, 6, 1);
-    ui->gridLayoutPrincipal->addWidget(langue2, 6, 2);
-    ui->gridLayoutPrincipal->addWidget(exemplaires, 6, 3);
-    ui->gridLayoutPrincipal->addWidget(exemplaires2, 6, 4);
-    ui->gridLayoutPrincipal->addWidget(commentaire, 14, 3, 1, 1, Qt::AlignLeft);
-    ui->gridLayoutPrincipal->addWidget(commentaire2, 15, 3, 1, 2);
-    ui->gridLayoutPrincipal->addWidget(classement, 7, 1);
-    ui->gridLayoutPrincipal->addWidget(classement2, 7, 2);
-    ui->gridLayoutPrincipal->addWidget(annee, 4, 3);
-    ui->gridLayoutPrincipal->addWidget(annee2, 4, 4);
-    ui->gridLayoutPrincipal->addWidget(auteur, 3, 1);
-    ui->gridLayoutPrincipal->addWidget(auteur2, 3, 2);
-    if(!films){
-        ui->gridLayoutPrincipal->addWidget(editeur, 4, 1);
-        ui->gridLayoutPrincipal->addWidget(editeur2, 4, 2);
-    }
-    ui->gridLayoutPrincipal->addWidget(empruntable, 8, 1, 1, 2, Qt::AlignLeft);
-    ui->gridLayoutPrincipal->addWidget(empruntable, 8, 2, 1, 1, Qt::AlignLeft);
-    ui->gridLayoutPrincipal->addWidget(lu, 8, 3, 1, 2, Qt::AlignLeft);
-    ui->gridLayoutPrincipal->addWidget(ebook, 9, 1, 1, 2, Qt::AlignLeft);
-    ui->gridLayoutPrincipal->addWidget(ebook, 9, 2, 1, 1, Qt::AlignLeft);
-    ui->gridLayoutPrincipal->addWidget(ebook2, 9, 3, 1, 2, Qt::AlignLeft);
-    ui->gridLayoutPrincipal->addWidget(couverture, 1, 0, 1, 1, Qt::AlignHCenter);
-    ui->gridLayoutPrincipal->addWidget(couverture2, 2, 0, 10, 1, Qt::AlignVCenter);
-    ui->gridLayoutPrincipal->addWidget(note1, 10, 1);
-    ui->gridLayoutPrincipal->addWidget(note2, 10, 2);
-    ui->gridLayoutPrincipal->addLayout(layoutEtiquettesLivres, 10, 3, 1, 2, Qt::AlignLeft);
+
     if(films){
-        ui->gridLayoutPrincipal->addWidget(buttonListWidgets, 12, 0);
-        ui->gridLayoutPrincipal->addWidget(editeur, 12, 1, 1, 2, Qt::AlignLeft);
-        ui->gridLayoutPrincipal->addWidget(listWidget, 13, 1, 1, 2);
-        ui->gridLayoutPrincipal->addWidget(isbn, 12, 3, 1, 2, Qt::AlignLeft);
-        ui->gridLayoutPrincipal->addWidget(listGenresWidget, 13, 3, 1, 2);
-        listWidget->setHidden(true); listGenresWidget->setHidden(true);
+        ui->stackedWidget->setCurrentIndex(1);
     }
-    QSpacerItem *spacer = new QSpacerItem(15, 100, QSizePolicy::Minimum, QSizePolicy::Minimum);
-    QSpacerItem *spacer2 = new QSpacerItem(10, 100, QSizePolicy::Minimum, QSizePolicy::Minimum);
-    ui->gridLayoutPrincipal->addItem(spacer, 11, 1, 1, 3, Qt::AlignHCenter);
-    ui->gridLayoutPrincipal->addItem(spacer2, 16, 1, 1, 3, Qt::AlignHCenter);
+    else{
+        ui->stackedWidget->setCurrentIndex(2);
+    }
+
+    //Connexion des signaux-slots disponibles
+    mapperDelete = new QSignalMapper; mapperEdit = new QSignalMapper;
+    connect(mapperDelete, SIGNAL(mapped(int)), this, SLOT(deleteLivre(int)));
+    connect(mapperEdit, SIGNAL(mapped(int)), this, SLOT(editLivre(int)));
+
+    if(films){
+        //------------------------------
+        //FILMS
+        //------------------------------
+        connect(ui->pushButtonListes, SIGNAL(clicked(bool)), this, SLOT(expandIntabContent(bool)));
+
+        //Masquage des deux champs
+        ui->listWidgetActeurs->setHidden(true);
+        ui->listWidgetGenres->setHidden(true);
+
+        //Remplissage des données
+        ui->labelTitre->setText(((sql) ? res1.record().value("titre").toString() : xmlLivre.value("titre")));
+        ui->labelID->setText(((sql) ? res1.record().value("id").toString() : xmlLivre.value("id")));
+        ui->labelTitreOriginal->setText(((sql) ? res1.record().value("titre_original").toString() : xmlLivre.value("titreOriginal")));
+        //Image
+        QPixmap loader = ToolsManager::getPixmapFromString((sql) ? res1.record().value("jaquette").toString() : xmlLivre.value("couverture"));
+        ui->labelImage->setPixmap(loader);
+        ui->labelDirecteur->setText(((sql) ? res1.record().value("directeur").toString() : xmlLivre.value("directeur")));
+        ui->labelAnnee->setText(((sql) ? res1.record().value("annee").toString() : xmlLivre.value("annee")));
+        ui->labelLangue->setText(((sql) ? res1.record().value("langue").toString() : xmlLivre.value("langue")));
+        ui->labelSousTitres->setText(((sql) ? res1.record().value("sous_titres").toString() : xmlLivre.value("sousTitres")));
+        ui->labelNationalite->setText(((sql) ? res1.record().value("pays").toString() : xmlLivre.value("pays")));
+        ui->labelDuree->setText(((sql) ? res1.record().value("duree").toString() : xmlLivre.value("duree")));
+        ui->labelClassement->setText(((sql) ? res1.record().value("classement").toString() : xmlLivre.value("classement")));
+        ui->labelNote->setText(((sql) ? res1.record().value("note").toString() : xmlLivre.value("note"))+"/20");
+        ui->plainTextEditSynopsis->clear(); ui->plainTextEditSynopsis->insertPlainText(((sql) ? res1.record().value("synopsis").toString() : xmlLivre.value("synopsis")));
+        ui->plainTextEditCommentaire->clear(); ui->plainTextEditCommentaire->insertPlainText(((sql) ? res1.record().value("commentaire").toString() : xmlLivre.value("commentaire")));
+        ui->checkBoxPrete->setChecked((sql) ? res1.record().value("prete").toBool() : ((xmlLivre.value("prete") == "True") ? true : false));
+        ui->checkBoxEmpruntable->setChecked((sql) ? res1.record().value("empruntable").toBool() : ((xmlLivre.value("empruntable") == "True") ? true : false));
+        ui->checkBoxFichier->setChecked((sql) ? res1.record().value("fichier").toBool() : ((xmlLivre.value("fichier") == "True") ? true : false));
+        //TODO chemin FICHIER
+        ui->checkBoxVu->setChecked((sql) ? res1.record().value("vu").toBool() : ((xmlLivre.value("vu") == "True") ? true : false));
+
+        //Mappeurs pour les boutons
+        connect(ui->pushButtonDelete, SIGNAL(clicked()), mapperDelete, SLOT(map()));
+        connect(ui->pushButtonEdit, SIGNAL(clicked()), mapperEdit, SLOT(map()));
+        mapperDelete->setMapping(ui->pushButtonDelete, ((sql) ? res1.record().value("id").toInt() : xmlLivre.value("id").toInt()));
+        mapperEdit->setMapping(ui->pushButtonEdit, ((sql) ? res1.record().value("id").toInt() : xmlLivre.value("id").toInt()));
+
+        //QListWidget pour les acteurs et les genres
+        ui->listWidgetActeurs->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        ui->listWidgetActeurs->addItems(((sql) ? res1.record().value("acteurs").toString() : xmlLivre.value("acteurs")).split(","));
+        ui->listWidgetGenres->addItems(((sql) ? res1.record().value("genre").toString() : xmlLivre.value("genre")).split(","));
+    }
+    else{
+        //------------------------------
+        //LIVRES
+        //------------------------------
+        ui->labelTitreLivre->setText(((sql) ? res1.record().value("titre").toString() : xmlLivre.value("titre")));
+        ui->labelIDLivre->setText(((sql) ? res1.record().value("id").toString() : xmlLivre.value("id")));
+        ui->labelImageLivre->setPixmap(ToolsManager::getPixmapFromString(((sql) ? res1.record().value("couverture").toString() : xmlLivre.value("couverture"))));
+        ui->labelAuteurLivre->setText(((sql) ? res1.record().value("auteur").toString() : xmlLivre.value("auteur")));
+        ui->labelCoAuteurLivre->setText(((sql) ? res1.record().value("coauteur").toString() : xmlLivre.value("coauteur")));
+        ui->labelEditeurLivre->setText(((sql) ? res1.record().value("editeur").toString() : xmlLivre.value("editeur")));
+        ui->labelAnneeLivre->setText(((sql) ? res1.record().value("annee").toString() : xmlLivre.value("annee")));
+        ui->labelPagesLivre->setText(((sql) ? res1.record().value("pages").toString() : xmlLivre.value("pages")));
+        ui->labelLangueLivre->setText(((sql) ? res1.record().value("langue").toString() : xmlLivre.value("langue")));
+        ui->labelISBNLivre->setText(((sql) ? res1.record().value("isbn").toString() : xmlLivre.value("isbn")));
+
+        ui->labelEditionLivre->setText(((sql) ? res1.record().value("edition").toString() : xmlLivre.value("edition")));
+        ui->labelExemplairesLivre->setText(((sql) ? res1.record().value("exemplaires").toString() : xmlLivre.value("exemplaires")));
+        ui->labelNoteLivre->setText(((sql) ? res1.record().value("note").toString() : xmlLivre.value("note"))+"/20");
+        ui->checkBoxLuLivre->setChecked(((sql) ? res1.record().value("lu").toBool() : ((xmlLivre.value("lu") == "True") ? true : false)));
+        ui->checkBoxEmpruntableLivre->setChecked(((sql) ? res1.record().value("empruntable").toBool() : ((xmlLivre.value("empruntable") == "True") ? true : false)));
+        ui->checkBoxPreteLivre->setChecked(((sql) ? res1.record().value("prete").toBool() : ((xmlLivre.value("prete") == "True") ? true : false)));
+        ui->checkBoxEbookLivre->setChecked(((sql) ? res1.record().value("ebook").toBool() : ((xmlLivre.value("ebook") == "True") ? true : false)));
+        ui->labelEmplacementLivre->setText(((sql) ? res1.record().value("emplacement").toString() : xmlLivre.value("emplacement")));
+        if((sql && !res1.record().value("ebook").toBool()) || (!sql && (xmlLivre.value("ebook") != "True")))
+            ui->labelEmplacementLivre->setHidden(true);
+        ui->labelClassementLivre->setText(((sql) ? res1.record().value("classement").toString() : xmlLivre.value("classement")));
+        ui->plainTextEditResumeLivre->clear(); ui->plainTextEditResumeLivre->insertPlainText(((sql) ? res1.record().value("synopsis").toString() : xmlLivre.value("synopsis")));
+        ui->plainTextEditCommentaireLivre->clear(); ui->plainTextEditCommentaire->insertPlainText(((sql) ? res1.record().value("commentaire").toString() : xmlLivre.value("commentaire")));
+
+        //Mappeurs pour les boutons
+        connect(ui->pushButtonDeleteLivre, SIGNAL(clicked()), mapperDelete, SLOT(map()));
+        connect(ui->pushButtonEditLivre, SIGNAL(clicked()), mapperEdit, SLOT(map()));
+        mapperDelete->setMapping(ui->pushButtonDeleteLivre, ((sql) ? res1.record().value("id").toInt() : xmlLivre.value("id").toInt()));
+        mapperEdit->setMapping(ui->pushButtonEditLivre, ((sql) ? res1.record().value("id").toInt() : xmlLivre.value("id").toInt()));
+    }
 }
 
 //Affiche la liste des livres/films qui contiennent l'étiquette TAG
@@ -1250,13 +1002,13 @@ void DadaBooks::openTagList(QString tag){
 //Affiche ou cache les auteurs et les genres en cas de prévisualisation dans l'onglet courant
 void DadaBooks::expandIntabContent(bool status){
     if(status){
-        buttonListWidgets->setIcon(QIcon(":/boutons/images/moins.png"));
-        listGenresWidget->setHidden(false);
-        listWidget->setHidden(false);
+        ui->pushButtonListes->setIcon(QIcon(":/boutons/images/moins.png"));
+        ui->listWidgetGenres->setHidden(false);
+        ui->listWidgetActeurs->setHidden(false);
     }
     else{
-        buttonListWidgets->setIcon(QIcon(":/boutons/images/plus.png"));
-        listGenresWidget->setHidden(true);
-        listWidget->setHidden(true);
+        ui->pushButtonListes->setIcon(QIcon(":/boutons/images/plus.png"));
+        ui->listWidgetActeurs->setHidden(true);
+        ui->listWidgetGenres->setHidden(true);
     }
 }

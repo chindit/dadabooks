@@ -146,10 +146,10 @@ void EditBook::accept(){
                 //On vire les vieilles étiquettes
                 insSql->query("DELETE FROM liste_etiquettes WHERE id_livre="+QString::number(idLivre));
                 for(int i=0; i<etiquettes.size(); i++){
-                    req1 = "SELECT id FROM etiquettes WHERE nom=\""+etiquettes.at(i).trimmed()+"\"";
+                    req1 = "SELECT id FROM etiquettes WHERE nom=\""+etiquettes.at(i).trimmed().trimmed()+"\"";
                     res1 = insSql->query(req1);
                     if(res1.size() < 1){
-                        req1 = "INSERT INTO etiquettes(nom) VALUES(\""+etiquettes.at(i)+"\")";
+                        req1 = "INSERT INTO etiquettes(nom) VALUES(\""+etiquettes.at(i).trimmed()+"\")";
                         res1 = insSql->query(req1);
                         id = res1.lastInsertId().toInt();
                     }
@@ -251,7 +251,6 @@ void EditBook::accept(){
                 else{
                     //req1 = "UPDATE films SET titre = \""+this->guillemets(ui->lineEdit_titre->text())+"\", ISBN = \""+ui->lineEdit_ISBN->text()+"\", auteur = "+QString::number(id_auteur)+", coauteurs = \""+this->guillemets(ui->lineEdit_coauteurs->text())+"\", synopsis = \""+this->guillemets(ui->plainTextEdit_resume->toPlainText())+"\", couverture = \""+nomImage+"\", editeur = "+QString::number(id_editeur)+", annee = '"+QString::number(annee)+"', pages = "+QString::number(pages)+", edition = "+QString::number(edition)+", langue = \""+this->guillemets(ui->lineEdit_langue->text())+"\", classement = \""+this->guillemets(ui->lineEdit_classement->text())+"\", exemplaires = "+QString::number(exemplaires)+", commentaire = \""+this->guillemets(ui->plainTextEdit_commentaire->toPlainText())+"\", lu = "+QString::number(lu)+", note = "+QString::number(note)+", empruntable = "+QString::number(empruntable)+", pret = "+QString::number(pret)+", ebook = "+QString::number(ebook)+", emplacement = \""+ui->lineEdit_emplacement->text()+"\" WHERE id="+QString::number(idEdit)+";";
                 }
-                QMessageBox::information(this, "e", req1);
                 QSqlQuery res1 = insSql->query(req1);
                 idFilm = (idEdit == 0) ? res1.lastInsertId().toInt() : idEdit;
                 QString etiquette = ui->comboBoxEtiquettes->currentText();
@@ -267,9 +266,9 @@ void EditBook::accept(){
                     insSql->query("DELETE FROM liste_etiquettes WHERE id_livre="+QString::number(idFilm));
                     for(int i=0; i<etiquettes.size(); i++){
                         req1 = "SELECT id FROM etiquettes WHERE nom=\""+etiquettes.at(i).trimmed()+"\"";
-                        res1 = insSql->query(req1);
+                        res1 = insSql->query(req1); res1.first();
                         if(res1.size() < 1){
-                            req1 = "INSERT INTO etiquettes(nom) VALUES(\""+etiquettes.at(i)+"\")";
+                            req1 = "INSERT INTO etiquettes(nom) VALUES(\""+etiquettes.at(i).trimmed()+"\")";
                             res1 = insSql->query(req1);
                             id = res1.lastInsertId().toInt();
                         }
@@ -364,6 +363,7 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
     bool films = ((QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) != 0) ? false : true);
 
     if(!films){
+        ui->stackedWidget->setCurrentIndex(0);
         ui->lineEdit_titre->setText(livre.value("titre"));
         ui->lineEdit_auteur->setText(livre.value("auteur"));
         ui->lineEdit_editeur->setText(livre.value("editeur"));
@@ -445,6 +445,7 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
     }
     else{
         //FILM
+        ui->stackedWidget->setCurrentIndex(1);
         ui->lineEditTitre->setText(livre.value("titre"));
         ui->lineEditOriginal->setText(livre.value("titreOriginal"));
         ui->lineEditDirecteur->setText(livre.value("directeur"));

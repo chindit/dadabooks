@@ -64,13 +64,7 @@ private:
     SiteManager *insSiteManager;
     SqlManager *insSqlManager;
     XmlManager *insXmlManager;
-    QHBoxLayout *layoutEtiquettesLivres;
-    QLabel *titre_fen, *id1, *id2, *titre, *titre2, *isbn, *isbn2, *coauteurs, *coauteurs2, *synopsis, *couverture, *couverture2, *pages, *pages2, *edition, *edition2, *langue, *langue2, *classement, *classement2, *exemplaires, *exemplaires2, *commentaire, *annee, *annee2, *auteur, *auteur2, *editeur, *editeur2, *note1, *note2, *ebook2, *ebook3, *listeEtiquettes;
-    QCheckBox *empruntable, *prete, *lu, *ebook;
-    QPushButton *buttonEdit, *buttonDelete, *buttonListWidgets;
-    QTextEdit *synopsis2, *commentaire2;
     QSignalMapper *mapperDelete, *mapperEdit;
-    QListWidget *listWidget, *listGenresWidget;
 
     int idOngletEdit;
     QString nomSiteRecherche;
