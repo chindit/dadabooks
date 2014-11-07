@@ -50,6 +50,7 @@ private slots:
     void showEtiquette(const int &id);
     void openTagList(QString tag);
     void expandIntabContent(bool status);
+    void selectRandom();
 
 
 private:

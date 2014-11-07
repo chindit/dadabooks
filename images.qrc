@@ -12,6 +12,7 @@
         <file>images/etiquette_small.png</file>
         <file>images/moins.png</file>
         <file>images/plus.png</file>
+        <file>images/random.png</file>
     </qresource>
     <qresource prefix="/programme">
         <file>images/icone.png</file>

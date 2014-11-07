@@ -37,6 +37,7 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     //Connexion des signaux et des slots
     connect(ui->pushButton_add, SIGNAL(clicked()), insAddBook, SLOT(show()));
     connect(insAddBook, SIGNAL(searchInternet(QString,QString)), this, SLOT(rechercheInternet(QString,QString)));
+    connect(ui->pushButton_random, SIGNAL(clicked()), this, SLOT(selectRandom()));
     connect(insPreviewBook, SIGNAL(bookSelected(QString)), this, SLOT(getBook(QString)));
     connect(ui->tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
     connect(insEditBook, SIGNAL(editDone(int)), this, SLOT(updateOnglet(int)));
@@ -1011,4 +1012,50 @@ void DadaBooks::expandIntabContent(bool status){
         ui->listWidgetActeurs->setHidden(true);
         ui->listWidgetGenres->setHidden(true);
     }
+}
+
+//Sélection un film/livre non vu/lu au hasard
+void DadaBooks::selectRandom(){
+    //Détection du type de collection
+    bool films = ((QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) != 0) ? false : true);
+    bool sql = !insSettingsManager->getSettings(Xml).toBool();
+    int id = -1;
+    if(sql){
+        QSqlQuery res1;
+        QString req1;
+        if(films){
+            req1 = 'SELECT id FROM films WHERE vu=0 ORDER BY RAND() LIMIT 1';
+        }
+        else{
+            req1 = 'SELECT id FROM livres WHERE lu=0 ORDER BY RAND() LIMIT 1';
+        }
+        res1 = insSqlManager->query(req1);
+        res1.first();
+        id = res1.record().value("id").toInt();
+    }
+    else{ //XML
+        QList<QMultiMap<QString, QString> > base = insXmlManager->readBase();
+        QList<int> ids;
+        for( int i=0; i<base.count(); ++i ){
+            if(films){
+                if(base.at(i).value("vu") == "False"){
+                    ids.append(base.at(i).value("id").toInt());
+                }
+            }
+            else{
+                if(base.at(i).value("lu") == "False"){
+                    ids.append(base.at(i).value("id").toInt());
+                }
+            }
+        }
+        srand(time(NULL));
+        id = ids.at((rand()%ids.count()));
+    }
+    if(insSettingsManager->getSettings(OpenInTab).toBool()){
+        this->intabPreview(id);
+    }
+    else{
+        this->activatePreview(id);
+    }
+    return;
 }

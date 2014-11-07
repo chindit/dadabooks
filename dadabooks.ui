@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>852</width>
-    <height>599</height>
+    <height>738</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -96,6 +96,32 @@
         <property name="icon">
          <iconset resource="images.qrc">
           <normaloff>:/boutons/images/options.png</normaloff>:/boutons/images/options.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_random">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>45</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="statusTip">
+         <string>Sélectionner un élément au hasard</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="images.qrc">
+          <normaloff>:/boutons/images/random.png</normaloff>:/boutons/images/random.png</iconset>
         </property>
        </widget>
       </item>
@@ -202,6 +228,9 @@
         </item>
         <item row="0" column="1">
          <widget class="QStackedWidget" name="stackedWidget">
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
           <widget class="QWidget" name="page">
            <layout class="QGridLayout" name="gridLayout_4">
             <item row="0" column="0">
@@ -276,7 +305,7 @@
               <item row="7" column="0">
                <widget class="QLabel" name="labelFichier">
                 <property name="text">
-                 <string>TextLabel</string>
+                 <string/>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -341,7 +370,7 @@
               <item row="5" column="0">
                <widget class="QLabel" name="labelClassement">
                 <property name="text">
-                 <string>TextLabel</string>
+                 <string/>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

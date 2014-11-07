@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>720</width>
-    <height>813</height>
+    <height>831</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -38,7 +38,7 @@
    <item row="1" column="0">
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="livre">
       <layout class="QGridLayout" name="gridLayout_4">
@@ -422,8 +422,6 @@
         </layout>
        </item>
       </layout>
-      <zorder>layoutWidget</zorder>
-      <zorder>label_titre</zorder>
      </widget>
      <widget class="QWidget" name="film">
       <layout class="QGridLayout" name="gridLayout_3">
@@ -563,6 +561,9 @@
          <property name="text">
           <string>Jaquette</string>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item row="16" column="2">
@@ -697,14 +698,14 @@
        <item row="12" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_8">
          <item>
-          <widget class="QCheckBox" name="checkBoxPrete">
+          <widget class="QCheckBox" name="checkBoxEmpruntable">
            <property name="text">
             <string>Empruntable</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="checkBoxEmpruntable">
+          <widget class="QCheckBox" name="checkBoxPrete">
            <property name="text">
             <string>Prêté</string>
            </property>

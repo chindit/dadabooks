@@ -56,9 +56,8 @@ void FirstLaunch::saveSQLParams(){
 
 QString FirstLaunch::getDirName(){
     QMessageBox::information(this, "Choisissez un dossier", "Merci de choisir un dossier dans lequel DadaBooks placera sa base de données");
-    QString dirName = QFileDialog::getOpenFileName(this, "Dossier racine");
-    QFileInfo dossier(dirName);
-    return dossier.path()+"/";
+    QString dirName = QFileDialog::getExistingDirectory(this, "Dossier racine", QDir::homePath());
+    return dirName+"/";
 }
 
 void FirstLaunch::accept(){
