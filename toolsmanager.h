@@ -8,7 +8,9 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QPixmap>
+#include <QtPrintSupport/QPrinter>
 #include <QString>
+#include <QTextDocument>
 
 class ToolsManager
 {
@@ -16,6 +18,7 @@ public:
     ToolsManager();
     static QString downloadFile(QString file, QDir dossier);
     static QPixmap getPixmapFromString(QString adresse);
+    static void exportMovieList(QList<QMultiMap<QString, QString> > base, QString dir);
 
 private:
     QByteArray downloadLink(QString url);

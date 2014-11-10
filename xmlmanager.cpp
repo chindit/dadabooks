@@ -1,5 +1,4 @@
 #include "xmlmanager.h"
-#include "sql.h"
 #include "sitemanager.h"
 
 XmlManager::XmlManager(QObject *parent) : QObject(parent){

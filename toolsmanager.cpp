@@ -66,3 +66,47 @@ QPixmap ToolsManager::makeThumbnail(QPixmap image){
 
     return pixmap;
 }
+
+void ToolsManager::exportMovieList(QList<QMultiMap<QString, QString> > base, QString dir){
+    if(base.isEmpty())
+        return;
+    QString document;
+    QFile schema("ressources/template_films.html");
+    if(schema.exists()){
+        if(schema.open(QFile::ReadOnly)){
+            document = schema.readAll();
+            schema.close();
+        }
+    }
+
+    for(int i=0; i<base.count(); ++i){
+        QString image = base.at(i).value("couverture");
+        if(image.startsWith("http")){
+            image = ToolsManager::downloadFile(base.at(i).value("couverture"), QDir(dir));
+        }
+        document.append("<div class=\"film\"> \n \
+                <img src=\""+image+"\" /> \n \
+                <span class=\"titre\">"+base.at(i).value("titre")+"</span> \n \
+                <div class=\"prop\"> \n \
+                <span class=\"duree\">"+base.at(i).value("duree")+" min</span> \n \
+                <span class=\"genre\">"+base.at(i).value("genre")+"</span> \n \
+                <span class=\"date\">"+base.at(i).value("date")+"</span> \n \
+                </div> \n \
+                <span class=\"acteurs\">"+base.at(i).value("acteurs")+"</span> \n \
+                <span class=\"synopsis\">"+base.at(i).value("synopsis")+"</span> \n \
+            </div>");
+    }
+    document.append("</body></html>");
+    schema.setFileName(dir+"/test.html");
+    schema.open(QFile::WriteOnly);
+    QTextStream out(&schema);
+    out << document;
+    schema.close();
+    //TEST POUR IMPRESSION PDF -> À RE-CODER
+    /*QTextDocument doc;
+    doc.setHtml(document);
+    QPrinter imprimante;
+    imprimante.setOutputFileName("/home/david/Documents/file.pdf");
+    imprimante.setOutputFormat(QPrinter::PdfFormat);
+    doc.print(&imprimante);*/
+}

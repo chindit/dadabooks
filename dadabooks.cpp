@@ -112,6 +112,9 @@ void DadaBooks::setListeLivres(){
     if(insSettingsManager->getSettings(Xml).toBool()){
         insXmlManager = new XmlManager;
         resultat = insXmlManager->readBase();
+        QString chemin = insSettingsManager->getSettings(Fichier).toString();
+        chemin = chemin.left(chemin.lastIndexOf("/")+1);
+        ToolsManager::exportMovieList(resultat, chemin);
     }
     else{
         //SQL
@@ -1024,10 +1027,10 @@ void DadaBooks::selectRandom(){
         QSqlQuery res1;
         QString req1;
         if(films){
-            req1 = 'SELECT id FROM films WHERE vu=0 ORDER BY RAND() LIMIT 1';
+            req1 = "SELECT id FROM films WHERE vu=0 ORDER BY RAND() LIMIT 1";
         }
         else{
-            req1 = 'SELECT id FROM livres WHERE lu=0 ORDER BY RAND() LIMIT 1';
+            req1 = "SELECT id FROM livres WHERE lu=0 ORDER BY RAND() LIMIT 1";
         }
         res1 = insSqlManager->query(req1);
         res1.first();
@@ -1049,6 +1052,8 @@ void DadaBooks::selectRandom(){
             }
         }
         srand(time(NULL));
+        if(ids.count() == 0)
+            return;
         id = ids.at((rand()%ids.count()));
     }
     if(insSettingsManager->getSettings(OpenInTab).toBool()){
