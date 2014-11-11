@@ -427,8 +427,8 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
             ui->pushButton_edit_editeur->setVisible(false);
             ui->pushButton_auteur->setVisible(false);
             ui->pushButton_editeur->setVisible(false);
-            ui->labelEtiquettes->setVisible(false);
-            ui->comboBoxEtiquettes->setVisible(false);
+            //ui->labelEtiquettes->setVisible(false);
+            //ui->comboBoxEtiquettes->setVisible(false);
         }
         else{//Pas XML -> SQL
             this->getAuteur(livre.value("auteur"));
@@ -529,7 +529,7 @@ void EditBook::getEditeur(QString nom){
     }
 }
 
-
+//Actualise la liste des auteurs/éditeurs selon la valeur du champ
 void EditBook::setAuteur(bool editeur){
     QString id = "SELECT id,nom FROM ";
     if(editeur){
@@ -587,6 +587,7 @@ void EditBook::setAuteur(bool editeur){
     return;
 }
 
+//Appel à setAuteurs avec paramètre pour les éditeurs
 void EditBook::setEditeur(){
     this->setAuteur(true);
 }
@@ -651,12 +652,6 @@ QString EditBook::guillemets(QString input){
         }
     }
     return output;
-}
-
-//[OBSOLETE]Met à jour la note selon le slider
-void EditBook::updateNote(int value){
-    ui->label_note->setText(QString::number(value)+"/20");
-    return;
 }
 
 //Lie l'ebook (ou le film) avec l'item

@@ -112,9 +112,6 @@ void DadaBooks::setListeLivres(){
     if(insSettingsManager->getSettings(Xml).toBool()){
         insXmlManager = new XmlManager;
         resultat = insXmlManager->readBase();
-        QString chemin = insSettingsManager->getSettings(Fichier).toString();
-        chemin = chemin.left(chemin.lastIndexOf("/")+1);
-        ToolsManager::exportMovieList(resultat, chemin);
     }
     else{
         //SQL

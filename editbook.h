@@ -38,7 +38,6 @@ private slots:
     void setAuteur(bool editeur=false);
     void setEditeur();
     void uploadImage();
-    void updateNote(int value);
     void uploadEbook();
 
 signals:

@@ -306,7 +306,7 @@
          <item row="20" column="0">
           <widget class="QLabel" name="label_etiquette">
            <property name="text">
-            <string>Étiquette</string>
+            <string>Étiquettes</string>
            </property>
           </widget>
          </item>
