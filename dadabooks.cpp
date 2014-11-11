@@ -876,6 +876,50 @@ void DadaBooks::showEtiquette(const int &id){
     return;
 }
 
+//Affiche les éléments contenant l'étiquette fournie en paramètres
+void DadaBooks::showEtiquette(const QString nom){
+    if(insSettingsManager->getSettings(Xml).toBool()){ //XML
+        QList< QMultiMap <QString, QString> > elements = insXmlManager->getElementsByLabel(nom);
+        QWidget *nv_onglet = new QWidget(ui->tabWidget);
+        ui->tabWidget->addTab(nv_onglet, "Recherche...");
+        QTableWidget *table = new QTableWidget(nv_onglet);
+        table->setColumnCount(5);
+        QStringList liste_headers;
+        liste_headers << "ID" << "Titre" << "Directeur" << "Acteurs" << "Année";
+        table->setHorizontalHeaderLabels(liste_headers);
+        QGridLayout *layout = new QGridLayout;
+        layout->addWidget(table, 0, 0);
+        nv_onglet->setLayout(layout);
+
+        for(int i=0; i<elements.count(); ++i){
+            table->insertRow(0);
+            QTableWidgetItem *item0 = new QTableWidgetItem();
+            QTableWidgetItem *item1 = new QTableWidgetItem();
+            QTableWidgetItem *item2 = new QTableWidgetItem();
+            QTableWidgetItem *item3 = new QTableWidgetItem();
+            QTableWidgetItem *item4 = new QTableWidgetItem();
+            item0->setText(elements.at(i).value("id"));
+            item1->setText(elements.at(i).value("titre"));
+            item2->setText(elements.at(i).value("directeur"));
+            item3->setText(elements.at(i).value("acteurs"));
+            item4->setText(elements.at(i).value("annee"));
+            table->setItem(0, 0, item0);
+            table->setItem(0, 1, item1);
+            table->setItem(0, 2, item2);
+            table->setItem(0, 3, item3);
+            table->setItem(0, 4, item4);
+        }
+        table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+        connect(table, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(prepareSearchView(int)));
+        table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        ui->tabWidget->setCurrentWidget(nv_onglet);
+    }
+    else{ //SQL
+        //TODO
+    }
+    return;
+}
+
 //Affiche le livre sélectionné dans l'onglet principal
 void DadaBooks::intabPreview(int id){
     //Détection du type de collection
@@ -942,6 +986,16 @@ void DadaBooks::intabPreview(int id){
         ui->checkBoxFichier->setChecked((sql) ? res1.record().value("fichier").toBool() : ((xmlLivre.value("fichier") == "True") ? true : false));
         //TODO chemin FICHIER
         ui->checkBoxVu->setChecked((sql) ? res1.record().value("vu").toBool() : ((xmlLivre.value("vu") == "True") ? true : false));
+        //TODO Étiquettes SQL
+        if(!sql){
+            QString resultat;
+            QStringList etiquettes = xmlLivre.value("etiquettes").split(",");
+            for(int i=0; i<etiquettes.count(); ++i){
+                resultat.append("<a href=\""+etiquettes.at(i)+"\">"+etiquettes.at(i)+"</a> ");
+            }
+            ui->labelEtiquettesText->setText(resultat);
+            connect(ui->labelEtiquettesText, SIGNAL(linkActivated(QString)), this, SLOT(showEtiquette(QString)));
+        }
 
         //Mappeurs pour les boutons
         connect(ui->pushButtonDelete, SIGNAL(clicked()), mapperDelete, SLOT(map()));

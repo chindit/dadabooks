@@ -135,7 +135,7 @@ void EditBook::accept(){
 
             QSqlQuery res1 = insSql->query(req1);
             idLivre = (idEdit == 0) ? res1.lastInsertId().toInt() : idEdit;
-            QString etiquette = ui->comboBoxEtiquettes->currentText();
+            QString etiquette = ui->comboBox_etiquette->currentText();
             QStringList etiquettes;
             if(etiquette.contains(",")){
                 etiquettes = etiquette.split(",");
@@ -184,6 +184,7 @@ void EditBook::accept(){
             livre.insert("exemplaires", QString::number(ui->spinBox_exemplaires->value()));
             livre.insert("classement", ui->lineEdit_classement->text());
             livre.insert("annee", QString::number(ui->spinBox_annee->value()));
+            livre.insert("etiquettes", ui->comboBox_etiquette->currentText());
             livre.insert("synopsis", ui->plainTextEdit_resume->toPlainText());
             livre.insert("commentaire", ui->plainTextEdit_commentaire->toPlainText());
             livre.insert("note", QString::number(ui->horizontalSlider_note->value()));
@@ -302,6 +303,7 @@ void EditBook::accept(){
             film.insert("commentaire", ui->editCommentaire->toPlainText());
             film.insert("note", QString::number(ui->horizontalSlider->value()));
             film.insert("couverture", nomImage);
+            film.insert("etiquettes", ui->comboBoxEtiquettes->currentText());
             film.insert("empruntable", ((ui->checkBoxEmpruntable->isChecked()) ? "True" : "False"));
             film.insert("prete", ((ui->checkBoxPrete->isChecked()) ? "True" : "False"));
             film.insert("vu", ((ui->checkBoxVu->isChecked()) ? "True" : "False"));

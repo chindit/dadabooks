@@ -48,6 +48,7 @@ private slots:
     void about();
     void openNewColl();
     void showEtiquette(const int &id);
+    void showEtiquette(const QString nom);
     void openTagList(QString tag);
     void expandIntabContent(bool status);
     void selectRandom();

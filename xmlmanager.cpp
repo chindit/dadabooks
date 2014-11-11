@@ -247,3 +247,15 @@ void XmlManager::exportCurrentAsGCStar(QList< QMultiMap<QString, QString> > base
     QMessageBox::information(0, "Export effectué", "La base de données a été correctement exportée");
     return;
 }
+
+QList<QMultiMap<QString, QString> > XmlManager::getElementsByLabel(QString label){
+    //Le principe: on vire de la liste tout élément NE CONTENANT PAS le label
+    QList<QMultiMap<QString, QString> > resultat = this->readBase();
+    for(int i=0; i<resultat.count(); ++i){
+        if(!resultat.at(i).value("etiquettes").contains(label)){
+            resultat.removeAt(i);
+            i--;
+        }
+    }
+    return resultat;
+}

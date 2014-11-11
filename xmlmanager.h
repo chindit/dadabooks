@@ -26,6 +26,7 @@ public:
     QList<QMultiMap<QString, QString> > makeSearch(QStringList mots);
     void exportCurrentAsGCStar(QList< QMultiMap<QString, QString> > base);
     int getIdByTitle(QString titre);
+    QList<QMultiMap<QString, QString> > getElementsByLabel(QString label);
     
 signals:
     

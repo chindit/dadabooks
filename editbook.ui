@@ -38,7 +38,7 @@
    <item row="1" column="0">
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="livre">
       <layout class="QGridLayout" name="gridLayout_4">
@@ -749,6 +749,56 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>lineEdit_titre</tabstop>
+  <tabstop>lineEdit_auteur</tabstop>
+  <tabstop>lineEdit_coauteurs</tabstop>
+  <tabstop>lineEdit_editeur</tabstop>
+  <tabstop>plainTextEdit_resume</tabstop>
+  <tabstop>spinBox_annee</tabstop>
+  <tabstop>spinBox_pages</tabstop>
+  <tabstop>spinBox_edition</tabstop>
+  <tabstop>lineEdit_ISBN</tabstop>
+  <tabstop>lineEdit_langue</tabstop>
+  <tabstop>lineEdit_classement</tabstop>
+  <tabstop>spinBox_exemplaires</tabstop>
+  <tabstop>checkBox_empruntable</tabstop>
+  <tabstop>checkBox_prete</tabstop>
+  <tabstop>plainTextEdit_commentaire</tabstop>
+  <tabstop>checkBox_ebook</tabstop>
+  <tabstop>lineEdit_emplacement</tabstop>
+  <tabstop>pushButton_emplacement</tabstop>
+  <tabstop>comboBox_etiquette</tabstop>
+  <tabstop>checkBox_lu</tabstop>
+  <tabstop>horizontalSlider_note</tabstop>
+  <tabstop>comboBox_auteur</tabstop>
+  <tabstop>pushButton_edit_auteur</tabstop>
+  <tabstop>pushButton_auteur</tabstop>
+  <tabstop>comboBox_editeur</tabstop>
+  <tabstop>pushButton_edit_editeur</tabstop>
+  <tabstop>pushButton_editeur</tabstop>
+  <tabstop>lineEditTitre</tabstop>
+  <tabstop>lineEditOriginal</tabstop>
+  <tabstop>lineEditDirecteur</tabstop>
+  <tabstop>lineEditActeurs</tabstop>
+  <tabstop>editResume</tabstop>
+  <tabstop>spinBoxAnnee</tabstop>
+  <tabstop>spinBoxDuree</tabstop>
+  <tabstop>lineEditType</tabstop>
+  <tabstop>lineEditNationalite</tabstop>
+  <tabstop>lineEditLangue</tabstop>
+  <tabstop>lineEditSousTitres</tabstop>
+  <tabstop>lineEditClassement</tabstop>
+  <tabstop>checkBoxEmpruntable</tabstop>
+  <tabstop>checkBoxPrete</tabstop>
+  <tabstop>comboBoxEtiquettes</tabstop>
+  <tabstop>editCommentaire</tabstop>
+  <tabstop>checkBoxFichier</tabstop>
+  <tabstop>lineEditEmplacement</tabstop>
+  <tabstop>pushButtonEmplacement</tabstop>
+  <tabstop>checkBoxVu</tabstop>
+  <tabstop>horizontalSlider</tabstop>
+ </tabstops>
  <resources>
   <include location="images.qrc"/>
  </resources>
@@ -792,12 +842,12 @@
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>432</x>
-     <y>753</y>
+     <x>498</x>
+     <y>780</y>
     </hint>
     <hint type="destinationlabel">
-     <x>596</x>
-     <y>753</y>
+     <x>609</x>
+     <y>783</y>
     </hint>
    </hints>
   </connection>
@@ -808,12 +858,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>141</x>
-     <y>714</y>
+     <x>184</x>
+     <y>754</y>
     </hint>
     <hint type="destinationlabel">
-     <x>568</x>
-     <y>718</y>
+     <x>635</x>
+     <y>755</y>
     </hint>
    </hints>
   </connection>
@@ -824,8 +874,8 @@
    <slot>setAuteur()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>525</x>
-     <y>150</y>
+     <x>522</x>
+     <y>134</y>
     </hint>
     <hint type="destinationlabel">
      <x>370</x>
@@ -840,28 +890,12 @@
    <slot>setEditeur()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>522</x>
-     <y>257</y>
+     <x>519</x>
+     <y>226</y>
     </hint>
     <hint type="destinationlabel">
      <x>358</x>
      <y>198</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>horizontalSlider_note</sender>
-   <signal>sliderMoved(int)</signal>
-   <receiver>EditBook</receiver>
-   <slot>updateNote(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>495</x>
-     <y>756</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>715</x>
-     <y>709</y>
     </hint>
    </hints>
   </connection>
@@ -872,12 +906,28 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>144</x>
-     <y>686</y>
+     <x>178</x>
+     <y>725</y>
     </hint>
     <hint type="destinationlabel">
-     <x>574</x>
-     <y>694</y>
+     <x>624</x>
+     <y>726</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_note</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>label_note</receiver>
+   <slot>setNum(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>522</x>
+     <y>773</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>585</x>
+     <y>777</y>
     </hint>
    </hints>
   </connection>
