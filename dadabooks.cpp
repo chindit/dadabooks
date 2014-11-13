@@ -375,7 +375,7 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
         titre2 = new QLabel(xmlLivre.value("titre"));
         isbn2 = new QLabel(xmlLivre.value((films) ? "genre" : "isbn"));
         coauteurs2 = new QLabel(xmlLivre.value((films) ? "titreOriginal" : "coauteurs"));
-        if(!xmlLivre.value("couverture").startsWith("http")){
+        if(!xmlLivre.value("couverture").startsWith("http") && !xmlLivre.value("couverture").isEmpty()){
             QFile fichierImage(xmlLivre.value("couverture"));
             if(!fichierImage.exists()){
                 QMessageBox::information(this, "Image introuvable", "Une erreur est survenue, la jaquette de ce livre ne peut être trouvée");
@@ -431,7 +431,7 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
         coauteurs2 = new QLabel(res1.record().value(((films) ? "titre_original" : "coauteurs")).toString());
         if(!res1.record().value((films) ? "jaquette" : "couverture").toString().startsWith("http")){
             QFile fichierImage(res1.record().value((films) ? "jaquette" : "couverture").toString());
-            if(!fichierImage.exists()){
+            if(!fichierImage.exists() && !res1.record().value((films) ? "jaquette" : "couverture").toString().isEmpty()){
                 QMessageBox::information(this, "Image introuvable", "Une erreur est survenue, la jaquette de ce livre ne peut être trouvée");
             }
             else{

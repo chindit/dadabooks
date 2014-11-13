@@ -228,8 +228,14 @@ void EditBook::accept(){
 
         //1)Vérification du titre
         if(ui->lineEditTitre->text().isEmpty()){
-            QMessageBox::critical(this, "Pas de titre", "Nous sommes désolé mais il est impossible d'ajouter un film qui ne possède pas de titre");
+            QMessageBox::warning(this, "Pas de titre", "Nous sommes désolé mais il est impossible d'ajouter un film qui ne possède pas de titre");
             return;
+        }
+        if(ui->labelTxtImage->text().isEmpty()){
+            int reponse = QMessageBox::warning(this, "Pas de jaquette", "Le film ne possède pas de jaquette.  Êtes-vous sûr de vouloir continuer?", QMessageBox::Yes | QMessageBox::No);
+            if(reponse == QMessageBox::No){
+                return;
+            }
         }
 
         //Téléchargement de l'image si besoin
