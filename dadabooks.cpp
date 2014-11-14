@@ -47,6 +47,8 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     connect(ui->action_propos_de_DadaBooks, SIGNAL(triggered()), this, SLOT(about()));
     connect(ui->action_propos_de_Qt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
     connect(ui->actionNouveau, SIGNAL(triggered()), this, SLOT(openNewColl()));
+    connect(ui->actionHTML, SIGNAL(triggered()), this, SLOT(exportAsHTML()));
+    connect(ui->actionPDF, SIGNAL(triggered()), this, SLOT(exportAsPDF()));
 
     //Et on liste les livres
     this->setListeLivres();
@@ -1112,6 +1114,27 @@ void DadaBooks::selectRandom(){
     }
     else{
         this->activatePreview(id);
+    }
+    return;
+}
+
+//Exporte la liste de films en HTML
+void DadaBooks::exportAsHTML(){
+    QString chemin = insSettingsManager->getSettings(Fichier).toString();
+    chemin = chemin.left(chemin.lastIndexOf("/")+1);
+    QDir dossierImage; dossierImage.setPath(chemin);
+    if(insSettingsManager->getSettings(Xml).toBool()){
+        ToolsManager::exportMovieList(insXmlManager->readBase(), dossierImage.path());
+    }
+    return;
+}
+
+void DadaBooks::exportAsPDF(){
+    QString chemin = insSettingsManager->getSettings(Fichier).toString();
+    chemin = chemin.left(chemin.lastIndexOf("/")+1);
+    QDir dossierImage; dossierImage.setPath(chemin);
+    if(insSettingsManager->getSettings(Xml).toBool()){
+        ToolsManager::exportMovieList(insXmlManager->readBase(), dossierImage.path(), true);
     }
     return;
 }

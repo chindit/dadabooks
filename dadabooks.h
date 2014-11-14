@@ -52,6 +52,8 @@ private slots:
     void openTagList(QString tag);
     void expandIntabContent(bool status);
     void selectRandom();
+    void exportAsHTML();
+    void exportAsPDF();
 
 
 private:

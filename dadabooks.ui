@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>852</width>
-    <height>738</height>
+    <height>752</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1291,7 +1291,15 @@
     <property name="title">
      <string>Fichier</string>
     </property>
+    <widget class="QMenu" name="menuExporter">
+     <property name="title">
+      <string>Exporter</string>
+     </property>
+     <addaction name="actionHTML"/>
+     <addaction name="actionPDF"/>
+    </widget>
     <addaction name="actionNouveau"/>
+    <addaction name="menuExporter"/>
     <addaction name="actionQuitter"/>
    </widget>
    <widget class="QMenu" name="menuAide">
@@ -1342,6 +1350,16 @@
    </property>
    <property name="text">
     <string>Nouveau</string>
+   </property>
+  </action>
+  <action name="actionHTML">
+   <property name="text">
+    <string>HTML</string>
+   </property>
+  </action>
+  <action name="actionPDF">
+   <property name="text">
+    <string>PDF</string>
    </property>
   </action>
  </widget>
