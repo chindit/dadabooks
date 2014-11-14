@@ -963,8 +963,13 @@ void DadaBooks::intabPreview(int id){
         connect(ui->pushButtonListes, SIGNAL(clicked(bool)), this, SLOT(expandIntabContent(bool)));
 
         //Masquage des deux champs
-        ui->listWidgetActeurs->setHidden(true);
-        ui->listWidgetGenres->setHidden(true);
+        this->expandIntabContent(false); //L'appel au slot permet également de modifier le bouton en cas de besoin
+
+        //Vidage des données anciennes.
+        ui->listWidgetActeurs->clear();
+        ui->listWidgetGenres->clear();
+        ui->plainTextEditSynopsis->clear();
+        ui->plainTextEditCommentaire->clear();
 
         //Remplissage des données
         ui->labelTitre->setText(((sql) ? res1.record().value("titre").toString() : xmlLivre.value("titre")));
@@ -981,8 +986,8 @@ void DadaBooks::intabPreview(int id){
         ui->labelDuree->setText(((sql) ? res1.record().value("duree").toString() : xmlLivre.value("duree")));
         ui->labelClassement->setText(((sql) ? res1.record().value("classement").toString() : xmlLivre.value("classement")));
         ui->labelNote->setText(((sql) ? res1.record().value("note").toString() : xmlLivre.value("note"))+"/20");
-        ui->plainTextEditSynopsis->clear(); ui->plainTextEditSynopsis->insertPlainText(((sql) ? res1.record().value("synopsis").toString() : xmlLivre.value("synopsis")));
-        ui->plainTextEditCommentaire->clear(); ui->plainTextEditCommentaire->insertPlainText(((sql) ? res1.record().value("commentaire").toString() : xmlLivre.value("commentaire")));
+        ui->plainTextEditSynopsis->insertPlainText(((sql) ? res1.record().value("synopsis").toString() : xmlLivre.value("synopsis")));
+        ui->plainTextEditCommentaire->insertPlainText(((sql) ? res1.record().value("commentaire").toString() : xmlLivre.value("commentaire")));
         ui->checkBoxPrete->setChecked((sql) ? res1.record().value("prete").toBool() : ((xmlLivre.value("prete") == "True") ? true : false));
         ui->checkBoxEmpruntable->setChecked((sql) ? res1.record().value("empruntable").toBool() : ((xmlLivre.value("empruntable") == "True") ? true : false));
         ui->checkBoxFichier->setChecked((sql) ? res1.record().value("fichier").toBool() : ((xmlLivre.value("fichier") == "True") ? true : false));
