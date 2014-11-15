@@ -67,7 +67,7 @@ QPixmap ToolsManager::makeThumbnail(QPixmap image){
     return pixmap;
 }
 
-void ToolsManager::exportMovieList(QList<QMultiMap<QString, QString> > base, QString dir, bool pdf){
+void ToolsManager::exportMovieList(QList<QMultiMap<QString, QString> > base, QString output, bool pdf){
     if(base.isEmpty())
         return;
     if(!pdf){
@@ -83,7 +83,7 @@ void ToolsManager::exportMovieList(QList<QMultiMap<QString, QString> > base, QSt
         for(int i=0; i<base.count(); ++i){
             QString image = base.at(i).value("couverture");
             if(image.startsWith("http")){
-                image = ToolsManager::downloadFile(base.at(i).value("couverture"), QDir(dir));
+                image = ToolsManager::downloadFile(base.at(i).value("couverture"), QDir::temp());
             }
             document.append("<div class=\"film\"> \n \
                             <img src=\""+image+"\" /> \n \
@@ -98,7 +98,7 @@ void ToolsManager::exportMovieList(QList<QMultiMap<QString, QString> > base, QSt
                     </div>");
         }
         document.append("</body></html>");
-        schema.setFileName(dir+"/test.html");
+        schema.setFileName(output);
         schema.open(QFile::WriteOnly);
         QTextStream out(&schema);
         out << document;
@@ -114,7 +114,7 @@ void ToolsManager::exportMovieList(QList<QMultiMap<QString, QString> > base, QSt
         QFontMetrics metrics(titre);
         QFontMetrics metricsItalique(italique);
         printer.setOutputFormat(QPrinter::PdfFormat);
-        printer.setOutputFileName("/home/david/test.pdf");
+        printer.setOutputFileName(output);
         printer.setPaperSize(QPrinter::A4);
         printer.setPageMargins(75, 100, 75, 100, QPrinter::DevicePixel);
         int currentHeight = 0;
@@ -125,12 +125,13 @@ void ToolsManager::exportMovieList(QList<QMultiMap<QString, QString> > base, QSt
         for(int i=0; i<base.count(); ++i){
             QString image = base.at(i).value("couverture");
             if(image.startsWith("http")){
-                image = ToolsManager::downloadFile(base.at(i).value("couverture"), QDir(dir));
+                image = ToolsManager::downloadFile(base.at(i).value("couverture"), QDir::temp());
             }
             if((iPage*230) > (printer.height()-200)){
                 iPage = 0;
                 currentHeight = 0;
                 page.drawText(printer.width(), printer.height()+60, QString::number(nbPages));
+                nbPages++;
                 printer.newPage();
             }
             //1)Insertion de l'image

@@ -23,5 +23,7 @@
         <file>images/quitter.png</file>
         <file>images/logo_qt.jpg</file>
         <file>images/nouveau.png</file>
+        <file>images/html.png</file>
+        <file>images/pdf.png</file>
     </qresource>
 </RCC>

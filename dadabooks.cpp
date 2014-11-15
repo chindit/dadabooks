@@ -1125,21 +1125,18 @@ void DadaBooks::selectRandom(){
 
 //Exporte la liste de films en HTML
 void DadaBooks::exportAsHTML(){
-    QString chemin = insSettingsManager->getSettings(Fichier).toString();
-    chemin = chemin.left(chemin.lastIndexOf("/")+1);
-    QDir dossierImage; dossierImage.setPath(chemin);
+    QString output = QFileDialog::getSaveFileName(this, "Dossier de sortie", QDir::homePath(), "Fichiers HTML (*.html)");
     if(insSettingsManager->getSettings(Xml).toBool()){
-        ToolsManager::exportMovieList(insXmlManager->readBase(), dossierImage.path());
+        ToolsManager::exportMovieList(insXmlManager->readBase(), output);
     }
     return;
 }
 
+//Exporte la liste des fichiers en PDF
 void DadaBooks::exportAsPDF(){
-    QString chemin = insSettingsManager->getSettings(Fichier).toString();
-    chemin = chemin.left(chemin.lastIndexOf("/")+1);
-    QDir dossierImage; dossierImage.setPath(chemin);
+    QString output = QFileDialog::getSaveFileName(this, "Dossier de sortie", QDir::homePath(), "Fichiers PDF (*.pdf)");
     if(insSettingsManager->getSettings(Xml).toBool()){
-        ToolsManager::exportMovieList(insXmlManager->readBase(), dossierImage.path(), true);
+        ToolsManager::exportMovieList(insXmlManager->readBase(), output, true);
     }
     return;
 }

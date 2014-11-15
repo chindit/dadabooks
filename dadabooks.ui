@@ -1353,11 +1353,19 @@
    </property>
   </action>
   <action name="actionHTML">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/menus/images/html.png</normaloff>:/menus/images/html.png</iconset>
+   </property>
    <property name="text">
     <string>HTML</string>
    </property>
   </action>
   <action name="actionPDF">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/menus/images/pdf.png</normaloff>:/menus/images/pdf.png</iconset>
+   </property>
    <property name="text">
     <string>PDF</string>
    </property>

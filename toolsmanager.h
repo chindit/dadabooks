@@ -4,6 +4,7 @@
 #include <math.h>
 #include <QDir>
 #include <QEventLoop>
+#include <QFileDialog>
 #include <QMessageBox>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
@@ -20,7 +21,7 @@ public:
     ToolsManager();
     static QString downloadFile(QString file, QDir dossier);
     static QPixmap getPixmapFromString(QString adresse);
-    static void exportMovieList(QList<QMultiMap<QString, QString> > base, QString dir, bool pdf=false);
+    static void exportMovieList(QList<QMultiMap<QString, QString> > base, QString output, bool pdf=false);
 
 private:
     QByteArray downloadLink(QString url);
