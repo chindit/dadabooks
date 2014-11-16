@@ -67,94 +67,137 @@ QPixmap ToolsManager::makeThumbnail(QPixmap image){
     return pixmap;
 }
 
-void ToolsManager::exportMovieList(QList<QMultiMap<QString, QString> > base, QString output, bool pdf){
+void ToolsManager::exportMovieList(QList<QMultiMap<QString, QString> > base, QString output, bool films, bool pdf){
     if(base.isEmpty())
         return;
-    if(!pdf){
-        QString document;
-        QFile schema("ressources/template_films.html");
-        if(schema.exists()){
-            if(schema.open(QFile::ReadOnly)){
-                document = schema.readAll();
-                schema.close();
+    if(films){
+        if(!pdf){
+            QString document;
+            QFile schema("ressources/template_films.html");
+            if(schema.exists()){
+                if(schema.open(QFile::ReadOnly)){
+                    document = schema.readAll();
+                    schema.close();
+                }
             }
-        }
 
-        for(int i=0; i<base.count(); ++i){
-            QString image = base.at(i).value("couverture");
-            if(image.startsWith("http")){
-                image = ToolsManager::downloadFile(base.at(i).value("couverture"), QDir::temp());
+            for(int i=0; i<base.count(); ++i){
+                QString image = base.at(i).value("couverture");
+                if(image.startsWith("http")){
+                    image = ToolsManager::downloadFile(base.at(i).value("couverture"), QDir::temp());
+                }
+                document.append("<div class=\"film\"> \n \
+                                <img src=\""+image+"\" /> \n \
+                        <span class=\"titre\">"+base.at(i).value("titre")+"</span> \n \
+                        <div class=\"prop\"> \n \
+                        <span class=\"duree\">"+base.at(i).value("duree")+" min</span> \n \
+                        <span class=\"genre\">"+base.at(i).value("genre")+"</span> \n \
+                        <span class=\"date\">"+base.at(i).value("date")+"</span> \n \
+                        </div> \n \
+                        <span class=\"acteurs\">"+base.at(i).value("acteurs")+"</span> \n \
+                        <span class=\"synopsis\">"+base.at(i).value("synopsis")+"</span> \n \
+                        </div>");
             }
-            document.append("<div class=\"film\"> \n \
-                            <img src=\""+image+"\" /> \n \
-                    <span class=\"titre\">"+base.at(i).value("titre")+"</span> \n \
-                    <div class=\"prop\"> \n \
-                    <span class=\"duree\">"+base.at(i).value("duree")+" min</span> \n \
-                    <span class=\"genre\">"+base.at(i).value("genre")+"</span> \n \
-                    <span class=\"date\">"+base.at(i).value("date")+"</span> \n \
-                    </div> \n \
-                    <span class=\"acteurs\">"+base.at(i).value("acteurs")+"</span> \n \
-                    <span class=\"synopsis\">"+base.at(i).value("synopsis")+"</span> \n \
-                    </div>");
+            document.append("</body></html>");
+            schema.setFileName(output);
+            schema.open(QFile::WriteOnly);
+            QTextStream out(&schema);
+            out << document;
+            schema.close();
         }
-        document.append("</body></html>");
-        schema.setFileName(output);
-        schema.open(QFile::WriteOnly);
-        QTextStream out(&schema);
-        out << document;
-        schema.close();
+        else{//PDF
+            QPainter page;
+            QPrinter printer;
+            int totalWidth = printer.width();
+            QFont titre("Arial", 22, QFont::DemiBold);
+            QFont italique("Arial", 10); italique.setItalic(true);
+            QFont standard("Arial", 10);
+            QFontMetrics metrics(titre);
+            QFontMetrics metricsItalique(italique);
+            printer.setOutputFormat(QPrinter::PdfFormat);
+            printer.setOutputFileName(output);
+            printer.setPaperSize(QPrinter::A4);
+            printer.setPageMargins(75, 100, 75, 100, QPrinter::DevicePixel);
+            int currentHeight = 0;
+            int iPage = 0;
+            int nbPages = 1;
+            if (!page.begin(&printer))
+                return;
+            for(int i=0; i<base.count(); ++i){
+                QString image = base.at(i).value("couverture");
+                if(image.startsWith("http")){
+                    image = ToolsManager::downloadFile(base.at(i).value("couverture"), QDir::temp());
+                }
+                if((iPage*230) > (printer.height()-200)){
+                    iPage = 0;
+                    currentHeight = 0;
+                    page.drawText(printer.width(), printer.height()+60, QString::number(nbPages));
+                    nbPages++;
+                    printer.newPage();
+                }
+                //1)Insertion de l'image
+                page.drawPixmap(0, (iPage*230), 150, 220, QPixmap(image));
+                //2)Titre
+                page.setFont(titre);
+                QRect placeTitre = metrics.boundingRect(base.at(i).value("titre"));
+                page.drawText(160, currentHeight, totalWidth-150-160, placeTitre.height(), Qt::TextDontClip, base.at(i).value("titre"));
+                currentHeight += placeTitre.height();
+                page.setFont(italique);
+                QRect placeGenre = metricsItalique.boundingRect(base.at(i).value("duree"));
+                page.drawText(160, currentHeight, totalWidth, placeGenre.height(), Qt::AlignJustify, base.at(i).value("duree")+"min");
+                currentHeight += placeGenre.height();
+                page.drawText(160, currentHeight-placeGenre.height(), totalWidth-150-160, placeGenre.height(), Qt::AlignRight, base.at(i).value("genre"));
+                page.drawText(160, currentHeight, totalWidth, placeGenre.height(), Qt::TextDontClip, base.at(i).value("acteurs").left(base.at(i).value("acteurs").left(75).lastIndexOf(",")));
+                page.setFont(standard);
+                page.drawText(160, currentHeight+placeGenre.height(), (totalWidth-150-160), (((iPage+1)*230)-currentHeight), Qt::AlignJustify|Qt::TextDontClip|Qt::TextWordWrap, base.at(i).value("synopsis"));
+                currentHeight = (iPage+1)*230;
+                iPage++;
+            }
+            //Numéro de la dernière page
+            page.drawText(printer.width(), printer.height()+60, QString::number(nbPages));
+            page.end();
+        }
     }
-    else{//PDF
-        QPainter page;
-        QPrinter printer;
-        int totalWidth = printer.width();
-        QFont titre("Arial", 22, QFont::DemiBold);
-        QFont italique("Arial", 10); italique.setItalic(true);
-        QFont standard("Arial", 10);
-        QFontMetrics metrics(titre);
-        QFontMetrics metricsItalique(italique);
-        printer.setOutputFormat(QPrinter::PdfFormat);
-        printer.setOutputFileName(output);
-        printer.setPaperSize(QPrinter::A4);
-        printer.setPageMargins(75, 100, 75, 100, QPrinter::DevicePixel);
-        int currentHeight = 0;
-        int iPage = 0;
-        int nbPages = 1;
-        if (!page.begin(&printer))
-            return;
-        for(int i=0; i<base.count(); ++i){
-            QString image = base.at(i).value("couverture");
-            if(image.startsWith("http")){
-                image = ToolsManager::downloadFile(base.at(i).value("couverture"), QDir::temp());
-            }
-            if((iPage*230) > (printer.height()-200)){
-                iPage = 0;
-                currentHeight = 0;
-                page.drawText(printer.width(), printer.height()+60, QString::number(nbPages));
-                nbPages++;
-                printer.newPage();
-            }
-            //1)Insertion de l'image
-            page.drawPixmap(0, (iPage*230), 150, 220, QPixmap(image));
-            //2)Titre
-            page.setFont(titre);
-            QRect placeTitre = metrics.boundingRect(base.at(i).value("titre"));
-            page.drawText(160, currentHeight, totalWidth-150-160, placeTitre.height(), Qt::TextDontClip, base.at(i).value("titre"));
-            currentHeight += placeTitre.height();
-            page.setFont(italique);
-            QRect placeGenre = metricsItalique.boundingRect(base.at(i).value("duree"));
-            page.drawText(160, currentHeight, totalWidth, placeGenre.height(), Qt::AlignJustify, base.at(i).value("duree")+"min");
-            currentHeight += placeGenre.height();
-            page.drawText(160, currentHeight-placeGenre.height(), totalWidth-150-160, placeGenre.height(), Qt::AlignRight, base.at(i).value("genre"));
-            page.drawText(160, currentHeight, totalWidth, placeGenre.height(), Qt::TextDontClip, base.at(i).value("acteurs").left(base.at(i).value("acteurs").left(75).lastIndexOf(",")));
-            page.setFont(standard);
-            page.drawText(160, currentHeight+placeGenre.height(), (totalWidth-150-160), (((iPage+1)*230)-currentHeight), Qt::AlignJustify|Qt::TextDontClip|Qt::TextWordWrap, base.at(i).value("synopsis"));
-            currentHeight = (iPage+1)*230;
-            iPage++;
+    else{//LIVRES
+        if(!pdf){
+            //HTML LIVRES
         }
-        //Numéro de la dernière page
-        page.drawText(printer.width(), printer.height()+60, QString::number(nbPages));
-        page.end();
+        else{//PDF LIVRES
+            QPainter page;
+            QPrinter printer;
+            int totalWidth = printer.width();
+            QFont standard("Arial", 12);
+            QFontMetrics metrics(standard);
+            printer.setOutputFormat(QPrinter::PdfFormat);
+            printer.setOutputFileName(output);
+            printer.setPaperSize(QPrinter::A4);
+            printer.setPageMargins(75, 100, 75, 100, QPrinter::DevicePixel);
+            int currentHeight = 0;
+            int nbPages = 1;
+            QTextDocument pdf_txt;
+            if (!page.begin(&printer))
+                return;
+            for(int i=0; i<base.count(); ++i){
+                page.setFont(standard);
+                QString chaine = base.at(i).value("auteur").toUpper();
+                chaine.append(", <i>");
+                chaine.append(base.at(i).value("titre"));
+                chaine.append("</i>, ");
+                chaine.append(base.at(i).value("editeur"));
+                chaine.append(", ");
+                chaine.append(base.at(i).value("annee"));
+                chaine.append(".");
+
+                //INSERT TO QTEXTDOCUMENT (VIA QTEXTCURSOR) AND PRINT
+                QRect placeRef = metrics.boundingRect(chaine);
+                page.drawText(0, currentHeight, totalWidth-150, placeRef.height(), Qt::AlignJustify | Qt::TextWordWrap, chaine);
+                currentHeight += ceil(placeRef.width()/(totalWidth-150));
+                currentHeight += 20;
+            }
+            //Numéro de la dernière page
+            page.drawText(printer.width(), printer.height()+60, QString::number(nbPages));
+            page.end();
+        }
     }
 }
 

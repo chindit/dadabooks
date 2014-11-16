@@ -15,6 +15,7 @@ public:
     SqlManager();
     ~SqlManager();
     QSqlQuery query(QString req);
+    QList<QMultiMap<QString, QString> > convertToXML(QSqlQuery requete, bool films=false);
 
 private:
     void connect();

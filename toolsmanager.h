@@ -1,7 +1,7 @@
 #ifndef TOOLSMANAGER_H
 #define TOOLSMANAGER_H
 
-#include <math.h>
+#include <cmath>
 #include <QDir>
 #include <QEventLoop>
 #include <QFileDialog>
@@ -21,7 +21,7 @@ public:
     ToolsManager();
     static QString downloadFile(QString file, QDir dossier);
     static QPixmap getPixmapFromString(QString adresse);
-    static void exportMovieList(QList<QMultiMap<QString, QString> > base, QString output, bool pdf=false);
+    static void exportMovieList(QList<QMultiMap<QString, QString> > base, QString output, bool films, bool pdf=false);
     static QString guillemets(QString input);
     static QString stripSlashes(QString input);
 

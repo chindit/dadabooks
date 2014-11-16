@@ -262,7 +262,7 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
 
     QString req1;
     if(!films)
-        req1 = "SELECT livres.id, livres.titre, livres.ISBN, livres.coauteurs, livres.synopsis, livres.couverture, livres.pages, livres.edition, livres.langue, livres.classement, livres.exemplaires, livres.commentaire, livres.lu, livres.note, livres.empruntable, livres.pret, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id WHERE livres.id = ";
+        req1 = "SELECT livres.id, livres.titre, livres.ISBN, livres.coauteurs, livres.synopsis, livres.couverture, livres.pages, livres.edition, livres.langue, livres.classement, livres.exemplaires, livres.commentaire, livres.lu, livres.note, livres.empruntable, livres.pret, livres.annee, livres.ebook, livres.emplacement, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id WHERE livres.id = ";
     else
         req1 = "SELECT * FROM films WHERE films.id=";
     QString real_id;
@@ -1126,8 +1126,9 @@ void DadaBooks::selectRandom(){
 //Exporte la liste de films en HTML
 void DadaBooks::exportAsHTML(){
     QString output = QFileDialog::getSaveFileName(this, "Dossier de sortie", QDir::homePath(), "Fichiers HTML (*.html)");
+    //A AJUSTER!!!!!!
     if(insSettingsManager->getSettings(Xml).toBool()){
-        ToolsManager::exportMovieList(insXmlManager->readBase(), output);
+        ToolsManager::exportMovieList(insXmlManager->readBase(), output, false);
     }
     return;
 }
@@ -1136,7 +1137,21 @@ void DadaBooks::exportAsHTML(){
 void DadaBooks::exportAsPDF(){
     QString output = QFileDialog::getSaveFileName(this, "Dossier de sortie", QDir::homePath(), "Fichiers PDF (*.pdf)");
     if(insSettingsManager->getSettings(Xml).toBool()){
-        ToolsManager::exportMovieList(insXmlManager->readBase(), output, true);
+        if(insSettingsManager->getSettings(Type).toString() == "livres"){
+            //LIVRES XML
+        }
+        else{
+            ToolsManager::exportMovieList(insXmlManager->readBase(), output, true, true);
+        }
+    }
+    else{
+        if(insSettingsManager->getSettings(Type).toString() == "livres"){
+            QString requete = "SELECT livres.id, livres.titre, livres.ISBN, livres.coauteurs, livres.synopsis, livres.couverture, livres.pages, livres.edition, livres.langue, livres.classement, livres.exemplaires, livres.commentaire, livres.lu, livres.note, livres.empruntable, livres.pret, livres.annee, livres.ebook, livres.emplacement, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id";
+            ToolsManager::exportMovieList(insSqlManager->convertToXML(insSqlManager->query(requete)), output, false, true);
+        }
+        else{
+            //FILMS SQL
+        }
     }
     return;
 }
