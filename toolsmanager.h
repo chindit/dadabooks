@@ -22,6 +22,8 @@ public:
     static QString downloadFile(QString file, QDir dossier);
     static QPixmap getPixmapFromString(QString adresse);
     static void exportMovieList(QList<QMultiMap<QString, QString> > base, QString output, bool pdf=false);
+    static QString guillemets(QString input);
+    static QString stripSlashes(QString input);
 
 private:
     QByteArray downloadLink(QString url);

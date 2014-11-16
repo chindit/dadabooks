@@ -157,3 +157,29 @@ void ToolsManager::exportMovieList(QList<QMultiMap<QString, QString> > base, QSt
         page.end();
     }
 }
+
+//Modifie le type de guillemets pour les rendres compatibles avec SQL
+QString ToolsManager::guillemets(QString input){
+    QString output = input;
+    bool close = false;
+    for(int i=0; i<input.size(); i++){
+        if(output.at(i) == QChar('"')){
+            if(close){
+                output.replace(i, 1, "»");
+                close = false;
+            }
+            else{
+                output.replace(i, 1, "«");
+                close = true;
+            }
+        }
+    }
+    output = output.replace('\'', "\\\'");
+    return output;
+}
+
+//Retire les slashes pour affichage
+QString ToolsManager::stripSlashes(QString input){
+    QString output = input;
+    return output.replace("\\\'", "\'");
+}

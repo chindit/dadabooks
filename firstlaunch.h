@@ -29,7 +29,7 @@ private slots:
     void accept();
 
 private:
-    QString getDirName();
+    QString getDirName(bool isXML=false);
 
     Ui::FirstLaunch *ui;
     QDialog *dialogParams;

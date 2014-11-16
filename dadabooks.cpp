@@ -92,10 +92,7 @@ void DadaBooks::getBook(QString id){
 
 //Actualise l'onglet courant
 void DadaBooks::updateOnglet(int id){
-    //On ne fait rien s'il s'agit de l'onglet principal
-    if(insSettingsManager->getSettings(OpenInTab).toBool()){
-        return;
-    }
+    //Si c'est un autre onglet, on le ferme et on le ré-ouvre pour l'actualiser
     if(idOngletEdit >= 0){
         ui->tabWidget->removeTab(idOngletEdit);
         this->activatePreview(id, false, true);
@@ -180,7 +177,7 @@ void DadaBooks::setListeLivres(){
             QTableWidgetItem *item3 = new QTableWidgetItem();
             QTableWidgetItem *item4 = new QTableWidgetItem();
             item0->setText(res1.record().value("id").toString());
-            item1->setText(res1.record().value("titre").toString());
+            item1->setText(ToolsManager::stripSlashes(res1.record().value("titre").toString()));
             item2->setText(res1.record().value((films) ? "directeur" : "nom").toString());
             item3->setText(res1.record().value((films) ? "acteurs" : "nom_editeur").toString());
             item4->setText(res1.record().value("annee").toString());
@@ -195,7 +192,7 @@ void DadaBooks::setListeLivres(){
         QSqlQuery res2 = insSqlManager->query(req2);
         ui->listWidget_accueil->clear();
         while(res2.next()){
-            ui->listWidget_accueil->addItem(res2.record().value("titre").toString());
+            ui->listWidget_accueil->addItem(ToolsManager::stripSlashes(res2.record().value("titre").toString()));
         }
     }
 
@@ -1019,12 +1016,12 @@ void DadaBooks::intabPreview(int id){
         //------------------------------
         //LIVRES
         //------------------------------
-        ui->labelTitreLivre->setText(((sql) ? res1.record().value("titre").toString() : xmlLivre.value("titre")));
+        ui->labelTitreLivre->setText(((sql) ? ToolsManager::stripSlashes(res1.record().value("titre").toString()) : xmlLivre.value("titre")));
         ui->labelIDLivre->setText(((sql) ? res1.record().value("id").toString() : xmlLivre.value("id")));
         ui->labelImageLivre->setPixmap(ToolsManager::getPixmapFromString(((sql) ? res1.record().value("couverture").toString() : xmlLivre.value("couverture"))));
-        ui->labelAuteurLivre->setText(((sql) ? res1.record().value("auteur").toString() : xmlLivre.value("auteur")));
+        ui->labelAuteurLivre->setText(((sql) ? ToolsManager::stripSlashes(res1.record().value("nom").toString()) : xmlLivre.value("auteur")));
         ui->labelCoAuteurLivre->setText(((sql) ? res1.record().value("coauteur").toString() : xmlLivre.value("coauteur")));
-        ui->labelEditeurLivre->setText(((sql) ? res1.record().value("editeur").toString() : xmlLivre.value("editeur")));
+        ui->labelEditeurLivre->setText(((sql) ? ToolsManager::stripSlashes(res1.record().value("nom_editeur").toString()) : xmlLivre.value("editeur")));
         ui->labelAnneeLivre->setText(((sql) ? res1.record().value("annee").toString() : xmlLivre.value("annee")));
         ui->labelPagesLivre->setText(((sql) ? res1.record().value("pages").toString() : xmlLivre.value("pages")));
         ui->labelLangueLivre->setText(((sql) ? res1.record().value("langue").toString() : xmlLivre.value("langue")));
@@ -1041,7 +1038,7 @@ void DadaBooks::intabPreview(int id){
         if((sql && !res1.record().value("ebook").toBool()) || (!sql && (xmlLivre.value("ebook") != "True")))
             ui->labelEmplacementLivre->setHidden(true);
         ui->labelClassementLivre->setText(((sql) ? res1.record().value("classement").toString() : xmlLivre.value("classement")));
-        ui->plainTextEditResumeLivre->clear(); ui->plainTextEditResumeLivre->insertPlainText(((sql) ? res1.record().value("synopsis").toString() : xmlLivre.value("synopsis")));
+        ui->plainTextEditResumeLivre->clear(); ui->plainTextEditResumeLivre->insertPlainText(((sql) ? ToolsManager::stripSlashes(res1.record().value("synopsis").toString()) : xmlLivre.value("synopsis")));
         ui->plainTextEditCommentaireLivre->clear(); ui->plainTextEditCommentaire->insertPlainText(((sql) ? res1.record().value("commentaire").toString() : xmlLivre.value("commentaire")));
 
         //Mappeurs pour les boutons
@@ -1084,6 +1081,9 @@ void DadaBooks::selectRandom(){
     if(sql){
         QSqlQuery res1;
         QString req1;
+        if(ui->listWidget_accueil->count() == 0){
+            return;
+        }
         if(films){
             req1 = "SELECT id FROM films WHERE vu=0 ORDER BY RAND() LIMIT 1";
         }

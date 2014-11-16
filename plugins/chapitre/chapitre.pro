@@ -11,7 +11,7 @@ TEMPLATE = lib
 CONFIG += plugin
 
 #DESTDIR = $$[QT_INSTALL_PLUGINS]/
-DESTDIR = /tmp/dadabooks_Debug/
+DESTDIR = /home/david/Linux/david/Documents/Programmation/Compilations/dadabooks/Debug/plugins/
 
 SOURCES += chapitre.cpp
 

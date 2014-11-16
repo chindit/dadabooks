@@ -5,6 +5,7 @@
 #include <QFileDialog>
 
 #include "sqlmanager.h"
+#include "toolsmanager.h"
 
 namespace Ui {
 class AddAuteur;

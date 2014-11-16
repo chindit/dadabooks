@@ -4,6 +4,7 @@
 #include <QDialog>
 
 #include "sqlmanager.h"
+#include "toolsmanager.h"
 
 namespace Ui {
 class AddEditeur;

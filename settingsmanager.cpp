@@ -43,8 +43,8 @@ void SettingsManager::setSettings(Setting s, QVariant v){
 
 void SettingsManager::loadSettings(){
     QSettings options("DadaBooks", "dadabooks");
-    settings[AutoAuteur] = options.value(names[AutoAuteur], false);
-    settings[AutoEditeur] = options.value(names[AutoEditeur], false);
+    settings[AutoAuteur] = options.value(names[AutoAuteur], true);
+    settings[AutoEditeur] = options.value(names[AutoEditeur], true);
     settings[Sqlite] = options.value(names[Sqlite], false);
     settings[MariaDB] = options.value(names[MariaDB], false);
     settings[Xml] = options.value(names[Xml], true);
@@ -54,8 +54,8 @@ void SettingsManager::loadSettings(){
     settings[DBPass] = options.value(names[DBPass], "");
     settings[DBBase] = options.value(names[DBBase], "DadaBooks");
     settings[Initialized] = options.value(names[Initialized], false);
-    settings[OpenInTab] = options.value(names[OpenInTab], false);
-    settings[DownPics] = options.value(names[DownPics], false);
+    settings[OpenInTab] = options.value(names[OpenInTab], true);
+    settings[DownPics] = options.value(names[DownPics], true);
     settings[Type] = options.value(names[Type], "livres");
     return;
 }

@@ -20,6 +20,17 @@ EditBook::EditBook(QWidget *parent) : QDialog(parent), ui(new Ui::EditBook){
         connect(insAddAuteur, SIGNAL(makeClose(int, QString)), this, SLOT(updateAuteurs(int, QString)));
         connect(ui->pushButton_editeur, SIGNAL(clicked()), insAddEditeur, SLOT(show()));
         connect(insAddEditeur, SIGNAL(makeClose(int, QString)), this, SLOT(updateEditeurs(int, QString)));
+        //On cache les éléments d'auteur si besoin
+        if(insSettingsManager->getSettings(AutoAuteur).toBool()){
+            ui->comboBox_auteur->setHidden(true);
+            ui->pushButton_auteur->setHidden(true);
+            ui->pushButton_edit_auteur->setHidden(true);
+        }
+        if(insSettingsManager->getSettings(AutoEditeur).toBool()){
+            ui->comboBox_editeur->setHidden(true);
+            ui->pushButton_editeur->setHidden(true);
+            ui->pushButton_edit_editeur->setHidden(true);
+        }
     }
 
     //Gestion des films
@@ -127,10 +138,10 @@ void EditBook::accept(){
 
         if(!insSettingsManager->getSettings(Xml).toBool()){
             if(idEdit == 0){ //Si pas d'édition->INSERT
-                req1 = "INSERT INTO livres(titre, ISBN, auteur, coauteurs, synopsis, couverture, editeur, annee, pages, edition, langue, classement, exemplaires, commentaire, lu, note, empruntable, pret, ebook, emplacement) VALUES(\""+ui->lineEdit_titre->text().replace("\"", "\\\"")+"\", \""+ui->lineEdit_ISBN->text()+"\", "+QString::number(id_auteur)+", \""+this->guillemets(ui->lineEdit_coauteurs->text())+"\", \""+this->guillemets(ui->plainTextEdit_resume->toPlainText())+"\", \""+ui->label_image_texte->text()+"\", "+QString::number(id_editeur)+", '"+QString::number(annee)+"', "+QString::number(pages)+", "+QString::number(edition)+", \""+this->guillemets(ui->lineEdit_langue->text())+"\", \""+this->guillemets(ui->lineEdit_classement->text())+"\", "+QString::number(exemplaires)+", \""+this->guillemets(ui->plainTextEdit_commentaire->toPlainText())+"\", "+QString::number(lu)+", "+QString::number(note)+", "+QString::number(empruntable)+", "+QString::number(pret)+", "+QString::number(ebook)+", \""+ui->lineEdit_emplacement->text()+"\");";
+                req1 = "INSERT INTO livres(titre, ISBN, auteur, coauteurs, synopsis, couverture, editeur, annee, pages, edition, langue, classement, exemplaires, commentaire, lu, note, empruntable, pret, ebook, emplacement) VALUES(\""+ToolsManager::guillemets(ui->lineEdit_titre->text())+"\", \""+ui->lineEdit_ISBN->text()+"\", "+QString::number(id_auteur)+", \""+ToolsManager::guillemets(ui->lineEdit_coauteurs->text())+"\", \""+ToolsManager::guillemets(ui->plainTextEdit_resume->toPlainText())+"\", \""+ui->label_image_texte->text()+"\", "+QString::number(id_editeur)+", '"+QString::number(annee)+"', "+QString::number(pages)+", "+QString::number(edition)+", \""+ToolsManager::guillemets(ui->lineEdit_langue->text())+"\", \""+ToolsManager::guillemets(ui->lineEdit_classement->text())+"\", "+QString::number(exemplaires)+", \""+ToolsManager::guillemets(ui->plainTextEdit_commentaire->toPlainText())+"\", "+QString::number(lu)+", "+QString::number(note)+", "+QString::number(empruntable)+", "+QString::number(pret)+", "+QString::number(ebook)+", \""+ui->lineEdit_emplacement->text()+"\");";
             }
             else{
-                req1 = "UPDATE livres SET titre = \""+this->guillemets(ui->lineEdit_titre->text())+"\", ISBN = \""+ui->lineEdit_ISBN->text()+"\", auteur = "+QString::number(id_auteur)+", coauteurs = \""+this->guillemets(ui->lineEdit_coauteurs->text())+"\", synopsis = \""+this->guillemets(ui->plainTextEdit_resume->toPlainText())+"\", couverture = \""+nomImage+"\", editeur = "+QString::number(id_editeur)+", annee = '"+QString::number(annee)+"', pages = "+QString::number(pages)+", edition = "+QString::number(edition)+", langue = \""+this->guillemets(ui->lineEdit_langue->text())+"\", classement = \""+this->guillemets(ui->lineEdit_classement->text())+"\", exemplaires = "+QString::number(exemplaires)+", commentaire = \""+this->guillemets(ui->plainTextEdit_commentaire->toPlainText())+"\", lu = "+QString::number(lu)+", note = "+QString::number(note)+", empruntable = "+QString::number(empruntable)+", pret = "+QString::number(pret)+", ebook = "+QString::number(ebook)+", emplacement = \""+ui->lineEdit_emplacement->text()+"\" WHERE id="+QString::number(idEdit)+";";
+                req1 = "UPDATE livres SET titre = \""+ToolsManager::guillemets(ui->lineEdit_titre->text())+"\", ISBN = \""+ui->lineEdit_ISBN->text()+"\", auteur = "+QString::number(id_auteur)+", coauteurs = \""+ToolsManager::guillemets(ui->lineEdit_coauteurs->text())+"\", synopsis = \""+ToolsManager::guillemets(ui->plainTextEdit_resume->toPlainText())+"\", couverture = \""+nomImage+"\", editeur = "+QString::number(id_editeur)+", annee = '"+QString::number(annee)+"', pages = "+QString::number(pages)+", edition = "+QString::number(edition)+", langue = \""+ToolsManager::guillemets(ui->lineEdit_langue->text())+"\", classement = \""+ToolsManager::guillemets(ui->lineEdit_classement->text())+"\", exemplaires = "+QString::number(exemplaires)+", commentaire = \""+ToolsManager::guillemets(ui->plainTextEdit_commentaire->toPlainText())+"\", lu = "+QString::number(lu)+", note = "+QString::number(note)+", empruntable = "+QString::number(empruntable)+", pret = "+QString::number(pret)+", ebook = "+QString::number(ebook)+", emplacement = \""+ui->lineEdit_emplacement->text()+"\" WHERE id="+QString::number(idEdit)+";";
             }
 
             QSqlQuery res1 = insSql->query(req1);
@@ -253,10 +264,10 @@ void EditBook::accept(){
             int idFilm = -1;
             QString req1;
             if(idEdit == 0){ //Si pas d'édition->INSERT
-                req1 = "INSERT INTO films(id, titre, titre_original, directeur, acteurs, synopsis, annee, duree, genre, pays, langue, classement, sous_titres, commentaire, note, jaquette, empruntable, prete, vu, fichier, emplacement, qualite) VALUES(NULL, \""+this->guillemets(ui->lineEditTitre->text())+"\", \""+this->guillemets(ui->lineEditOriginal->text())+"\", \""+this->guillemets(ui->lineEditDirecteur->text())+"\", \""+this->guillemets(ui->lineEditActeurs->text())+"\", \""+this->guillemets(ui->editResume->toPlainText())+"\", "+QString::number(ui->spinBoxAnnee->value())+", "+QString::number(ui->spinBoxDuree->value())+", \""+this->guillemets(ui->lineEditType->text())+"\", \""+this->guillemets(ui->lineEditNationalite->text())+"\", \""+this->guillemets(ui->lineEditLangue->text())+"\", \""+this->guillemets(ui->lineEditClassement->text())+"\", \""+this->guillemets(ui->lineEditSousTitres->text())+"\", \""+this->guillemets(ui->editCommentaire->toPlainText())+"\", "+QString::number(ui->horizontalSlider->value())+", \""+nomImage+"\", "+((ui->checkBoxEmpruntable->isChecked()) ? QString::number(1) : QString::number(0))+", "+((ui->checkBoxPrete->isChecked()) ? QString::number(1) : QString::number(0))+", "+((ui->checkBoxVu->isChecked()) ? QString::number(1) : QString::number(0))+", "+((ui->checkBoxFichier->isChecked()) ? QString::number(1) : QString::number(0))+", \""+this->guillemets(ui->lineEditEmplacement->text())+"\", \"\")";
+                req1 = "INSERT INTO films(id, titre, titre_original, directeur, acteurs, synopsis, annee, duree, genre, pays, langue, classement, sous_titres, commentaire, note, jaquette, empruntable, prete, vu, fichier, emplacement, qualite) VALUES(NULL, \""+ToolsManager::guillemets(ui->lineEditTitre->text())+"\", \""+ToolsManager::guillemets(ui->lineEditOriginal->text())+"\", \""+ToolsManager::guillemets(ui->lineEditDirecteur->text())+"\", \""+ToolsManager::guillemets(ui->lineEditActeurs->text())+"\", \""+ToolsManager::guillemets(ui->editResume->toPlainText())+"\", "+QString::number(ui->spinBoxAnnee->value())+", "+QString::number(ui->spinBoxDuree->value())+", \""+ToolsManager::guillemets(ui->lineEditType->text())+"\", \""+ToolsManager::guillemets(ui->lineEditNationalite->text())+"\", \""+ToolsManager::guillemets(ui->lineEditLangue->text())+"\", \""+ToolsManager::guillemets(ui->lineEditClassement->text())+"\", \""+ToolsManager::guillemets(ui->lineEditSousTitres->text())+"\", \""+ToolsManager::guillemets(ui->editCommentaire->toPlainText())+"\", "+QString::number(ui->horizontalSlider->value())+", \""+nomImage+"\", "+((ui->checkBoxEmpruntable->isChecked()) ? QString::number(1) : QString::number(0))+", "+((ui->checkBoxPrete->isChecked()) ? QString::number(1) : QString::number(0))+", "+((ui->checkBoxVu->isChecked()) ? QString::number(1) : QString::number(0))+", "+((ui->checkBoxFichier->isChecked()) ? QString::number(1) : QString::number(0))+", \""+ToolsManager::guillemets(ui->lineEditEmplacement->text())+"\", \"\")";
             }
             else{
-                //req1 = "UPDATE films SET titre = \""+this->guillemets(ui->lineEdit_titre->text())+"\", ISBN = \""+ui->lineEdit_ISBN->text()+"\", auteur = "+QString::number(id_auteur)+", coauteurs = \""+this->guillemets(ui->lineEdit_coauteurs->text())+"\", synopsis = \""+this->guillemets(ui->plainTextEdit_resume->toPlainText())+"\", couverture = \""+nomImage+"\", editeur = "+QString::number(id_editeur)+", annee = '"+QString::number(annee)+"', pages = "+QString::number(pages)+", edition = "+QString::number(edition)+", langue = \""+this->guillemets(ui->lineEdit_langue->text())+"\", classement = \""+this->guillemets(ui->lineEdit_classement->text())+"\", exemplaires = "+QString::number(exemplaires)+", commentaire = \""+this->guillemets(ui->plainTextEdit_commentaire->toPlainText())+"\", lu = "+QString::number(lu)+", note = "+QString::number(note)+", empruntable = "+QString::number(empruntable)+", pret = "+QString::number(pret)+", ebook = "+QString::number(ebook)+", emplacement = \""+ui->lineEdit_emplacement->text()+"\" WHERE id="+QString::number(idEdit)+";";
+                //req1 = "UPDATE films SET titre = \""+ToolsManager::guillemets(ui->lineEdit_titre->text())+"\", ISBN = \""+ui->lineEdit_ISBN->text()+"\", auteur = "+QString::number(id_auteur)+", coauteurs = \""+ToolsManager::guillemets(ui->lineEdit_coauteurs->text())+"\", synopsis = \""+ToolsManager::guillemets(ui->plainTextEdit_resume->toPlainText())+"\", couverture = \""+nomImage+"\", editeur = "+QString::number(id_editeur)+", annee = '"+QString::number(annee)+"', pages = "+QString::number(pages)+", edition = "+QString::number(edition)+", langue = \""+ToolsManager::guillemets(ui->lineEdit_langue->text())+"\", classement = \""+ToolsManager::guillemets(ui->lineEdit_classement->text())+"\", exemplaires = "+QString::number(exemplaires)+", commentaire = \""+ToolsManager::guillemets(ui->plainTextEdit_commentaire->toPlainText())+"\", lu = "+QString::number(lu)+", note = "+QString::number(note)+", empruntable = "+QString::number(empruntable)+", pret = "+QString::number(pret)+", ebook = "+QString::number(ebook)+", emplacement = \""+ui->lineEdit_emplacement->text()+"\" WHERE id="+QString::number(idEdit)+";";
             }
             QSqlQuery res1 = insSql->query(req1);
             idFilm = (idEdit == 0) ? res1.lastInsertId().toInt() : idEdit;
@@ -272,10 +283,10 @@ void EditBook::accept(){
                 //On vire les vieilles étiquettes
                 insSql->query("DELETE FROM liste_etiquettes WHERE id_livre="+QString::number(idFilm));
                 for(int i=0; i<etiquettes.size(); i++){
-                    req1 = "SELECT id FROM etiquettes WHERE nom=\""+etiquettes.at(i).trimmed()+"\"";
+                    req1 = "SELECT id FROM etiquettes WHERE nom=\""+ToolsManager::guillemets(etiquettes.at(i).trimmed())+"\"";
                     res1 = insSql->query(req1); res1.first();
                     if(res1.size() < 1){
-                        req1 = "INSERT INTO etiquettes(nom) VALUES(\""+etiquettes.at(i).trimmed()+"\")";
+                        req1 = "INSERT INTO etiquettes(nom) VALUES(\""+ToolsManager::guillemets(etiquettes.at(i).trimmed())+"\")";
                         res1 = insSql->query(req1);
                         id = res1.lastInsertId().toInt();
                     }
@@ -551,13 +562,13 @@ void EditBook::setAuteur(bool editeur){
         if(ui->pushButton_edit_editeur->text() == "Actualiser")
             id+=ui->lineEdit_editeur->text()+"%\";";
         else
-            id+=this->guillemets(ui->comboBox_editeur->currentText())+"';";
+            id+=ToolsManager::guillemets(ui->comboBox_editeur->currentText())+"';";
     }
     else{
         if(ui->pushButton_edit_auteur->text() == "Actualiser")
             id+=ui->lineEdit_auteur->text()+"%\"";
         else
-            id+=this->guillemets(ui->comboBox_auteur->currentText())+"';";
+            id+=ToolsManager::guillemets(ui->comboBox_auteur->currentText())+"';";
     }
 
     QSqlQuery res = insSql->query(id);
@@ -625,10 +636,10 @@ int EditBook::getId(bool editeur){
     }
     id +=" WHERE nom LIKE '";
     if(editeur){
-        id+=this->guillemets(ui->comboBox_editeur->currentText())+"';";
+        id+=ToolsManager::guillemets(ui->comboBox_editeur->currentText())+"';";
     }
     else{
-        id+=this->guillemets(ui->comboBox_auteur->currentText())+"';";
+        id+=ToolsManager::guillemets(ui->comboBox_auteur->currentText())+"';";
     }
 
     QSqlQuery res = insSql->query(id);
@@ -641,25 +652,6 @@ int EditBook::getId(bool editeur){
 void EditBook::setId(int id){
     idEdit = id;
     return;
-}
-
-//Modifie le type de guillemets pour les rendres compatibles avec SQL
-QString EditBook::guillemets(QString input){
-    QString output = input;
-    bool close = false;
-    for(int i=0; i<input.size(); i++){
-        if(output.at(i) == QChar('"')){
-            if(close){
-                output.replace(i, 1, "»");
-                close = false;
-            }
-            else{
-                output.replace(i, 1, "«");
-                close = true;
-            }
-        }
-    }
-    return output;
 }
 
 //Lie l'ebook (ou le film) avec l'item

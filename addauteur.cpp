@@ -51,7 +51,7 @@ void AddAuteur::setAuteur(int id){
 
 int AddAuteur::setAuteur(QString nom){
     //Ajoute automatiquement un auteur et retourne son ID
-    QString req1 = "INSERT INTO auteurs(nom, naissance, mort, biographie, photo) VALUES('"+nom.replace("'", "\\'")+"', '', '', \"\", '');";
+    QString req1 = "INSERT INTO auteurs(nom, naissance, mort, biographie, photo) VALUES(\""+ToolsManager::guillemets(nom)+"\", '', '', \"\", '');";
     QSqlQuery res1 = insSql->query(req1);
     return res1.lastInsertId().toInt();
 }

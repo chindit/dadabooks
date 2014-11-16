@@ -54,10 +54,20 @@ void FirstLaunch::saveSQLParams(){
     delete dialogParams;
 }
 
-QString FirstLaunch::getDirName(){
-    QMessageBox::information(this, "Choisissez un dossier", "Merci de choisir un dossier dans lequel DadaBooks placera sa base de données");
-    QString dirName = QFileDialog::getExistingDirectory(this, "Dossier racine", QDir::homePath());
-    return dirName+"/";
+QString FirstLaunch::getDirName(bool isXML){
+    QMessageBox::information(this, "Choisissez un dossier", "Merci de choisir l'emplacement du fichier de base de données");
+    QString dirName;
+    if(!isXML){
+        dirName = QFileDialog::getSaveFileName(this, "Emplacement de la base de données", QDir::homePath(), "Bases de données (*.db *.sqlite)");
+        if(!dirName.endsWith(".db") && !dirName.endsWith(".sqlite"))
+            dirName.append(".db");
+    }
+    else{
+        dirName = QFileDialog::getSaveFileName(this, "Emplacement de la base de données", QDir::homePath(), "Fichiers XML (*.xml)");
+        if(!dirName.endsWith(".xml"))
+            dirName.append(".xml");
+    }
+    return dirName;
 }
 
 void FirstLaunch::accept(){
@@ -103,12 +113,12 @@ void FirstLaunch::accept(){
     else if(ui->buttonSQLite->isChecked()){
         insSettingsManager->setSettings(Sqlite, true);
         insSettingsManager->setSettings(Xml, false);
-        QString nomFichier = this->getDirName()+"dadabooks.db";
+        QString nomFichier = this->getDirName();
         insSettingsManager->setSettings(Fichier, nomFichier);
     }
     else if(ui->buttonXML->isChecked()){
         insSettingsManager->setSettings(Xml, true);
-            QString nomFichier = this->getDirName()+"dadabooks.xml";
+            QString nomFichier = this->getDirName(true);
             insSettingsManager->setSettings(Fichier, nomFichier);
     }
     else{

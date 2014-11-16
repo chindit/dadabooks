@@ -48,7 +48,6 @@ private:
     void getAuteur(QString nom);
     void getEditeur(QString nom);
     int getId(bool editeur=false);
-    QString guillemets(QString input);
     Ui::EditBook *ui;
     SqlManager *insSql;
     AddAuteur *insAddAuteur;
