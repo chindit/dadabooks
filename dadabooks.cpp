@@ -217,9 +217,9 @@ void DadaBooks::preparePreview(){
     else{
         QSqlQuery resultat;
         if(insSettingsManager->getSettings(Type).toString() == "livres")
-            resultat = insSqlManager->query("SELECT id FROM livres WHERE titre=\""+ui->listWidget_accueil->currentItem()->text().replace("\"", "\\\"")+"\"");
+            resultat = insSqlManager->query("SELECT id FROM livres WHERE titre=\""+ToolsManager::guillemets(ui->listWidget_accueil->currentItem()->text())+"\"");
         else
-            resultat = insSqlManager->query("SELECT id FROM films WHERE titre=\""+ui->listWidget_accueil->currentItem()->text().replace("\"", "\\\"")+"\"");
+            resultat = insSqlManager->query("SELECT id FROM films WHERE titre=\""+ToolsManager::guillemets(ui->listWidget_accueil->currentItem()->text())+"\"");
         resultat.first();
         id = resultat.record().value("id").toInt();
     }
@@ -1126,9 +1126,20 @@ void DadaBooks::selectRandom(){
 //Exporte la liste de films en HTML
 void DadaBooks::exportAsHTML(){
     QString output = QFileDialog::getSaveFileName(this, "Dossier de sortie", QDir::homePath(), "Fichiers HTML (*.html)");
-    //A AJUSTER!!!!!!
     if(insSettingsManager->getSettings(Xml).toBool()){
-        ToolsManager::exportMovieList(insXmlManager->readBase(), output, false);
+        if(insSettingsManager->getSettings(Type).toString() == "livres")
+            ToolsManager::exportMovieList(insXmlManager->readBase(), output, false, false);
+        else
+            ToolsManager::exportMovieList(insXmlManager->readBase(), output, true, false);
+    }
+    else{
+        if(insSettingsManager->getSettings(Type).toString() == "livres"){
+            QString requete = "SELECT livres.id, livres.titre, livres.ISBN, livres.coauteurs, livres.synopsis, livres.couverture, livres.pages, livres.editeur, livres.edition, livres.langue, livres.classement, livres.exemplaires, livres.commentaire, livres.lu, livres.note, livres.empruntable, livres.pret, livres.annee, livres.ebook, livres.emplacement, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id";
+            ToolsManager::exportMovieList(insSqlManager->convertToXML(insSqlManager->query(requete)), output, false, true);
+        }
+        else{
+            //Films SQL
+        }
     }
     return;
 }
@@ -1138,7 +1149,7 @@ void DadaBooks::exportAsPDF(){
     QString output = QFileDialog::getSaveFileName(this, "Dossier de sortie", QDir::homePath(), "Fichiers PDF (*.pdf)");
     if(insSettingsManager->getSettings(Xml).toBool()){
         if(insSettingsManager->getSettings(Type).toString() == "livres"){
-            //LIVRES XML
+            ToolsManager::exportMovieList(insXmlManager->readBase(), output, false, true);
         }
         else{
             ToolsManager::exportMovieList(insXmlManager->readBase(), output, true, true);

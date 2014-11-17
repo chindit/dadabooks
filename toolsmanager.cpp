@@ -159,26 +159,46 @@ void ToolsManager::exportMovieList(QList<QMultiMap<QString, QString> > base, QSt
         }
     }
     else{//LIVRES
-        if(!pdf){
-            //HTML LIVRES
+        if(!pdf){//HTML LIVRES
+            QString document;
+            QFile schema("ressources/template_livres.html");
+            if(schema.exists()){
+                if(schema.open(QFile::ReadOnly)){
+                    document = schema.readAll();
+                    schema.close();
+                }
+            }
+            for(int i=0; i<base.count(); ++i){
+                document.append(stripSlashes(base.at(i).value("auteur").toUpper()));
+                document.append(", <i>");
+                document.append(stripSlashes(base.at(i).value("titre")));
+                document.append("</i>, ");
+                document.append(stripSlashes(base.at(i).value("editeur")));
+                document.append(", ");
+                document.append(base.at(i).value("annee"));
+                document.append(".<br />");
+            }
+            document.append("</body></html>");
+            schema.setFileName(output);
+            schema.open(QFile::WriteOnly);
+            QTextStream out(&schema);
+            out << document;
+            schema.close();
         }
         else{//PDF LIVRES
-            QPainter page;
             QPrinter printer;
             printer.setOutputFormat(QPrinter::PdfFormat);
             printer.setOutputFileName(output);
             printer.setPaperSize(QPrinter::A4);
-            printer.setPageMargins(75, 100, 75, 100, QPrinter::DevicePixel);
+            printer.setPageMargins(25, 50, 25, 50, QPrinter::DevicePixel);
             QTextDocument pdf_txt;
             QString chaine;
-            /*if (!page.begin(&printer))
-                return;*/
             for(int i=0; i<base.count(); ++i){
-                chaine.append(base.at(i).value("auteur").toUpper());
+                chaine.append(stripSlashes(base.at(i).value("auteur").toUpper()));
                 chaine.append(", <i>");
-                chaine.append(base.at(i).value("titre"));
+                chaine.append(stripSlashes(base.at(i).value("titre")));
                 chaine.append("</i>, ");
-                chaine.append(base.at(i).value("editeur"));
+                chaine.append(stripSlashes(base.at(i).value("editeur")));
                 chaine.append(", ");
                 chaine.append(base.at(i).value("annee"));
                 chaine.append(".<br />");
