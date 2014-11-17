@@ -1103,10 +1103,16 @@ void DadaBooks::selectRandom(){
             return;
         }
         if(films){
-            req1 = "SELECT id FROM films WHERE vu=0 ORDER BY RAND() LIMIT 1";
+            if(insSettingsManager->getSettings(MariaDB).toBool())
+                req1 = "SELECT id FROM films WHERE vu=0 ORDER BY RAN() LIMIT 1";
+            else
+            req1 = "SELECT id FROM films WHERE vu=0 ORDER BY RANDOM() LIMIT 1";
         }
         else{
-            req1 = "SELECT id FROM livres WHERE lu=0 ORDER BY RAND() LIMIT 1";
+            if(insSettingsManager->getSettings(MariaDB).toBool())
+                req1 = "SELECT id FROM livres WHERE lu=0 ORDER BY RAND() LIMIT 1";
+            else
+                req1 = "SELECT id FROM livres WHERE lu=0 ORDER BY RANDOM() LIMIT 1";
         }
         res1 = insSqlManager->query(req1);
         res1.first();
