@@ -41,7 +41,11 @@ void AddEditeur::setEditeur(int id){
 }
 
 int AddEditeur::setEditeur(QString nom){
-    QString req1 = "INSERT INTO editeurs(nom, adresse, site) VALUES(\""+ToolsManager::guillemets(nom)+"\", \"\", '');";
+    QString req1 = "INSERT INTO editeurs(nom, adresse, site) VALUES(\""+ToolsManager::guillemets(nom)+"\", \"\", \"\");";
     QSqlQuery res1 = insSql->query(req1);
+    /*req1 = "SELECT id FROM editeurs WHERE nom=\""+nom+"\"";
+    res1 = insSql->query(req1);
+    res1.last();
+    return res1.record().value("id").toInt();*/
     return res1.lastInsertId().toInt();
 }

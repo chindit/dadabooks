@@ -103,6 +103,12 @@ QList<QMultiMap<QString, QString> > SqlManager::convertToXML(QSqlQuery requete, 
     if(!films){
         while(requete.next()){
             QMultiMap<QString, QString> livre;
+            if(requete.record().value("nom_editeur").toString().isEmpty()){
+                QString show = "SELECT nom FROM editeurs WHERE id="+requete.record().value("editeur").toString();
+                QSqlQuery editor = this->query("SELECT nom FROM editeurs WHERE id="+requete.record().value("editeur").toString());
+                editor.last();
+                livre.insert("editeur", editor.record().value("nom_editeur").toString());
+            }
             livre.insert("titre", requete.record().value("titre").toString());
             livre.insert("isbn", requete.record().value("isbn").toString());
             livre.insert("auteur", requete.record().value("nom").toString());

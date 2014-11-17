@@ -95,8 +95,9 @@ void EditBook::accept(){
         if(!insSettingsManager->getSettings(Xml).toBool()){
             if(id_auteur <= 0)
                 id_auteur=this->getId(false);
-            id_editeur=this->getId(true);
-            if(id_auteur <= 0 || id_auteur <= 0){
+            if(id_editeur <= 0)
+                id_editeur=this->getId(true);
+            if(id_auteur <= 0 || id_editeur <= 0){
                 QMessageBox::warning(this, "Erreur étrange", "L'auteur ou l'éditeur n'ont pu être trouvés dans la base de données.  Essayez en ré-insérant le nom ou en redémarrant le programme");
                 return;
             }

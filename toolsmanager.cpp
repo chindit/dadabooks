@@ -165,38 +165,26 @@ void ToolsManager::exportMovieList(QList<QMultiMap<QString, QString> > base, QSt
         else{//PDF LIVRES
             QPainter page;
             QPrinter printer;
-            int totalWidth = printer.width();
-            QFont standard("Arial", 12);
-            QFontMetrics metrics(standard);
             printer.setOutputFormat(QPrinter::PdfFormat);
             printer.setOutputFileName(output);
             printer.setPaperSize(QPrinter::A4);
             printer.setPageMargins(75, 100, 75, 100, QPrinter::DevicePixel);
-            int currentHeight = 0;
-            int nbPages = 1;
             QTextDocument pdf_txt;
-            if (!page.begin(&printer))
-                return;
+            QString chaine;
+            /*if (!page.begin(&printer))
+                return;*/
             for(int i=0; i<base.count(); ++i){
-                page.setFont(standard);
-                QString chaine = base.at(i).value("auteur").toUpper();
+                chaine.append(base.at(i).value("auteur").toUpper());
                 chaine.append(", <i>");
                 chaine.append(base.at(i).value("titre"));
                 chaine.append("</i>, ");
                 chaine.append(base.at(i).value("editeur"));
                 chaine.append(", ");
                 chaine.append(base.at(i).value("annee"));
-                chaine.append(".");
-
-                //INSERT TO QTEXTDOCUMENT (VIA QTEXTCURSOR) AND PRINT
-                QRect placeRef = metrics.boundingRect(chaine);
-                page.drawText(0, currentHeight, totalWidth-150, placeRef.height(), Qt::AlignJustify | Qt::TextWordWrap, chaine);
-                currentHeight += ceil(placeRef.width()/(totalWidth-150));
-                currentHeight += 20;
+                chaine.append(".<br />");
             }
-            //Numéro de la dernière page
-            page.drawText(printer.width(), printer.height()+60, QString::number(nbPages));
-            page.end();
+            pdf_txt.setHtml(chaine);
+            pdf_txt.print(&printer);
         }
     }
 }
