@@ -50,6 +50,12 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     connect(ui->actionHTML, SIGNAL(triggered()), this, SLOT(exportAsHTML()));
     connect(ui->actionPDF, SIGNAL(triggered()), this, SLOT(exportAsPDF()));
 
+    //Slots de visualisation intabPreview
+    connect(ui->pushButtonDelete, SIGNAL(clicked()), this, SLOT(deleteLivre()));
+    connect(ui->pushButtonDeleteLivre, SIGNAL(clicked()), this, SLOT(deleteLivre()));
+    connect(ui->pushButtonEdit, SIGNAL(clicked()), this, SLOT(editLivre()));
+    connect(ui->pushButtonEditLivre, SIGNAL(clicked()), this, SLOT(editLivre()));
+
     //Et on liste les livres
     this->setListeLivres();
 }
@@ -611,6 +617,18 @@ void DadaBooks::editLivre(int id){
     return;
 }
 
+//Surcharge qui appelle editLivre(int) avec l'ID correct
+void DadaBooks::editLivre(){
+    //Si on est ici, c'est qu'on vient du «intabPreview».  Donc, l'ID est affichée->on la récupère
+    int id = ui->labelID->text().toInt();
+    if(id == 0)
+        id = ui->labelIDLivre->text().toInt();
+    if(id == 0)
+        return;
+    this->editLivre(id);
+    return;
+}
+
 //Supprime le livre fourni en paramètre
 void DadaBooks::deleteLivre(int id){
     QString titre;
@@ -654,6 +672,19 @@ void DadaBooks::deleteLivre(int id){
         ui->stackedWidget->setCurrentIndex(0);
     else
         this->closeTab(ui->tabWidget->currentIndex());
+    return;
+}
+
+//Surcharge qui appelle deleteLivre(int) avec l'ID correct
+void DadaBooks::deleteLivre(){
+    //Copie conforme de editLivre()
+    //Si on est ici, c'est qu'on vient du «intabPreview».  Donc, l'ID est affichée->on la récupère
+    int id = ui->labelID->text().toInt();
+    if(id == 0)
+        id = ui->labelIDLivre->text().toInt();
+    if(id == 0)
+        return;
+    this->deleteLivre(id);
     return;
 }
 
@@ -951,11 +982,6 @@ void DadaBooks::intabPreview(int id){
         ui->stackedWidget->setCurrentIndex(2);
     }
 
-    //Connexion des signaux-slots disponibles
-    mapperDelete = new QSignalMapper; mapperEdit = new QSignalMapper;
-    connect(mapperDelete, SIGNAL(mapped(int)), this, SLOT(deleteLivre(int)));
-    connect(mapperEdit, SIGNAL(mapped(int)), this, SLOT(editLivre(int)));
-
     if(films){
         //------------------------------
         //FILMS
@@ -1004,12 +1030,6 @@ void DadaBooks::intabPreview(int id){
             connect(ui->labelEtiquettesText, SIGNAL(linkActivated(QString)), this, SLOT(showEtiquette(QString)));
         }
 
-        //Mappeurs pour les boutons
-        connect(ui->pushButtonDelete, SIGNAL(clicked()), mapperDelete, SLOT(map()));
-        connect(ui->pushButtonEdit, SIGNAL(clicked()), mapperEdit, SLOT(map()));
-        mapperDelete->setMapping(ui->pushButtonDelete, ((sql) ? res1.record().value("id").toInt() : xmlLivre.value("id").toInt()));
-        mapperEdit->setMapping(ui->pushButtonEdit, ((sql) ? res1.record().value("id").toInt() : xmlLivre.value("id").toInt()));
-
         //QListWidget pour les acteurs et les genres
         ui->listWidgetActeurs->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         ui->listWidgetActeurs->addItems(((sql) ? res1.record().value("acteurs").toString() : xmlLivre.value("acteurs")).split(","));
@@ -1044,11 +1064,6 @@ void DadaBooks::intabPreview(int id){
         ui->plainTextEditResumeLivre->clear(); ui->plainTextEditResumeLivre->insertPlainText(((sql) ? ToolsManager::stripSlashes(res1.record().value("synopsis").toString()) : xmlLivre.value("synopsis")));
         ui->plainTextEditCommentaireLivre->clear(); ui->plainTextEditCommentaire->insertPlainText(((sql) ? res1.record().value("commentaire").toString() : xmlLivre.value("commentaire")));
 
-        //Mappeurs pour les boutons
-        connect(ui->pushButtonDeleteLivre, SIGNAL(clicked()), mapperDelete, SLOT(map()));
-        connect(ui->pushButtonEditLivre, SIGNAL(clicked()), mapperEdit, SLOT(map()));
-        mapperDelete->setMapping(ui->pushButtonDeleteLivre, ((sql) ? res1.record().value("id").toInt() : xmlLivre.value("id").toInt()));
-        mapperEdit->setMapping(ui->pushButtonEditLivre, ((sql) ? res1.record().value("id").toInt() : xmlLivre.value("id").toInt()));
     }
 }
 

@@ -41,7 +41,9 @@ private slots:
     void preparePreview();
     void closeTab(int tab);
     void deleteLivre(int id);
+    void deleteLivre(); //Surcharge pour appel
     void editLivre(int id);
+    void editLivre(); //Surcharge pour appel
     void makeSearch();
     void prepareSearchView(int row);
     void openFile();
@@ -68,7 +70,6 @@ private:
     SiteManager *insSiteManager;
     SqlManager *insSqlManager;
     XmlManager *insXmlManager;
-    QSignalMapper *mapperDelete, *mapperEdit;
 
     int idOngletEdit;
     QString nomSiteRecherche;
