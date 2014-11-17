@@ -8,6 +8,7 @@
 #include <QDebug>
 
 #include "settingsmanager.h"
+#include "toolsmanager.h"
 
 class SqlManager
 {

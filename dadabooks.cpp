@@ -579,8 +579,8 @@ void DadaBooks::editLivre(int id){
     }
     else{
         QSqlQuery res1 = insSqlManager->query(req1);
-        res1.next();
-        livre.insert("couverture", res1.record().value((films) ? "jaquette" : "couverture").toString());
+        //res1.next();
+        /*livre.insert("couverture", res1.record().value((films) ? "jaquette" : "couverture").toString());
         livre.insert("titre", res1.record().value("titre").toString());
         livre.insert((films) ? "directeur" : "auteur", res1.record().value((films) ? "directeur" : "nom").toString());
         livre.insert((films) ? "acteurs" : "editeur", res1.record().value((films) ? "acteurs" : "nom_editeur").toString());
@@ -599,7 +599,10 @@ void DadaBooks::editLivre(int id){
         livre.insert("note", res1.record().value("note").toString());
         livre.insert("lu", res1.record().value("lu").toString());
         livre.insert("ebook", res1.record().value((films) ? "fichier" : "ebook").toString());
-        livre.insert("emplacement", res1.record().value("emplacement").toString());
+        livre.insert("emplacement", res1.record().value("emplacement").toString());*/
+        QList<QMultiMap<QString, QString> > listeLivres;
+        listeLivres = insSqlManager->convertToXML(res1);
+        livre = listeLivres.first();
         livre.insert("xml", "0");
     }
     insEditBook->setId(id);
@@ -1135,7 +1138,7 @@ void DadaBooks::exportAsHTML(){
     else{
         if(insSettingsManager->getSettings(Type).toString() == "livres"){
             QString requete = "SELECT livres.id, livres.titre, livres.ISBN, livres.coauteurs, livres.synopsis, livres.couverture, livres.pages, livres.editeur, livres.edition, livres.langue, livres.classement, livres.exemplaires, livres.commentaire, livres.lu, livres.note, livres.empruntable, livres.pret, livres.annee, livres.ebook, livres.emplacement, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id";
-            ToolsManager::exportMovieList(insSqlManager->convertToXML(insSqlManager->query(requete)), output, false, true);
+            ToolsManager::exportMovieList(insSqlManager->convertToXML(insSqlManager->query(requete)), output, false, false);
         }
         else{
             //Films SQL

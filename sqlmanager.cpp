@@ -104,25 +104,26 @@ QList<QMultiMap<QString, QString> > SqlManager::convertToXML(QSqlQuery requete, 
         while(requete.next()){
             QMultiMap<QString, QString> livre;
             if(requete.record().value("nom_editeur").toString().isEmpty()){
-                QString show = "SELECT nom FROM editeurs WHERE id="+requete.record().value("editeur").toString();
-                QSqlQuery editor = this->query("SELECT nom FROM editeurs WHERE id="+requete.record().value("editeur").toString());
-                editor.last();
-                livre.insert("editeur", editor.record().value("nom_editeur").toString());
+                if(!requete.record().value("editeur").isNull()){
+                    QSqlQuery editor = this->query("SELECT nom FROM editeurs WHERE id="+requete.record().value("editeur").toString());
+                    editor.last();
+                    livre.insert("editeur", editor.record().value("nom_editeur").toString());
+                }
             }
-            livre.insert("titre", requete.record().value("titre").toString());
+            livre.insert("titre", ToolsManager::stripSlashes(requete.record().value("titre").toString()));
             livre.insert("isbn", requete.record().value("isbn").toString());
-            livre.insert("auteur", requete.record().value("nom").toString());
-            livre.insert("editeur", requete.record().value("nom_editeur").toString());
-            livre.insert("coauteur", requete.record().value("coauteurs").toString());
+            livre.insert("auteur", ToolsManager::stripSlashes(requete.record().value("nom").toString()));
+            livre.insert("editeur", ToolsManager::stripSlashes(requete.record().value("nom_editeur").toString()));
+            livre.insert("coauteur", ToolsManager::stripSlashes(requete.record().value("coauteurs").toString()));
             livre.insert("couverture", requete.record().value("couverture").toString());
             livre.insert("pages", requete.record().value("pages").toString());
             livre.insert("edition", requete.record().value("edition").toString());
             livre.insert("langue", requete.record().value("langue").toString());
             livre.insert("exemplaires", requete.record().value("exemplaires").toString());
-            livre.insert("classement", requete.record().value("classement").toString());
+            livre.insert("classement", ToolsManager::stripSlashes(requete.record().value("classement").toString()));
             livre.insert("annee", requete.record().value("annee").toString());
-            livre.insert("synopsis", requete.record().value("synopsis").toString());
-            livre.insert("commentaire", requete.record().value("commentaire").toString());
+            livre.insert("synopsis", ToolsManager::stripSlashes(requete.record().value("synopsis").toString()));
+            livre.insert("commentaire", ToolsManager::stripSlashes(requete.record().value("commentaire").toString()));
             livre.insert("note", requete.record().value("note").toString());
             livre.insert("empruntable", ((requete.record().value("empruntable").toBool()) ? "True" : "False"));
             livre.insert("prete", ((requete.record().value("pret").toBool()) ? "True" : "False"));
