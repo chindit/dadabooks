@@ -1,4 +1,4 @@
 dadabooks
 =========
 
-Gestionnaire de livres (et bientôt de films)
+Gestionnaire de livres et de films en Qt
