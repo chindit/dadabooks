@@ -3,7 +3,11 @@
 
 //Constructeur
 DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBooks){
+
+    //Création de l'UI
     ui->setupUi(this);
+
+    //Initialisations des classes
     insPreviewBook = new PreviewBook;
     insSettingsManager = new SettingsManager;
     insAddBook = new AddBook;
@@ -12,7 +16,6 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     idOngletEdit = -1;
 
     //On vérifie si le programme est initialisé ou non
-    //if(insSettingsManager->getSettings(Fichier).toString().isEmpty() && !insSettingsManager->getSettings(MariaDB).toBool()){
     if(!insSettingsManager->getSettings(Initialized).toBool()){
         FirstLaunch *insFirstLaunch = new FirstLaunch;
         insFirstLaunch->exec();
@@ -585,29 +588,11 @@ void DadaBooks::editLivre(int id){
     }
     else{
         QSqlQuery res1 = insSqlManager->query(req1);
-        //res1.next();
-        /*livre.insert("couverture", res1.record().value((films) ? "jaquette" : "couverture").toString());
-        livre.insert("titre", res1.record().value("titre").toString());
-        livre.insert((films) ? "directeur" : "auteur", res1.record().value((films) ? "directeur" : "nom").toString());
-        livre.insert((films) ? "acteurs" : "editeur", res1.record().value((films) ? "acteurs" : "nom_editeur").toString());
-        livre.insert("annee", res1.record().value("annee").toString());
-        livre.insert((films) ? "genre": "isbn", res1.record().value((films) ? "genre" : "isbn").toString());
-        livre.insert("langue", res1.record().value("langue").toString());
-        livre.insert((films) ? "duree" : "pages", res1.record().value((films) ? "duree" : "pages").toString());
-        livre.insert("synopsis", res1.record().value("synopsis").toString());
-        livre.insert((films) ? "titreOriginal" : "coauteurs", res1.record().value((films) ? "titre_original" : "coauteurs").toString());
-        livre.insert((films) ? "pays" : "edition", res1.record().value((films) ? "pays" : "edition").toString());
-        livre.insert((films) ? "sousTitres" : "exemplaires", res1.record().value((films) ? "sous_titres" : "exemplaires").toString());
-        livre.insert("commentaire", res1.record().value("commentaire").toString());
-        livre.insert("classement", res1.record().value("classement").toString());
-        livre.insert("empruntable", res1.record().value("empruntable").toString());
-        livre.insert("prete", res1.record().value("pret").toString());
-        livre.insert("note", res1.record().value("note").toString());
-        livre.insert("lu", res1.record().value("lu").toString());
-        livre.insert("ebook", res1.record().value((films) ? "fichier" : "ebook").toString());
-        livre.insert("emplacement", res1.record().value("emplacement").toString());*/
         QList<QMultiMap<QString, QString> > listeLivres;
-        listeLivres = insSqlManager->convertToXML(res1);
+        if(insSettingsManager->getSettings(Type).toString() != "films")
+            listeLivres = insSqlManager->convertToXML(res1);
+        else
+            listeLivres = insSqlManager->convertToXML(res1, true);
         livre = listeLivres.first();
         livre.insert("xml", "0");
     }

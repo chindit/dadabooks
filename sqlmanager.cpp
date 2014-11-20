@@ -135,7 +135,34 @@ QList<QMultiMap<QString, QString> > SqlManager::convertToXML(QSqlQuery requete, 
         }
     }
     else{
-        //TODO
+        while(requete.next()){
+            QMultiMap<QString, QString> film;
+            film.insert("id", requete.record().value("id").toString());
+            film.insert("titre", ToolsManager::stripSlashes(requete.record().value("titre").toString()));
+            film.insert("titreOriginal", ToolsManager::stripSlashes(requete.record().value("titre_original").toString()));
+            film.insert("directeur", ToolsManager::stripSlashes(requete.record().value("directeur").toString()));
+            film.insert("acteurs", ToolsManager::stripSlashes(requete.record().value("acteurs").toString()));
+            film.insert("synopsis", ToolsManager::stripSlashes(requete.record().value("synopsis").toString()));
+            film.insert("annee", requete.record().value("annee").toString());
+            film.insert("duree", requete.record().value("duree").toString());
+            film.insert("genre", ToolsManager::stripSlashes(requete.record().value("genre").toString()));
+            film.insert("pays", ToolsManager::stripSlashes(requete.record().value("pays").toString()));
+            film.insert("langue", ToolsManager::stripSlashes(requete.record().value("langue").toString()));
+            film.insert("classement", ToolsManager::stripSlashes(requete.record().value("classement").toString()));
+            film.insert("sousTitres", ToolsManager::stripSlashes(requete.record().value("sous_titres").toString()));
+            film.insert("commentaire", ToolsManager::stripSlashes(requete.record().value("commentaire").toString()));
+            film.insert("note", requete.record().value("note").toString());
+            film.insert("couverture", requete.record().value("jaquette").toString());
+            film.insert("empruntable", ((requete.record().value("empruntable").toBool()) ? "True" : "False"));
+            film.insert("prete", ((requete.record().value("prete").toBool()) ? "True" : "False"));
+            film.insert("vu", ((requete.record().value("vu").toBool()) ? "True" : "False"));
+            film.insert("fichier", ((requete.record().value("fichier").toBool()) ? "True" : "False"));
+            if(requete.record().value("fichier").toBool())
+                film.insert("emplacement", requete.record().value("emplacement").toString());
+            //Traitement des édiquettes
+            //TODO
+            resultat.append(film);
+        }
     }
     return resultat;
 }
