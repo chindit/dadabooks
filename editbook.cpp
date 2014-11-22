@@ -382,15 +382,24 @@ void EditBook::accept(){
 
 //Dans le cas où il ne s'agit pas d'un remplissage automatique, on affiche quelques outils pour l'édition manuelle
 void EditBook::setManual(){
+    QStringList etiquettes;
+    if(!insSettingsManager->getSettings(Xml).toBool()){
+        QSqlQuery res1 = insSql->query("SELECT nom FROM etiquettes");
+        while(res1.next())
+            etiquettes.append(res1.record().value("nom").toString());
+    }
+
     if(ui->stackedWidget->currentIndex() == 1){
-        //ui->labelImageFilm->setText("<a href=\"#\">Cliquez ici pour ajouter une jaquette</a>");
-        //connect(ui->labelImageFilm, SIGNAL(linkActivated(QString)), this, SLOT(uploadImage()));
         if(insSettingsManager->getSettings(Xml).toBool())
             ui->listWidgetEtiquettesDispoFilm->addItems(insXml->getListEtiquettes());
+        else
+            ui->listWidgetEtiquettesDispoFilm->addItems(etiquettes);
     }
     else{
-        //ui->labelImageLivre->setText("<a href=\"#\">Cliquez ici pour ajouter une image</a>");
-        //connect(ui->labelImageLivre, SIGNAL(linkActivated(QString)), this, SLOT(uploadImage()));
+        if(insSettingsManager->getSettings(Xml).toBool())
+            ui->listWidgetEtiquettesDispoLivre->addItems(insXml->getListEtiquettes());
+        else
+            ui->listWidgetEtiquettesDispoLivre->addItems(etiquettes);
     }
 }
 
@@ -466,11 +475,7 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
                 image = image.scaledToWidth(result);
             }
         }
-        //ui->labelImageLivre->setPixmap(image);
-        //ui->labelImageLivre->setText(image);
         ui->labelImageLivre->setText(livre.value("couverture"));
-        //ui->label_image_texte->setMaximumWidth(150);
-        //ui->label_image_texte->setVisible(true);
         if((livre.value("xml", "-1").toInt() == 1) || insSettingsManager->getSettings(Xml).toBool()){
             ui->comboBoxAuteurLivre->setVisible(false);
             ui->comboBoxEditeurLivre->setVisible(false);
@@ -478,17 +483,20 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
             ui->pushButtonEditEditeurLivre->setVisible(false);
             ui->pushButtonNouvelAuteurLivre->setVisible(false);
             ui->pushButtonNouvelEditeurLivre->setVisible(false);
-            //ui->labelEtiquettes->setVisible(false);
-            //ui->comboBoxEtiquettes->setVisible(false);
+            if(idEdit)
+                ui->listWidgetEtiquettesLivreLivre->addItems(livre.value("etiquettes").split(","));
         }
         else{//Pas XML -> SQL
             this->getAuteur(livre.value("auteur"));
             this->getEditeur(livre.value("editeur"));
             //Màj des étiquettes
             QSqlQuery resultat = insSql->query("SELECT id,nom FROM etiquettes");
-            while(resultat.next()){
-                ui->listWidgetEtiquettesLivreLivre->addItem(resultat.record().value("nom").toString());
-                //ui->comboBoxEtiquettes->addItem(resultat.record().value("nom").toString(), resultat.record().value("id"));
+            while(resultat.next())
+                ui->listWidgetEtiquettesDispoLivre->addItem(resultat.record().value("nom").toString());
+            if(idEdit > 0){
+                QSqlQuery res1 = insSql->query("SELECT nom FROM etiquettes LEFT JOIN liste_etiquettes ON liste_etiquettes.id_etiquette=etiquettes.id WHERE liste_etiquettes.id_livre="+QString::number(idEdit));
+                while(res1.next())
+                    ui->listWidgetEtiquettesLivreLivre->addItem(res1.record().value("nom").toString());
             }
         }
     }
