@@ -2,741 +2,28 @@
 <ui version="4.0">
  <class>EditBook</class>
  <widget class="QDialog" name="EditBook">
-  <property name="windowModality">
-   <enum>Qt::ApplicationModal</enum>
-  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>720</width>
-    <height>831</height>
+    <width>761</width>
+    <height>808</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
-   <string>Éditer/Ajouter un livre</string>
+   <string>Ajouter un élément</string>
   </property>
   <property name="windowIcon">
    <iconset resource="images.qrc">
     <normaloff>:/programme/images/icone.png</normaloff>:/programme/images/icone.png</iconset>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
-   <item row="0" column="0" alignment="Qt::AlignHCenter">
-    <widget class="QLabel" name="labelTitreGeneral">
-     <property name="font">
-      <font>
-       <pointsize>20</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Édition du livre</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QStackedWidget" name="stackedWidget">
-     <property name="currentIndex">
-      <number>1</number>
-     </property>
-     <widget class="QWidget" name="livre">
-      <layout class="QGridLayout" name="gridLayout_4">
-       <item row="0" column="0">
-        <layout class="QGridLayout" name="gridLayout">
-         <item row="11" column="2">
-          <widget class="QSpinBox" name="spinBox_edition">
-           <property name="value">
-            <number>1</number>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="3" alignment="Qt::AlignHCenter">
-          <widget class="QLabel" name="label_couverture">
-           <property name="text">
-            <string>Couverture</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="label_editeur">
-           <property name="text">
-            <string>Éditeur</string>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="2">
-          <widget class="QPlainTextEdit" name="plainTextEdit_resume"/>
-         </item>
-         <item row="10" column="0">
-          <widget class="QLabel" name="label_pages">
-           <property name="text">
-            <string>Pages</string>
-           </property>
-          </widget>
-         </item>
-         <item row="22" column="3">
-          <widget class="QLabel" name="label_image_texte">
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Auteur</string>
-           </property>
-          </widget>
-         </item>
-         <item row="9" column="2">
-          <widget class="QSpinBox" name="spinBox_annee">
-           <property name="maximum">
-            <number>2200</number>
-           </property>
-           <property name="value">
-            <number>1900</number>
-           </property>
-          </widget>
-         </item>
-         <item row="11" column="0">
-          <widget class="QLabel" name="label_edition">
-           <property name="text">
-            <string>Édition</string>
-           </property>
-          </widget>
-         </item>
-         <item row="16" column="2">
-          <widget class="QSpinBox" name="spinBox_exemplaires">
-           <property name="value">
-            <number>1</number>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="2">
-          <widget class="QLineEdit" name="lineEdit_coauteurs"/>
-         </item>
-         <item row="17" column="0">
-          <widget class="QLabel" name="label_empruntable">
-           <property name="text">
-            <string>Options</string>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="0">
-          <widget class="QLabel" name="label_resume">
-           <property name="text">
-            <string>Résumé</string>
-           </property>
-          </widget>
-         </item>
-         <item row="9" column="0">
-          <widget class="QLabel" name="label_annee">
-           <property name="text">
-            <string>Année</string>
-           </property>
-          </widget>
-         </item>
-         <item row="18" column="0">
-          <widget class="QLabel" name="label_commentaire">
-           <property name="text">
-            <string>Commentaire</string>
-           </property>
-          </widget>
-         </item>
-         <item row="13" column="0">
-          <widget class="QLabel" name="label_langue">
-           <property name="text">
-            <string>Langue</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="2">
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
-           <item>
-            <widget class="QComboBox" name="comboBox_editeur"/>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_edit_editeur">
-             <property name="text">
-              <string>Éditer l'éditeur</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_editeur">
-             <property name="text">
-              <string>Nouvel éditeur</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="12" column="2">
-          <widget class="QLineEdit" name="lineEdit_ISBN"/>
-         </item>
-         <item row="0" column="2">
-          <widget class="QLineEdit" name="lineEdit_titre"/>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="label_coauteurs">
-           <property name="text">
-            <string>Co-auteur(s)</string>
-           </property>
-          </widget>
-         </item>
-         <item row="15" column="2">
-          <widget class="QLineEdit" name="lineEdit_classement"/>
-         </item>
-         <item row="12" column="0">
-          <widget class="QLabel" name="label_ISBN">
-           <property name="text">
-            <string>ISBN</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="2">
-          <widget class="QLineEdit" name="lineEdit_editeur"/>
-         </item>
-         <item row="1" column="2">
-          <widget class="QLineEdit" name="lineEdit_auteur"/>
-         </item>
-         <item row="19" column="0">
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>Ebook</string>
-           </property>
-          </widget>
-         </item>
-         <item row="16" column="0">
-          <widget class="QLabel" name="label_exemplaires">
-           <property name="text">
-            <string>Exemplaires</string>
-           </property>
-          </widget>
-         </item>
-         <item row="10" column="2">
-          <widget class="QSpinBox" name="spinBox_pages">
-           <property name="maximum">
-            <number>15000</number>
-           </property>
-           <property name="value">
-            <number>50</number>
-           </property>
-          </widget>
-         </item>
-         <item row="18" column="2">
-          <widget class="QPlainTextEdit" name="plainTextEdit_commentaire"/>
-         </item>
-         <item row="13" column="2">
-          <widget class="QLineEdit" name="lineEdit_langue"/>
-         </item>
-         <item row="2" column="2">
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
-            <widget class="QComboBox" name="comboBox_auteur"/>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_edit_auteur">
-             <property name="text">
-              <string>Éditer l'auteur</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_auteur">
-             <property name="text">
-              <string>Nouvel auteur</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="15" column="0">
-          <widget class="QLabel" name="label_classement">
-           <property name="text">
-            <string>Classement</string>
-           </property>
-          </widget>
-         </item>
-         <item row="17" column="2">
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QCheckBox" name="checkBox_empruntable">
-             <property name="text">
-              <string>Empruntable</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="checkBox_prete">
-             <property name="text">
-              <string>Prêté</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="20" column="0">
-          <widget class="QLabel" name="label_etiquette">
-           <property name="text">
-            <string>Étiquettes</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="3" rowspan="19">
-          <widget class="QLabel" name="label_image">
-           <property name="text">
-            <string>IMAGE</string>
-           </property>
-          </widget>
-         </item>
-         <item row="22" column="0" colspan="3">
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
-           <item>
-            <widget class="QCheckBox" name="checkBox_lu">
-             <property name="layoutDirection">
-              <enum>Qt::RightToLeft</enum>
-             </property>
-             <property name="text">
-              <string>Lu</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSlider" name="horizontalSlider_note">
-             <property name="maximum">
-              <number>20</number>
-             </property>
-             <property name="value">
-              <number>10</number>
-             </property>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="tickPosition">
-              <enum>QSlider::TicksAbove</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_note">
-             <property name="minimumSize">
-              <size>
-               <width>50</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>10/20</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="19" column="2">
-          <layout class="QHBoxLayout" name="horizontalLayout_6">
-           <item>
-            <widget class="QCheckBox" name="checkBox_ebook">
-             <property name="text">
-              <string>Ebook</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="Line" name="line">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_4">
-             <property name="text">
-              <string>Emplacement</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEdit_emplacement">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_emplacement">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>Emplacement</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="20" column="2">
-          <widget class="QComboBox" name="comboBox_etiquette">
-           <property name="editable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_titre">
-           <property name="text">
-            <string>Titre</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="film">
-      <layout class="QGridLayout" name="gridLayout_3">
-       <item row="6" column="0">
-        <widget class="QLabel" name="label_10">
-         <property name="text">
-          <string>Durée (en min)</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLineEdit" name="lineEditDirecteur"/>
-       </item>
-       <item row="8" column="0">
-        <widget class="QLabel" name="label_12">
-         <property name="text">
-          <string>Nationalité</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="label_8">
-         <property name="text">
-          <string>Résumé</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QPlainTextEdit" name="editResume"/>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_5">
-         <property name="text">
-          <string>Titre</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>Directeur</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QLineEdit" name="lineEditActeurs"/>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label_7">
-         <property name="text">
-          <string>Acteurs</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="label_9">
-         <property name="text">
-          <string>Année</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="lineEditTitre"/>
-       </item>
-       <item row="7" column="1">
-        <widget class="QLineEdit" name="lineEditType"/>
-       </item>
-       <item row="7" column="0">
-        <widget class="QLabel" name="label_11">
-         <property name="text">
-          <string>Genre(s)</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QSpinBox" name="spinBoxAnnee">
-         <property name="minimum">
-          <number>1900</number>
-         </property>
-         <property name="maximum">
-          <number>2025</number>
-         </property>
-         <property name="value">
-          <number>2014</number>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QSpinBox" name="spinBoxDuree">
-         <property name="maximum">
-          <number>1000</number>
-         </property>
-         <property name="value">
-          <number>90</number>
-         </property>
-        </widget>
-       </item>
-       <item row="12" column="0">
-        <widget class="QLabel" name="label_13">
-         <property name="text">
-          <string>Options</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1">
-        <widget class="QLineEdit" name="lineEditNationalite"/>
-       </item>
-       <item row="11" column="0">
-        <widget class="QLabel" name="label_14">
-         <property name="text">
-          <string>Classement</string>
-         </property>
-        </widget>
-       </item>
-       <item row="15" column="0">
-        <widget class="QLabel" name="label_16">
-         <property name="text">
-          <string>Fichier</string>
-         </property>
-        </widget>
-       </item>
-       <item row="11" column="1">
-        <widget class="QLineEdit" name="lineEditClassement"/>
-       </item>
-       <item row="14" column="0">
-        <widget class="QLabel" name="label_15">
-         <property name="text">
-          <string>Commentaire</string>
-         </property>
-        </widget>
-       </item>
-       <item row="14" column="1">
-        <widget class="QTextEdit" name="editCommentaire"/>
-       </item>
-       <item row="0" column="2">
-        <widget class="QLabel" name="label_17">
-         <property name="text">
-          <string>Jaquette</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="16" column="2">
-        <widget class="QLabel" name="labelTxtImage">
-         <property name="maximumSize">
-          <size>
-           <width>200</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="13" column="0">
-        <widget class="QLabel" name="labelEtiquettes">
-         <property name="text">
-          <string>Étiquettes</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="2" rowspan="14">
-        <widget class="QLabel" name="labelImage">
-         <property name="maximumSize">
-          <size>
-           <width>250</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="0">
-        <widget class="QLabel" name="label_19">
-         <property name="text">
-          <string>Langue</string>
-         </property>
-        </widget>
-       </item>
-       <item row="16" column="0" colspan="2">
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
-         <item>
-          <widget class="QCheckBox" name="checkBoxVu">
-           <property name="text">
-            <string>Vu</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSlider" name="horizontalSlider">
-           <property name="maximum">
-            <number>20</number>
-           </property>
-           <property name="value">
-            <number>10</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_18">
-           <property name="text">
-            <string>10</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>/20</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="9" column="1">
-        <widget class="QLineEdit" name="lineEditLangue"/>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_20">
-         <property name="text">
-          <string>Titre original</string>
-         </property>
-        </widget>
-       </item>
-       <item row="15" column="1">
-        <layout class="QHBoxLayout" name="horizontalLayout_7">
-         <item>
-          <widget class="QCheckBox" name="checkBoxFichier">
-           <property name="text">
-            <string>Fichier</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_22">
-           <property name="text">
-            <string>Emplacement</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="lineEditEmplacement">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButtonEmplacement">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>Emplacement</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="12" column="1">
-        <layout class="QHBoxLayout" name="horizontalLayout_8">
-         <item>
-          <widget class="QCheckBox" name="checkBoxEmpruntable">
-           <property name="text">
-            <string>Empruntable</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="checkBoxPrete">
-           <property name="text">
-            <string>Prêté</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="10" column="0">
-        <widget class="QLabel" name="label_23">
-         <property name="text">
-          <string>Sous-titres</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="lineEditOriginal"/>
-       </item>
-       <item row="10" column="1">
-        <widget class="QLineEdit" name="lineEditSousTitres"/>
-       </item>
-       <item row="13" column="1">
-        <widget class="QComboBox" name="comboBoxEtiquettes">
-         <property name="editable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-   </item>
+  <layout class="QGridLayout" name="gridLayout">
    <item row="2" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
@@ -747,57 +34,1001 @@
      </property>
     </widget>
    </item>
+   <item row="1" column="0">
+    <widget class="QStackedWidget" name="stackedWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="livres">
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_23">
+         <property name="text">
+          <string>Auteur</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QSpinBox" name="spinBoxAnneeLivre"/>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="label_37">
+         <property name="text">
+          <string>Couverture</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QComboBox" name="comboBoxAuteurLivre"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonEditAuteurLivre">
+           <property name="text">
+            <string>Éditer l'auteur</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonNouvelAuteurLivre">
+           <property name="text">
+            <string>Nouvel auteur</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="2">
+        <widget class="QLabel" name="label_24">
+         <property name="text">
+          <string>Éditeur</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="lineEditAuteurLivre"/>
+       </item>
+       <item row="8" column="1" colspan="3">
+        <layout class="QHBoxLayout" name="horizontalLayout_10">
+         <item>
+          <widget class="QLabel" name="labelImageLivre">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonVoirLivre">
+           <property name="maximumSize">
+            <size>
+             <width>75</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Voir</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonModifImageLivre">
+           <property name="maximumSize">
+            <size>
+             <width>75</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Modifier</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="4" column="3">
+        <widget class="QLineEdit" name="lineEditLangueLivre"/>
+       </item>
+       <item row="2" column="2" colspan="2">
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QComboBox" name="comboBoxEditeurLivre"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonEditEditeurLivre">
+           <property name="text">
+            <string>Éditer l'éditeur</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonNouvelEditeurLivre">
+           <property name="text">
+            <string>Nouvel éditeur</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="5" column="1">
+        <widget class="QSpinBox" name="spinBoxExemplairesLivre">
+         <property name="value">
+          <number>1</number>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_27">
+         <property name="text">
+          <string>ISBN</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1" colspan="3">
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <widget class="QCheckBox" name="checkBoxEmpruntableLivre">
+           <property name="text">
+            <string>Empruntable</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBoxPretLivre">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>En prêt</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBoxEbookLivre">
+           <property name="text">
+            <string>Ebook</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelCheminLivre">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonEmplacementLivre">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Emplacement</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="7" column="1" colspan="3">
+        <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <item>
+          <widget class="QCheckBox" name="checkBoxLuLivre">
+           <property name="text">
+            <string>Lu</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSlider" name="horizontalSliderNoteLivre">
+           <property name="maximum">
+            <number>20</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelNoteLivre">
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_35">
+           <property name="text">
+            <string>/20</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="10" column="1">
+        <layout class="QVBoxLayout" name="verticalLayout_8">
+         <item>
+          <widget class="QLabel" name="label_41">
+           <property name="text">
+            <string>Pour le livre</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QListWidget" name="listWidgetEtiquettesLivreLivre">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>150</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="5" column="2">
+        <widget class="QLabel" name="label_30">
+         <property name="text">
+          <string>Édition</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_25">
+         <property name="text">
+          <string>Co-auteur(s)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QLineEdit" name="lineEditEditeurLivre"/>
+       </item>
+       <item row="5" column="3">
+        <widget class="QSpinBox" name="spinBoxEditionLivre">
+         <property name="value">
+          <number>1</number>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="0">
+        <widget class="QLabel" name="label_39">
+         <property name="text">
+          <string>Étiquettes</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="label_32">
+         <property name="text">
+          <string>Options</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="2" colspan="2">
+        <widget class="QLineEdit" name="lineEditClassementLivre"/>
+       </item>
+       <item row="9" column="1">
+        <widget class="QLabel" name="label_36">
+         <property name="text">
+          <string>Classement</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="label_22">
+         <property name="text">
+          <string>Année</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_20">
+         <property name="text">
+          <string>Titre</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="lineEditTitreLivre"/>
+       </item>
+       <item row="10" column="3">
+        <layout class="QVBoxLayout" name="verticalLayout_7">
+         <item>
+          <widget class="QLabel" name="label_40">
+           <property name="text">
+            <string>Disponibles</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QListWidget" name="listWidgetEtiquettesDispoLivre">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>150</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="3" column="2">
+        <widget class="QLabel" name="label_26">
+         <property name="text">
+          <string>Nombre de pages</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="lineEditCoAuteurLivre"/>
+       </item>
+       <item row="3" column="3">
+        <widget class="QSpinBox" name="spinBoxPagesLivre"/>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_29">
+         <property name="text">
+          <string>Exemplaires</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="lineEditISBNLivre"/>
+       </item>
+       <item row="4" column="2">
+        <widget class="QLabel" name="label_28">
+         <property name="text">
+          <string>Langue</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="2">
+        <layout class="QVBoxLayout" name="verticalLayout_6">
+         <property name="leftMargin">
+          <number>45</number>
+         </property>
+         <item>
+          <spacer name="verticalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonEtiquettesToLivreLivre">
+           <property name="minimumSize">
+            <size>
+             <width>31</width>
+             <height>31</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>31</width>
+             <height>31</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="images.qrc">
+             <normaloff>:/boutons/images/fleche_gauche.png</normaloff>:/boutons/images/fleche_gauche.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>25</width>
+             <height>25</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonEtiquettesLivreDispoLivre">
+           <property name="minimumSize">
+            <size>
+             <width>31</width>
+             <height>31</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>31</width>
+             <height>31</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="images.qrc">
+             <normaloff>:/boutons/images/fleche_droite.png</normaloff>:/boutons/images/fleche_droite.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>25</width>
+             <height>25</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonEtiquettesPlusLivre">
+           <property name="minimumSize">
+            <size>
+             <width>31</width>
+             <height>31</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>31</width>
+             <height>31</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="images.qrc">
+             <normaloff>:/boutons/images/plus.png</normaloff>:/boutons/images/plus.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>25</width>
+             <height>25</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="11" column="0" colspan="2">
+        <layout class="QVBoxLayout" name="verticalLayout_10">
+         <item>
+          <widget class="QLabel" name="label_42">
+           <property name="text">
+            <string>Synopsis</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPlainTextEdit" name="plainTextEditSynopsisLivre"/>
+         </item>
+        </layout>
+       </item>
+       <item row="11" column="2" colspan="2">
+        <layout class="QVBoxLayout" name="verticalLayout_11">
+         <item>
+          <widget class="QLabel" name="label_43">
+           <property name="text">
+            <string>Commentaire</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPlainTextEdit" name="plainTextEditCommentaireLivre"/>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="films">
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="7" column="0">
+        <widget class="QLabel" name="label_21">
+         <property name="text">
+          <string>Jaquette</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Directeur</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Titre original</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Nationalité</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Titre</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QLineEdit" name="lineEditNationaliteFilm"/>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Acteurs</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QSpinBox" name="spinBoxAnneeFilm">
+         <property name="minimum">
+          <number>1900</number>
+         </property>
+         <property name="maximum">
+          <number>2100</number>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="lineEditDirecteurFilm"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Année</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QLineEdit" name="lineEditTitreOriginalFilm"/>
+       </item>
+       <item row="3" column="3">
+        <widget class="QLineEdit" name="lineEditSousTitresFilm"/>
+       </item>
+       <item row="3" column="2">
+        <widget class="QLabel" name="label_10">
+         <property name="text">
+          <string>Sous-titres</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="2">
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Genres</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="3">
+        <widget class="QListWidget" name="listWidgetGenreFilm">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>100</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="3">
+        <widget class="QSpinBox" name="spinBoxDureeFilm">
+         <property name="maximum">
+          <number>1000</number>
+         </property>
+         <property name="value">
+          <number>90</number>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="3">
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QLabel" name="label_17">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Disponibles</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QListWidget" name="listWidgetEtiquettesDispoFilm">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>100</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Langue</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Durée</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="lineEditLangueFilm"/>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>Options</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="1">
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QLabel" name="label_16">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Pour le film</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QListWidget" name="listWidgetEtiquettesFilmFilm">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>100</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="9" column="0">
+        <widget class="QLabel" name="label_15">
+         <property name="text">
+          <string>Étiquettes</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="2" colspan="2">
+        <layout class="QVBoxLayout" name="verticalLayout_5">
+         <item>
+          <widget class="QLabel" name="label_19">
+           <property name="text">
+            <string>Commentaire</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPlainTextEdit" name="plainTextEditCommentaireFilm"/>
+         </item>
+        </layout>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="lineEditTitreFilm"/>
+       </item>
+       <item row="6" column="1" colspan="3">
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QCheckBox" name="checkBoxVuFilm">
+           <property name="text">
+            <string>Vu</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSlider" name="horizontalSliderNoteFilm">
+           <property name="maximum">
+            <number>20</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelNoteFilm">
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_14">
+           <property name="text">
+            <string>/20</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="5" column="1" colspan="3">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QCheckBox" name="checkBoxEmpruntableFilm">
+           <property name="text">
+            <string>Empruntable</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBoxPreteFilm">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>En prêt</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="checkBoxFichierFilm">
+           <property name="text">
+            <string>Fichier</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelCheminFilm">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonEmplacementFilm">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Emplacement</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="9" column="2">
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <property name="sizeConstraint">
+          <enum>QLayout::SetDefaultConstraint</enum>
+         </property>
+         <property name="leftMargin">
+          <number>25</number>
+         </property>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonEtiquetteToFilmFilm">
+           <property name="minimumSize">
+            <size>
+             <width>31</width>
+             <height>31</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>31</width>
+             <height>31</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="images.qrc">
+             <normaloff>:/boutons/images/fleche_gauche.png</normaloff>:/boutons/images/fleche_gauche.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>25</width>
+             <height>25</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonEtiquetteFilmDispoFilm">
+           <property name="minimumSize">
+            <size>
+             <width>31</width>
+             <height>31</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>31</width>
+             <height>31</height>
+            </size>
+           </property>
+           <property name="icon">
+            <iconset resource="images.qrc">
+             <normaloff>:/boutons/images/fleche_droite.png</normaloff>:/boutons/images/fleche_droite.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>25</width>
+             <height>25</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonEtiquettePlusFilm">
+           <property name="minimumSize">
+            <size>
+             <width>31</width>
+             <height>31</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>31</width>
+             <height>31</height>
+            </size>
+           </property>
+           <property name="icon">
+            <iconset resource="images.qrc">
+             <normaloff>:/boutons/images/plus.png</normaloff>:/boutons/images/plus.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>25</width>
+             <height>25</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="10" column="0" colspan="2">
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <widget class="QLabel" name="label_18">
+           <property name="text">
+            <string>Synopsis</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPlainTextEdit" name="plainTextEditSynopsisFilm"/>
+         </item>
+        </layout>
+       </item>
+       <item row="7" column="1" colspan="3">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="labelImageFilm">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonVoirFilm">
+           <property name="maximumSize">
+            <size>
+             <width>75</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Voir</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonModifImageFilm">
+           <property name="maximumSize">
+            <size>
+             <width>75</width>
+             <height>75</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Modifier</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="8" column="1">
+        <widget class="QLabel" name="label_31">
+         <property name="text">
+          <string>Classement</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="2" colspan="2">
+        <widget class="QLineEdit" name="lineEditClassementFilm"/>
+       </item>
+       <item row="4" column="1">
+        <widget class="QListWidget" name="listWidgetActeursFilm">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>100</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="windowTitle">
+     <property name="font">
+      <font>
+       <family>Arial</family>
+       <pointsize>20</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Édition du film</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>lineEdit_titre</tabstop>
-  <tabstop>lineEdit_auteur</tabstop>
-  <tabstop>lineEdit_coauteurs</tabstop>
-  <tabstop>lineEdit_editeur</tabstop>
-  <tabstop>plainTextEdit_resume</tabstop>
-  <tabstop>spinBox_annee</tabstop>
-  <tabstop>spinBox_pages</tabstop>
-  <tabstop>spinBox_edition</tabstop>
-  <tabstop>lineEdit_ISBN</tabstop>
-  <tabstop>lineEdit_langue</tabstop>
-  <tabstop>lineEdit_classement</tabstop>
-  <tabstop>spinBox_exemplaires</tabstop>
-  <tabstop>checkBox_empruntable</tabstop>
-  <tabstop>checkBox_prete</tabstop>
-  <tabstop>plainTextEdit_commentaire</tabstop>
-  <tabstop>checkBox_ebook</tabstop>
-  <tabstop>lineEdit_emplacement</tabstop>
-  <tabstop>pushButton_emplacement</tabstop>
-  <tabstop>comboBox_etiquette</tabstop>
-  <tabstop>checkBox_lu</tabstop>
-  <tabstop>horizontalSlider_note</tabstop>
-  <tabstop>comboBox_auteur</tabstop>
-  <tabstop>pushButton_edit_auteur</tabstop>
-  <tabstop>pushButton_auteur</tabstop>
-  <tabstop>comboBox_editeur</tabstop>
-  <tabstop>pushButton_edit_editeur</tabstop>
-  <tabstop>pushButton_editeur</tabstop>
-  <tabstop>lineEditTitre</tabstop>
-  <tabstop>lineEditOriginal</tabstop>
-  <tabstop>lineEditDirecteur</tabstop>
-  <tabstop>lineEditActeurs</tabstop>
-  <tabstop>editResume</tabstop>
-  <tabstop>spinBoxAnnee</tabstop>
-  <tabstop>spinBoxDuree</tabstop>
-  <tabstop>lineEditType</tabstop>
-  <tabstop>lineEditNationalite</tabstop>
-  <tabstop>lineEditLangue</tabstop>
-  <tabstop>lineEditSousTitres</tabstop>
-  <tabstop>lineEditClassement</tabstop>
-  <tabstop>checkBoxEmpruntable</tabstop>
-  <tabstop>checkBoxPrete</tabstop>
-  <tabstop>comboBoxEtiquettes</tabstop>
-  <tabstop>editCommentaire</tabstop>
-  <tabstop>checkBoxFichier</tabstop>
-  <tabstop>lineEditEmplacement</tabstop>
-  <tabstop>pushButtonEmplacement</tabstop>
-  <tabstop>checkBoxVu</tabstop>
-  <tabstop>horizontalSlider</tabstop>
+  <tabstop>lineEditTitreFilm</tabstop>
+  <tabstop>lineEditTitreOriginalFilm</tabstop>
+  <tabstop>lineEditDirecteurFilm</tabstop>
+  <tabstop>lineEditNationaliteFilm</tabstop>
+  <tabstop>spinBoxAnneeFilm</tabstop>
+  <tabstop>spinBoxDureeFilm</tabstop>
+  <tabstop>lineEditLangueFilm</tabstop>
+  <tabstop>lineEditSousTitresFilm</tabstop>
+  <tabstop>listWidgetGenreFilm</tabstop>
+  <tabstop>checkBoxEmpruntableFilm</tabstop>
+  <tabstop>checkBoxPreteFilm</tabstop>
+  <tabstop>checkBoxFichierFilm</tabstop>
+  <tabstop>pushButtonEmplacementFilm</tabstop>
+  <tabstop>checkBoxVuFilm</tabstop>
+  <tabstop>horizontalSliderNoteFilm</tabstop>
+  <tabstop>listWidgetEtiquettesFilmFilm</tabstop>
+  <tabstop>pushButtonEtiquetteToFilmFilm</tabstop>
+  <tabstop>pushButtonEtiquetteFilmDispoFilm</tabstop>
+  <tabstop>listWidgetEtiquettesDispoFilm</tabstop>
+  <tabstop>pushButtonEtiquettePlusFilm</tabstop>
+  <tabstop>plainTextEditSynopsisFilm</tabstop>
+  <tabstop>plainTextEditCommentaireFilm</tabstop>
  </tabstops>
  <resources>
   <include location="images.qrc"/>
@@ -810,8 +1041,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>236</x>
-     <y>803</y>
+     <x>256</x>
+     <y>798</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -826,8 +1057,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>304</x>
-     <y>803</y>
+     <x>324</x>
+     <y>798</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -836,105 +1067,100 @@
    </hints>
   </connection>
   <connection>
-   <sender>horizontalSlider</sender>
-   <signal>sliderMoved(int)</signal>
-   <receiver>label_18</receiver>
+   <sender>horizontalSliderNoteFilm</sender>
+   <signal>actionTriggered(int)</signal>
+   <receiver>labelNoteFilm</receiver>
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>498</x>
-     <y>780</y>
+     <x>413</x>
+     <y>307</y>
     </hint>
     <hint type="destinationlabel">
-     <x>609</x>
-     <y>783</y>
+     <x>715</x>
+     <y>323</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>checkBoxFichier</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>pushButtonEmplacement</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>184</x>
-     <y>754</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>635</x>
-     <y>755</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButton_edit_auteur</sender>
-   <signal>clicked()</signal>
-   <receiver>EditBook</receiver>
-   <slot>setAuteur()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>522</x>
-     <y>134</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>370</x>
-     <y>107</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButton_edit_editeur</sender>
-   <signal>clicked()</signal>
-   <receiver>EditBook</receiver>
-   <slot>setEditeur()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>519</x>
-     <y>226</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>358</x>
-     <y>198</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>checkBox_ebook</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>pushButton_emplacement</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>178</x>
-     <y>725</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>624</x>
-     <y>726</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>horizontalSlider_note</sender>
+   <sender>horizontalSliderNoteFilm</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>label_note</receiver>
+   <receiver>labelNoteFilm</receiver>
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>522</x>
-     <y>773</y>
+     <x>395</x>
+     <y>314</y>
     </hint>
     <hint type="destinationlabel">
-     <x>585</x>
-     <y>777</y>
+     <x>715</x>
+     <y>323</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxEmpruntableFilm</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>checkBoxPreteFilm</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>100</x>
+     <y>285</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>346</x>
+     <y>294</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxFichierFilm</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>pushButtonEmplacementFilm</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>478</x>
+     <y>294</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>741</x>
+     <y>295</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxEbookLivre</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>pushButtonEmplacementLivre</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>388</x>
+     <y>242</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>667</x>
+     <y>241</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxEmpruntableLivre</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>checkBoxPretLivre</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>151</x>
+     <y>239</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>250</x>
+     <y>240</y>
     </hint>
    </hints>
   </connection>
  </connections>
- <slots>
-  <slot>setAuteur()</slot>
-  <slot>setEditeur()</slot>
-  <slot>updateNote(int)</slot>
- </slots>
 </ui>

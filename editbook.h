@@ -39,6 +39,10 @@ private slots:
     void setEditeur();
     void uploadImage();
     void uploadEbook();
+    void showImage();
+    void addEtiquette();
+    void etiquetteDispoToElem();
+    void etiquetteElemToDispo();
 
 signals:
     void editDone(int);

@@ -259,3 +259,17 @@ QList<QMultiMap<QString, QString> > XmlManager::getElementsByLabel(QString label
     }
     return resultat;
 }
+
+QStringList XmlManager::getListEtiquettes(){
+    QList<QMultiMap<QString, QString> > base = this->readBase();
+    QStringList retour;
+    for(int i=0; i<base.count(); ++i){
+        QStringList temp;
+        temp = base.at(i).value("etiquettes").split(",");
+        for(int j=0; j<temp.count(); ++j){
+            if(!retour.contains(temp.at(j).trimmed(), Qt::CaseInsensitive))
+                retour.append(temp.at(j).trimmed());
+        }
+    }
+    return retour;
+}

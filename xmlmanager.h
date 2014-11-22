@@ -27,6 +27,7 @@ public:
     void exportCurrentAsGCStar(QList< QMultiMap<QString, QString> > base);
     int getIdByTitle(QString titre);
     QList<QMultiMap<QString, QString> > getElementsByLabel(QString label);
+    QStringList getListEtiquettes();
     
 signals:
     

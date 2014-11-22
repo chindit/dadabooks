@@ -16,32 +16,43 @@ EditBook::EditBook(QWidget *parent) : QDialog(parent), ui(new Ui::EditBook){
         insSql = new SqlManager();
         insAddAuteur = new AddAuteur(this);
         insAddEditeur = new AddEditeur(this);
-        connect(ui->pushButton_auteur, SIGNAL(clicked()), insAddAuteur, SLOT(show()));
+        connect(ui->pushButtonNouvelAuteurLivre, SIGNAL(clicked()), insAddAuteur, SLOT(show()));
         connect(insAddAuteur, SIGNAL(makeClose(int, QString)), this, SLOT(updateAuteurs(int, QString)));
-        connect(ui->pushButton_editeur, SIGNAL(clicked()), insAddEditeur, SLOT(show()));
+        connect(ui->pushButtonNouvelEditeurLivre, SIGNAL(clicked()), insAddEditeur, SLOT(show()));
         connect(insAddEditeur, SIGNAL(makeClose(int, QString)), this, SLOT(updateEditeurs(int, QString)));
         //On cache les éléments d'auteur si besoin
         if(insSettingsManager->getSettings(AutoAuteur).toBool()){
-            ui->comboBox_auteur->setHidden(true);
-            ui->pushButton_auteur->setHidden(true);
-            ui->pushButton_edit_auteur->setHidden(true);
+            ui->comboBoxAuteurLivre->setHidden(true);
+            ui->pushButtonEditAuteurLivre->setHidden(true);
+            ui->pushButtonNouvelAuteurLivre->setHidden(true);
         }
         if(insSettingsManager->getSettings(AutoEditeur).toBool()){
-            ui->comboBox_editeur->setHidden(true);
-            ui->pushButton_editeur->setHidden(true);
-            ui->pushButton_edit_editeur->setHidden(true);
+            ui->comboBoxEditeurLivre->setHidden(true);
+            ui->pushButtonEditEditeurLivre->setHidden(true);
+            ui->pushButtonNouvelEditeurLivre->setHidden(true);
         }
     }
 
     //Gestion des films
     if(insSettingsManager->getSettings(Type).toString() == "films"){
         ui->stackedWidget->setCurrentIndex(1); //On change l'éditeur de «livres à film» (onglet 2)
-        ui->labelTitreGeneral->setText("Édition du film"); //Et on change le titre
-        connect(ui->pushButtonEmplacement, SIGNAL(clicked()), this, SLOT(uploadEbook()));
+        connect(ui->pushButtonEmplacementFilm, SIGNAL(clicked()), this, SLOT(uploadEbook()));
     }
     else{
-        connect(ui->pushButton_emplacement, SIGNAL(clicked()), this, SLOT(uploadEbook()));
+        ui->windowTitle->setText("Édition du livre");
+        ui->stackedWidget->setCurrentIndex(0); //Index1 : livres
+        connect(ui->pushButtonEmplacementLivre, SIGNAL(clicked()), this, SLOT(uploadEbook()));
     }
+    //Boutons de jaquette
+    connect(ui->pushButtonVoirFilm, SIGNAL(clicked()), this, SLOT(showImage()));
+    connect(ui->pushButtonVoirLivre, SIGNAL(clicked()), this, SLOT(showImage()));
+    //Boutons d'Étiquettes
+    connect(ui->pushButtonEtiquettePlusFilm, SIGNAL(clicked()), this, SLOT(addEtiquette()));
+    connect(ui->pushButtonEtiquettesPlusLivre, SIGNAL(clicked()), this, SLOT(addEtiquette()));
+    connect(ui->pushButtonEtiquetteToFilmFilm, SIGNAL(clicked()), this, SLOT(etiquetteDispoToElem()));
+    connect(ui->pushButtonEtiquettesToLivreLivre, SIGNAL(clicked()), this, SLOT(etiquetteDispoToElem()));
+    connect(ui->pushButtonEtiquetteFilmDispoFilm, SIGNAL(clicked()), this, SLOT(etiquetteElemToDispo()));
+    connect(ui->pushButtonEtiquettesLivreDispoLivre, SIGNAL(clicked()), this, SLOT(etiquetteElemToDispo()));
 }
 
 //Destructeur
@@ -72,9 +83,9 @@ void EditBook::accept(){
          */
         int id_auteur = 0, id_editeur = 0;
         //1)Vérification de la présence de l'auteur
-        if(ui->comboBox_auteur->currentText().isEmpty() && !insSettingsManager->getSettings(Xml).toBool()){
+        if(ui->comboBoxAuteurLivre->currentText().isEmpty() && !insSettingsManager->getSettings(Xml).toBool()){
             if(insSettingsManager->getSettings(AutoAuteur).toBool()){
-                id_auteur = insAddAuteur->setAuteur(ui->lineEdit_auteur->text());
+                id_auteur = insAddAuteur->setAuteur(ui->lineEditAuteurLivre->text());
             }
             else{
                 QMessageBox::warning(this, "Auteur manquant", "L'auteur de ce livre n'est pas renseigné.  Veuillez créer une nouvelle entrée");
@@ -82,9 +93,9 @@ void EditBook::accept(){
             }
         }
         //2)Vérification de la présence de l'éditeur
-        if(ui->comboBox_editeur->currentText().isEmpty() && !insSettingsManager->getSettings(Xml).toBool()){
+        if(ui->comboBoxEditeurLivre->currentText().isEmpty() && !insSettingsManager->getSettings(Xml).toBool()){
             if(insSettingsManager->getSettings(AutoEditeur).toBool()){
-                id_editeur = insAddEditeur->setEditeur(ui->lineEdit_editeur->text());
+                id_editeur = insAddEditeur->setEditeur(ui->lineEditEditeurLivre->text());
             }
             else{
                 QMessageBox::warning(this, "Éditeur manquant", "L'éditeur de ce livre n'est pas renseigné.  Veuillez créer une nouvelle entrée");
@@ -103,7 +114,7 @@ void EditBook::accept(){
             }
         }
         //4)Vérification du titre
-        if(ui->lineEdit_titre->text().isEmpty()){
+        if(ui->lineEditTitreLivre->text().isEmpty()){
             QMessageBox::critical(this, "Impossible d'ajouter le livre", "Nous sommes désolé mais il est impossible d'ajouter un livre qui ne possède pas de titre");
             return;
         }
@@ -113,48 +124,46 @@ void EditBook::accept(){
          * Récupération et traitement des éléments insérés
          */
         int annee, pages, edition, exemplaires, empruntable, pret, lu, note, ebook;
-        annee = ui->spinBox_annee->value();
-        pages = ui->spinBox_pages->value();
-        edition = ui->spinBox_edition->value();
-        exemplaires = ui->spinBox_exemplaires->value();
-        empruntable = (ui->checkBox_empruntable->isChecked()) ? 1 : 0 ;
-        pret = (ui->checkBox_prete->isChecked()) ? 1 : 0 ;
-        lu = (ui->checkBox_lu->isChecked()) ? 1 : 0;
-        ebook = (ui->checkBox_ebook->isChecked() ? 1 : 0);
-        note = ui->horizontalSlider_note->value();
+        annee = ui->spinBoxAnneeLivre->value();
+        pages = ui->spinBoxPagesLivre->value();
+        edition = ui->spinBoxEditionLivre->value();
+        exemplaires = ui->spinBoxExemplairesLivre->value();
+        empruntable = (ui->checkBoxEmpruntableLivre->isChecked()) ? 1 : 0 ;
+        pret = (ui->checkBoxPretLivre->isChecked()) ? 1 : 0 ;
+        lu = (ui->checkBoxLuLivre->isChecked()) ? 1 : 0;
+        ebook = (ui->checkBoxEbookLivre->isChecked() ? 1 : 0);
+        note = ui->horizontalSliderNoteLivre->value();
         QString req1;
         int idLivre = -1;
 
         //Pour rappel, l'image est AFFICHÉE dans un QLabel et son URL est INDIQUÉE dans un autre.
         //On récupère bien entendu l'URL
-        QString nomImage = ui->label_image_texte->text();
+        QString nomImage = ui->labelImageLivre->text();
         //Stockage de l'image en local en cas de besoin
         if(!insSettingsManager->getSettings(MariaDB).toBool() && insSettingsManager->getSettings(DownPics).toBool() && nomImage.contains("http")){
             //On vérifie que le dossier existe
             QString chemin = insSettingsManager->getSettings(Fichier).toString();
             chemin = chemin.left(chemin.lastIndexOf("/")+1);
             QDir dossierImage; dossierImage.setPath(chemin+".dadabooksImages");
-            nomImage = ToolsManager::downloadFile(ui->label_image_texte->text(), dossierImage);
+            nomImage = ToolsManager::downloadFile(ui->labelImageLivre->text(), dossierImage);
         }
 
         if(!insSettingsManager->getSettings(Xml).toBool()){
             if(idEdit == 0){ //Si pas d'édition->INSERT
-                req1 = "INSERT INTO livres(titre, ISBN, auteur, coauteurs, synopsis, couverture, editeur, annee, pages, edition, langue, classement, exemplaires, commentaire, lu, note, empruntable, pret, ebook, emplacement) VALUES(\""+ToolsManager::guillemets(ui->lineEdit_titre->text())+"\", \""+ui->lineEdit_ISBN->text()+"\", "+QString::number(id_auteur)+", \""+ToolsManager::guillemets(ui->lineEdit_coauteurs->text())+"\", \""+ToolsManager::guillemets(ui->plainTextEdit_resume->toPlainText())+"\", \""+ui->label_image_texte->text()+"\", "+QString::number(id_editeur)+", '"+QString::number(annee)+"', "+QString::number(pages)+", "+QString::number(edition)+", \""+ToolsManager::guillemets(ui->lineEdit_langue->text())+"\", \""+ToolsManager::guillemets(ui->lineEdit_classement->text())+"\", "+QString::number(exemplaires)+", \""+ToolsManager::guillemets(ui->plainTextEdit_commentaire->toPlainText())+"\", "+QString::number(lu)+", "+QString::number(note)+", "+QString::number(empruntable)+", "+QString::number(pret)+", "+QString::number(ebook)+", \""+ui->lineEdit_emplacement->text()+"\");";
+                req1 = "INSERT INTO livres(titre, ISBN, auteur, coauteurs, synopsis, couverture, editeur, annee, pages, edition, langue, classement, exemplaires, commentaire, lu, note, empruntable, pret, ebook, emplacement) VALUES(\""+ToolsManager::guillemets(ui->lineEditTitreLivre->text())+"\", \""+ui->lineEditISBNLivre->text()+"\", "+QString::number(id_auteur)+", \""+ToolsManager::guillemets(ui->lineEditCoAuteurLivre->text())+"\", \""+ToolsManager::guillemets(ui->plainTextEditSynopsisLivre->toPlainText())+"\", \""+ui->labelImageLivre->text()+"\", "+QString::number(id_editeur)+", '"+QString::number(annee)+"', "+QString::number(pages)+", "+QString::number(edition)+", \""+ToolsManager::guillemets(ui->lineEditLangueLivre->text())+"\", \""+ToolsManager::guillemets(ui->lineEditClassementLivre->text())+"\", "+QString::number(exemplaires)+", \""+ToolsManager::guillemets(ui->plainTextEditCommentaireLivre->toPlainText())+"\", "+QString::number(lu)+", "+QString::number(note)+", "+QString::number(empruntable)+", "+QString::number(pret)+", "+QString::number(ebook)+", \""+ui->labelCheminLivre->text()+"\");";
             }
             else{
-                req1 = "UPDATE livres SET titre = \""+ToolsManager::guillemets(ui->lineEdit_titre->text())+"\", ISBN = \""+ui->lineEdit_ISBN->text()+"\", auteur = "+QString::number(id_auteur)+", coauteurs = \""+ToolsManager::guillemets(ui->lineEdit_coauteurs->text())+"\", synopsis = \""+ToolsManager::guillemets(ui->plainTextEdit_resume->toPlainText())+"\", couverture = \""+nomImage+"\", editeur = "+QString::number(id_editeur)+", annee = '"+QString::number(annee)+"', pages = "+QString::number(pages)+", edition = "+QString::number(edition)+", langue = \""+ToolsManager::guillemets(ui->lineEdit_langue->text())+"\", classement = \""+ToolsManager::guillemets(ui->lineEdit_classement->text())+"\", exemplaires = "+QString::number(exemplaires)+", commentaire = \""+ToolsManager::guillemets(ui->plainTextEdit_commentaire->toPlainText())+"\", lu = "+QString::number(lu)+", note = "+QString::number(note)+", empruntable = "+QString::number(empruntable)+", pret = "+QString::number(pret)+", ebook = "+QString::number(ebook)+", emplacement = \""+ui->lineEdit_emplacement->text()+"\" WHERE id="+QString::number(idEdit)+";";
+                req1 = "UPDATE livres SET titre = \""+ToolsManager::guillemets(ui->lineEditTitreLivre->text())+"\", ISBN = \""+ui->lineEditISBNLivre->text()+"\", auteur = "+QString::number(id_auteur)+", coauteurs = \""+ToolsManager::guillemets(ui->lineEditCoAuteurLivre->text())+"\", synopsis = \""+ToolsManager::guillemets(ui->plainTextEditSynopsisLivre->toPlainText())+"\", couverture = \""+nomImage+"\", editeur = "+QString::number(id_editeur)+", annee = '"+QString::number(annee)+"', pages = "+QString::number(pages)+", edition = "+QString::number(edition)+", langue = \""+ToolsManager::guillemets(ui->lineEditLangueLivre->text())+"\", classement = \""+ToolsManager::guillemets(ui->lineEditClassementLivre->text())+"\", exemplaires = "+QString::number(exemplaires)+", commentaire = \""+ToolsManager::guillemets(ui->plainTextEditCommentaireLivre->toPlainText())+"\", lu = "+QString::number(lu)+", note = "+QString::number(note)+", empruntable = "+QString::number(empruntable)+", pret = "+QString::number(pret)+", ebook = "+QString::number(ebook)+", emplacement = \""+ui->labelCheminLivre->text()+"\" WHERE id="+QString::number(idEdit)+";";
             }
 
             QSqlQuery res1 = insSql->query(req1);
             idLivre = (idEdit == 0) ? res1.lastInsertId().toInt() : idEdit;
-            QString etiquette = ui->comboBox_etiquette->currentText();
+
             QStringList etiquettes;
-            if(etiquette.contains(",")){
-                etiquettes = etiquette.split(",");
+            for(int i=0; i<ui->listWidgetEtiquettesLivreLivre->count(); ++i){
+                etiquettes.append(ui->listWidgetEtiquettesLivreLivre->item(i)->text());
             }
-            else
-                etiquettes.append(etiquette);
-            if(!etiquette.isEmpty()){
+            if(ui->listWidgetEtiquettesLivreLivre->count() > 0){
                 int id = -1;
                 //On vire les vieilles étiquettes
                 insSql->query("DELETE FROM liste_etiquettes WHERE id_livre="+QString::number(idLivre));
@@ -182,30 +191,36 @@ void EditBook::accept(){
             /*
              * Pour le XML, il suffit de remplir un QMultiMap.  Le plugin XML se chargera de tout
              */
+            QString etiquettes;
+            for(int i=0; i<ui->listWidgetEtiquettesLivreLivre->count(); ++i){
+                etiquettes.append(ui->listWidgetEtiquettesLivreLivre->item(i)->text());
+                if(i < (ui->listWidgetEtiquettesLivreLivre->count()-1))
+                    etiquettes.append(",");
+            }
 
             QMultiMap<QString, QString> livre;
-            livre.insert("titre", ui->lineEdit_titre->text());
-            livre.insert("isbn", ui->lineEdit_ISBN->text());
-            livre.insert("auteur", ui->lineEdit_auteur->text());
-            livre.insert("editeur", ui->lineEdit_editeur->text());
-            livre.insert("coauteur", ui->lineEdit_coauteurs->text());
+            livre.insert("titre", ui->lineEditTitreLivre->text());
+            livre.insert("isbn", ui->lineEditISBNLivre->text());
+            livre.insert("auteur", ui->lineEditAuteurLivre->text());
+            livre.insert("editeur", ui->lineEditEditeurLivre->text());
+            livre.insert("coauteur", ui->lineEditCoAuteurLivre->text());
             livre.insert("couverture", nomImage);
-            livre.insert("pages", QString::number(ui->spinBox_pages->value()));
-            livre.insert("edition", QString::number(ui->spinBox_edition->value()));
-            livre.insert("langue", ui->lineEdit_langue->text());
-            livre.insert("exemplaires", QString::number(ui->spinBox_exemplaires->value()));
-            livre.insert("classement", ui->lineEdit_classement->text());
-            livre.insert("annee", QString::number(ui->spinBox_annee->value()));
-            livre.insert("etiquettes", ui->comboBox_etiquette->currentText());
-            livre.insert("synopsis", ui->plainTextEdit_resume->toPlainText());
-            livre.insert("commentaire", ui->plainTextEdit_commentaire->toPlainText());
-            livre.insert("note", QString::number(ui->horizontalSlider_note->value()));
-            livre.insert("empruntable", ((ui->checkBox_empruntable->isChecked()) ? "True" : "False"));
-            livre.insert("prete", ((ui->checkBox_prete->isChecked()) ? "True" : "False"));
-            livre.insert("lu", ((ui->checkBox_lu->isChecked()) ? "True" : "False"));
-            livre.insert("ebook", ((ui->checkBox_ebook->isChecked()) ? "True" : "False"));
-            if(ui->checkBox_ebook->isChecked())
-                livre.insert("emplacement", ui->lineEdit_emplacement->text());
+            livre.insert("pages", QString::number(ui->spinBoxPagesLivre->value()));
+            livre.insert("edition", QString::number(ui->spinBoxEditionLivre->value()));
+            livre.insert("langue", ui->lineEditLangueLivre->text());
+            livre.insert("exemplaires", QString::number(ui->spinBoxExemplairesLivre->value()));
+            livre.insert("classement", ui->lineEditClassementLivre->text());
+            livre.insert("annee", QString::number(ui->spinBoxAnneeLivre->value()));
+            livre.insert("etiquettes", etiquettes);
+            livre.insert("synopsis", ui->plainTextEditSynopsisLivre->toPlainText());
+            livre.insert("commentaire", ui->plainTextEditCommentaireLivre->toPlainText());
+            livre.insert("note", QString::number(ui->horizontalSliderNoteLivre->value()));
+            livre.insert("empruntable", ((ui->checkBoxEmpruntableLivre->isChecked()) ? "True" : "False"));
+            livre.insert("prete", ((ui->checkBoxPretLivre->isChecked()) ? "True" : "False"));
+            livre.insert("lu", ((ui->checkBoxLuLivre->isChecked()) ? "True" : "False"));
+            livre.insert("ebook", ((ui->checkBoxEbookLivre->isChecked()) ? "True" : "False"));
+            if(ui->checkBoxEbookLivre->isChecked())
+                livre.insert("emplacement", ui->labelCheminLivre->text());
 
             if(idEdit == 0){
                 insXml->addBook(livre);
@@ -239,11 +254,11 @@ void EditBook::accept(){
         //---------------------------
 
         //1)Vérification du titre
-        if(ui->lineEditTitre->text().isEmpty()){
+        if(ui->lineEditTitreFilm->text().isEmpty()){
             QMessageBox::warning(this, "Pas de titre", "Nous sommes désolé mais il est impossible d'ajouter un film qui ne possède pas de titre");
             return;
         }
-        if(ui->labelTxtImage->text().isEmpty()){
+        if(ui->labelImageFilm->text().isEmpty()){
             int reponse = QMessageBox::warning(this, "Pas de jaquette", "Le film ne possède pas de jaquette.  Êtes-vous sûr de vouloir continuer?", QMessageBox::Yes | QMessageBox::No);
             if(reponse == QMessageBox::No){
                 return;
@@ -251,13 +266,33 @@ void EditBook::accept(){
         }
 
         //Téléchargement de l'image si besoin
-        QString nomImage = ui->labelTxtImage->text();
+        QString nomImage = ui->labelImageFilm->text();
         if(!insSettingsManager->getSettings(MariaDB).toBool() && insSettingsManager->getSettings(DownPics).toBool() && nomImage.contains("http")){
             //On vérifie que le dossier existe
             QString chemin = insSettingsManager->getSettings(Fichier).toString();
             chemin = chemin.left(chemin.lastIndexOf("/")+1);
             QDir dossierImage; dossierImage.setPath(chemin+".dadabooksImages");
-            nomImage = ToolsManager::downloadFile(ui->labelTxtImage->text(), dossierImage);
+            nomImage = ToolsManager::downloadFile(ui->labelImageFilm->text(), dossierImage);
+        }
+
+        //Préparation des variables de données pour écriture
+        QString etiquettes;
+        for(int i=0; i<ui->listWidgetEtiquettesFilmFilm->count(); ++i){
+            etiquettes.append(ui->listWidgetEtiquettesFilmFilm->item(i)->text());
+            if(i < (ui->listWidgetEtiquettesFilmFilm->count()-1))
+                etiquettes.append(",");
+        }
+        QString acteurs;
+        for(int i=0; i<ui->listWidgetActeursFilm->count(); ++i){
+            acteurs.append(ui->listWidgetActeursFilm->item(i)->text());
+            if(i < (ui->listWidgetActeursFilm->count()-1))
+                acteurs.append(",");
+        }
+        QString genres;
+        for(int i=0; i<ui->listWidgetGenreFilm->count(); ++i){
+            genres.append(ui->listWidgetGenreFilm->item(i)->text());
+            if(i < (ui->listWidgetGenreFilm->count()-1))
+                genres.append(",");
         }
 
         //2)On stocke tout en SQL ou XML
@@ -265,29 +300,22 @@ void EditBook::accept(){
             int idFilm = -1;
             QString req1;
             if(idEdit == 0){ //Si pas d'édition->INSERT
-                req1 = "INSERT INTO films(id, titre, titre_original, directeur, acteurs, synopsis, annee, duree, genre, pays, langue, classement, sous_titres, commentaire, note, jaquette, empruntable, prete, vu, fichier, emplacement, qualite) VALUES(NULL, \""+ToolsManager::guillemets(ui->lineEditTitre->text())+"\", \""+ToolsManager::guillemets(ui->lineEditOriginal->text())+"\", \""+ToolsManager::guillemets(ui->lineEditDirecteur->text())+"\", \""+ToolsManager::guillemets(ui->lineEditActeurs->text())+"\", \""+ToolsManager::guillemets(ui->editResume->toPlainText())+"\", "+QString::number(ui->spinBoxAnnee->value())+", "+QString::number(ui->spinBoxDuree->value())+", \""+ToolsManager::guillemets(ui->lineEditType->text())+"\", \""+ToolsManager::guillemets(ui->lineEditNationalite->text())+"\", \""+ToolsManager::guillemets(ui->lineEditLangue->text())+"\", \""+ToolsManager::guillemets(ui->lineEditClassement->text())+"\", \""+ToolsManager::guillemets(ui->lineEditSousTitres->text())+"\", \""+ToolsManager::guillemets(ui->editCommentaire->toPlainText())+"\", "+QString::number(ui->horizontalSlider->value())+", \""+nomImage+"\", "+((ui->checkBoxEmpruntable->isChecked()) ? QString::number(1) : QString::number(0))+", "+((ui->checkBoxPrete->isChecked()) ? QString::number(1) : QString::number(0))+", "+((ui->checkBoxVu->isChecked()) ? QString::number(1) : QString::number(0))+", "+((ui->checkBoxFichier->isChecked()) ? QString::number(1) : QString::number(0))+", \""+ToolsManager::guillemets(ui->lineEditEmplacement->text())+"\", \"\")";
+                req1 = "INSERT INTO films(id, titre, titre_original, directeur, acteurs, synopsis, annee, duree, genre, pays, langue, classement, sous_titres, commentaire, note, jaquette, empruntable, prete, vu, fichier, emplacement, qualite) VALUES(NULL, \""+ToolsManager::guillemets(ui->lineEditTitreFilm->text())+"\", \""+ToolsManager::guillemets(ui->lineEditTitreOriginalFilm->text())+"\", \""+ToolsManager::guillemets(ui->lineEditDirecteurFilm->text())+"\", \""+ToolsManager::guillemets(acteurs)+"\", \""+ToolsManager::guillemets(ui->plainTextEditSynopsisFilm->toPlainText())+"\", "+QString::number(ui->spinBoxAnneeFilm->value())+", "+QString::number(ui->spinBoxDureeFilm->value())+", \""+ToolsManager::guillemets(genres)+"\", \""+ToolsManager::guillemets(ui->lineEditNationaliteFilm->text())+"\", \""+ToolsManager::guillemets(ui->lineEditLangueFilm->text())+"\", \""+ToolsManager::guillemets(ui->lineEditClassementFilm->text())+"\", \""+ToolsManager::guillemets(ui->lineEditSousTitresFilm->text())+"\", \""+ToolsManager::guillemets(ui->plainTextEditCommentaireFilm->toPlainText())+"\", "+QString::number(ui->horizontalSliderNoteFilm->value())+", \""+nomImage+"\", "+((ui->checkBoxEmpruntableFilm->isChecked()) ? QString::number(1) : QString::number(0))+", "+((ui->checkBoxPreteFilm->isChecked()) ? QString::number(1) : QString::number(0))+", "+((ui->checkBoxVuFilm->isChecked()) ? QString::number(1) : QString::number(0))+", "+((ui->checkBoxFichierFilm->isChecked()) ? QString::number(1) : QString::number(0))+", \""+ToolsManager::guillemets(ui->labelCheminFilm->text())+"\", \"\")";
             }
             else{
-                //req1 = "UPDATE films SET titre = \""+ToolsManager::guillemets(ui->lineEdit_titre->text())+"\", ISBN = \""+ui->lineEdit_ISBN->text()+"\", auteur = "+QString::number(id_auteur)+", coauteurs = \""+ToolsManager::guillemets(ui->lineEdit_coauteurs->text())+"\", synopsis = \""+ToolsManager::guillemets(ui->plainTextEdit_resume->toPlainText())+"\", couverture = \""+nomImage+"\", editeur = "+QString::number(id_editeur)+", annee = '"+QString::number(annee)+"', pages = "+QString::number(pages)+", edition = "+QString::number(edition)+", langue = \""+ToolsManager::guillemets(ui->lineEdit_langue->text())+"\", classement = \""+ToolsManager::guillemets(ui->lineEdit_classement->text())+"\", exemplaires = "+QString::number(exemplaires)+", commentaire = \""+ToolsManager::guillemets(ui->plainTextEdit_commentaire->toPlainText())+"\", lu = "+QString::number(lu)+", note = "+QString::number(note)+", empruntable = "+QString::number(empruntable)+", pret = "+QString::number(pret)+", ebook = "+QString::number(ebook)+", emplacement = \""+ui->lineEdit_emplacement->text()+"\" WHERE id="+QString::number(idEdit)+";";
+                //req1 = "UPDATE films SET titre = \""+ToolsManager::guillemets(ui->lineEditTitreFilm->text())+"\", ISBN = \""+ui->lineEdit_ISBN->text()+"\", auteur = "+QString::number(id_auteur)+", coauteurs = \""+ToolsManager::guillemets(ui->lineEdit_coauteurs->text())+"\", synopsis = \""+ToolsManager::guillemets(ui->plainTextEdit_resume->toPlainText())+"\", couverture = \""+nomImage+"\", editeur = "+QString::number(id_editeur)+", annee = '"+QString::number(annee)+"', pages = "+QString::number(pages)+", edition = "+QString::number(edition)+", langue = \""+ToolsManager::guillemets(ui->lineEdit_langue->text())+"\", classement = \""+ToolsManager::guillemets(ui->lineEdit_classement->text())+"\", exemplaires = "+QString::number(exemplaires)+", commentaire = \""+ToolsManager::guillemets(ui->plainTextEdit_commentaire->toPlainText())+"\", lu = "+QString::number(lu)+", note = "+QString::number(note)+", empruntable = "+QString::number(empruntable)+", pret = "+QString::number(pret)+", ebook = "+QString::number(ebook)+", emplacement = \""+ui->lineEdit_emplacement->text()+"\" WHERE id="+QString::number(idEdit)+";";
             }
             QSqlQuery res1 = insSql->query(req1);
             idFilm = (idEdit == 0) ? res1.lastInsertId().toInt() : idEdit;
-            QString etiquette = ui->comboBoxEtiquettes->currentText();
-            QStringList etiquettes;
-            if(etiquette.contains(",")){
-                etiquettes = etiquette.split(",");
-            }
-            else
-                etiquettes.append(etiquette);
-            if(!etiquette.isEmpty()){
+            if(ui->listWidgetEtiquettesFilmFilm->count() > 0){
                 int id = -1;
                 //On vire les vieilles étiquettes
                 insSql->query("DELETE FROM liste_etiquettes WHERE id_livre="+QString::number(idFilm));
-                for(int i=0; i<etiquettes.size(); i++){
-                    req1 = "SELECT id FROM etiquettes WHERE nom=\""+ToolsManager::guillemets(etiquettes.at(i).trimmed())+"\"";
+                for(int i=0; i<ui->listWidgetEtiquettesFilmFilm->count(); i++){
+                    req1 = "SELECT id FROM etiquettes WHERE nom=\""+ToolsManager::guillemets(ui->listWidgetEtiquettesFilmFilm->item(i)->text().trimmed())+"\"";
                     res1 = insSql->query(req1); res1.first();
                     if(res1.size() < 1){
-                        req1 = "INSERT INTO etiquettes(nom) VALUES(\""+ToolsManager::guillemets(etiquettes.at(i).trimmed())+"\")";
+                        req1 = "INSERT INTO etiquettes(nom) VALUES(\""+ToolsManager::guillemets(ui->listWidgetEtiquettesFilmFilm->item(i)->text().trimmed())+"\")";
                         res1 = insSql->query(req1);
                         id = res1.lastInsertId().toInt();
                     }
@@ -306,28 +334,28 @@ void EditBook::accept(){
         else{
             //XML
             QMultiMap<QString, QString> film;
-            film.insert("titre", ui->lineEditTitre->text());
-            film.insert("titreOriginal", ui->lineEditOriginal->text());
-            film.insert("directeur", ui->lineEditDirecteur->text());
-            film.insert("acteurs", ui->lineEditActeurs->text());
-            film.insert("synopsis", ui->editResume->toPlainText());
-            film.insert("annee", QString::number(ui->spinBoxAnnee->value()));
-            film.insert("duree", QString::number(ui->spinBoxDuree->value()));
-            film.insert("genre", ui->lineEditType->text());
-            film.insert("pays", ui->lineEditNationalite->text());
-            film.insert("langue", ui->lineEditLangue->text());
-            film.insert("classement", ui->lineEditClassement->text());
-            film.insert("sousTitres", ui->lineEditSousTitres->text());
-            film.insert("commentaire", ui->editCommentaire->toPlainText());
-            film.insert("note", QString::number(ui->horizontalSlider->value()));
+            film.insert("titre", ui->lineEditTitreFilm->text());
+            film.insert("titreOriginal", ui->lineEditTitreOriginalFilm->text());
+            film.insert("directeur", ui->lineEditDirecteurFilm->text());
+            film.insert("acteurs", acteurs);
+            film.insert("synopsis", ui->plainTextEditSynopsisFilm->toPlainText());
+            film.insert("annee", QString::number(ui->spinBoxAnneeFilm->value()));
+            film.insert("duree", QString::number(ui->spinBoxDureeFilm->value()));
+            film.insert("genre", genres);
+            film.insert("pays", ui->lineEditNationaliteFilm->text());
+            film.insert("langue", ui->lineEditLangueFilm->text());
+            film.insert("classement", ui->lineEditClassementFilm->text());
+            film.insert("sousTitres", ui->lineEditSousTitresFilm->text());
+            film.insert("commentaire", ui->plainTextEditCommentaireFilm->toPlainText());
+            film.insert("note", QString::number(ui->horizontalSliderNoteFilm->value()));
             film.insert("couverture", nomImage);
-            film.insert("etiquettes", ui->comboBoxEtiquettes->currentText());
-            film.insert("empruntable", ((ui->checkBoxEmpruntable->isChecked()) ? "True" : "False"));
-            film.insert("prete", ((ui->checkBoxPrete->isChecked()) ? "True" : "False"));
-            film.insert("vu", ((ui->checkBoxVu->isChecked()) ? "True" : "False"));
-            film.insert("fichier", ((ui->checkBoxFichier->isChecked()) ? "True" : "False"));
-            if(ui->checkBoxFichier->isChecked())
-                film.insert("emplacement", ui->lineEditEmplacement->text());
+            film.insert("etiquettes", etiquettes);
+            film.insert("empruntable", ((ui->checkBoxEmpruntableFilm->isChecked()) ? "True" : "False"));
+            film.insert("prete", ((ui->checkBoxPreteFilm->isChecked()) ? "True" : "False"));
+            film.insert("vu", ((ui->checkBoxVuFilm->isChecked()) ? "True" : "False"));
+            film.insert("fichier", ((ui->checkBoxFichierFilm->isChecked()) ? "True" : "False"));
+            if(ui->checkBoxFichierFilm->isChecked())
+                film.insert("emplacement", ui->labelCheminFilm->text());
             //On ajoute si pas d'édition
             if(idEdit == 0){
                 insXml->addBook(film);
@@ -355,12 +383,14 @@ void EditBook::accept(){
 //Dans le cas où il ne s'agit pas d'un remplissage automatique, on affiche quelques outils pour l'édition manuelle
 void EditBook::setManual(){
     if(ui->stackedWidget->currentIndex() == 1){
-        ui->labelImage->setText("<a href=\"#\">Cliquez ici pour ajouter une jaquette</a>");
-        connect(ui->labelImage, SIGNAL(linkActivated(QString)), this, SLOT(uploadImage()));
+        //ui->labelImageFilm->setText("<a href=\"#\">Cliquez ici pour ajouter une jaquette</a>");
+        //connect(ui->labelImageFilm, SIGNAL(linkActivated(QString)), this, SLOT(uploadImage()));
+        if(insSettingsManager->getSettings(Xml).toBool())
+            ui->listWidgetEtiquettesDispoFilm->addItems(insXml->getListEtiquettes());
     }
     else{
-        ui->label_image->setText("<a href=\"#\">Cliquez ici pour ajouter une image</a>");
-        connect(ui->label_image, SIGNAL(linkActivated(QString)), this, SLOT(uploadImage()));
+        //ui->labelImageLivre->setText("<a href=\"#\">Cliquez ici pour ajouter une image</a>");
+        //connect(ui->labelImageLivre, SIGNAL(linkActivated(QString)), this, SLOT(uploadImage()));
     }
 }
 
@@ -368,9 +398,9 @@ void EditBook::setManual(){
 void EditBook::uploadImage(){
     QString image = QFileDialog::getOpenFileName(this, "Choisir une photo", QString(), "Images (*.png *.gif *.jpg *.jpeg)");
     if(ui->stackedWidget->currentIndex() == 1)
-        ui->labelImage->setText(image);
+        ui->labelImageLivre->setText(image);
     else
-        ui->label_image_texte->setText(image);
+        ui->labelImageFilm->setText(image);
     return;
 }
 
@@ -381,34 +411,34 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
 
     if(!films){
         ui->stackedWidget->setCurrentIndex(0);
-        ui->lineEdit_titre->setText(livre.value("titre"));
-        ui->lineEdit_auteur->setText(livre.value("auteur"));
-        ui->lineEdit_editeur->setText(livre.value("editeur"));
-        ui->spinBox_annee->setValue(livre.value("annee").toInt());
-        ui->lineEdit_ISBN->setText(livre.value("isbn"));
-        ui->lineEdit_langue->setText(livre.value("langue"));
-        ui->spinBox_pages->setValue(livre.value("pages").toInt());
-        ui->plainTextEdit_resume->clear();
-        ui->plainTextEdit_resume->insertPlainText(livre.value("synopsis"));
-        ui->lineEdit_coauteurs->setText(livre.value("coauteurs", ""));
-        ui->spinBox_edition->setValue(livre.value("edition", "1").toInt());
-        ui->spinBox_exemplaires->setValue(livre.value("exemplaires", "1").toInt());
-        ui->plainTextEdit_commentaire->clear();
-        ui->plainTextEdit_commentaire->insertPlainText(livre.value("commentaire", ""));
-        ui->lineEdit_classement->setText(livre.value("classement", ""));
+        ui->lineEditTitreLivre->setText(livre.value("titre"));
+        ui->lineEditAuteurLivre->setText(livre.value("auteur"));
+        ui->lineEditEditeurLivre->setText(livre.value("editeur"));
+        ui->spinBoxAnneeLivre->setValue(livre.value("annee").toInt());
+        ui->lineEditISBNLivre->setText(livre.value("isbn"));
+        ui->lineEditLangueLivre->setText(livre.value("langue"));
+        ui->spinBoxPagesLivre->setValue(livre.value("pages").toInt());
+        ui->plainTextEditSynopsisLivre->clear();
+        ui->plainTextEditSynopsisLivre->insertPlainText(livre.value("synopsis"));
+        ui->lineEditCoAuteurLivre->setText(livre.value("coauteurs", ""));
+        ui->spinBoxEditionLivre->setValue(livre.value("edition", "1").toInt());
+        ui->spinBoxExemplairesLivre->setValue(livre.value("exemplaires", "1").toInt());
+        ui->plainTextEditCommentaireLivre->clear();
+        ui->plainTextEditCommentaireLivre->insertPlainText(livre.value("commentaire", ""));
+        ui->lineEditClassementLivre->setText(livre.value("classement", ""));
         if(livre.value("empruntable", "0").toInt() == 1)
-            ui->checkBox_empruntable->setChecked(true);
+            ui->checkBoxEmpruntableLivre->setChecked(true);
         if(livre.value("prete", "0").toInt() == 1)
-            ui->checkBox_prete->setChecked(true);
+            ui->checkBoxPretLivre->setChecked(true);
         if(livre.value("lu").toInt() == 1)
-            ui->checkBox_lu->setChecked(true);
+            ui->checkBoxLuLivre->setChecked(true);
         if(livre.value("ebook").toInt() == 1){
-            ui->checkBox_ebook->setChecked(true);
-            ui->lineEdit_emplacement->setText(livre.value("emplacement"));
-            ui->pushButton_emplacement->setEnabled(true);
+            ui->checkBoxEbookLivre->setChecked(true);
+            ui->labelCheminLivre->setText(livre.value("emplacement"));
+            ui->pushButtonEmplacementLivre->setEnabled(true);
         }
-        ui->horizontalSlider_note->setValue(livre.value("note").toInt());
-        ui->label_note->setText(QString::number(livre.value("note").toInt())+"/20");
+        ui->horizontalSliderNoteLivre->setValue(livre.value("note").toInt());
+        ui->labelNoteLivre->setText(QString::number(livre.value("note").toInt())+"/20");
 
         //Récupération de l'image
         QPixmap image;
@@ -436,17 +466,18 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
                 image = image.scaledToWidth(result);
             }
         }
-        ui->label_image->setPixmap(image);
-        ui->label_image_texte->setText(livre.value("couverture"));
-        ui->label_image_texte->setMaximumWidth(150);
-        ui->label_image_texte->setVisible(true);
+        //ui->labelImageLivre->setPixmap(image);
+        //ui->labelImageLivre->setText(image);
+        ui->labelImageLivre->setText(livre.value("couverture"));
+        //ui->label_image_texte->setMaximumWidth(150);
+        //ui->label_image_texte->setVisible(true);
         if((livre.value("xml", "-1").toInt() == 1) || insSettingsManager->getSettings(Xml).toBool()){
-            ui->comboBox_auteur->setVisible(false);
-            ui->comboBox_editeur->setVisible(false);
-            ui->pushButton_edit_auteur->setVisible(false);
-            ui->pushButton_edit_editeur->setVisible(false);
-            ui->pushButton_auteur->setVisible(false);
-            ui->pushButton_editeur->setVisible(false);
+            ui->comboBoxAuteurLivre->setVisible(false);
+            ui->comboBoxEditeurLivre->setVisible(false);
+            ui->pushButtonEditAuteurLivre->setVisible(false);
+            ui->pushButtonEditEditeurLivre->setVisible(false);
+            ui->pushButtonNouvelAuteurLivre->setVisible(false);
+            ui->pushButtonNouvelEditeurLivre->setVisible(false);
             //ui->labelEtiquettes->setVisible(false);
             //ui->comboBoxEtiquettes->setVisible(false);
         }
@@ -456,30 +487,29 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
             //Màj des étiquettes
             QSqlQuery resultat = insSql->query("SELECT id,nom FROM etiquettes");
             while(resultat.next()){
-                ui->comboBoxEtiquettes->addItem(resultat.record().value("nom").toString(), resultat.record().value("id"));
+                ui->listWidgetEtiquettesLivreLivre->addItem(resultat.record().value("nom").toString());
+                //ui->comboBoxEtiquettes->addItem(resultat.record().value("nom").toString(), resultat.record().value("id"));
             }
         }
     }
     else{
         //FILM
         ui->stackedWidget->setCurrentIndex(1);
-        ui->lineEditTitre->setText(livre.value("titre"));
-        ui->lineEditOriginal->setText(livre.value("titreOriginal"));
-        ui->lineEditDirecteur->setText(livre.value("directeur"));
-        ui->lineEditActeurs->setText(livre.value("acteurs"));
-        ui->editResume->clear();
-        ui->editResume->setPlainText(livre.value("synopsis"));
-        ui->spinBoxAnnee->setValue(livre.value("annee").toInt());
-        ui->spinBoxDuree->setValue(livre.value("duree").toInt());
-        ui->lineEditType->setText(livre.value("genre"));
-        ui->lineEditNationalite->setText(livre.value("pays"));
-        ui->lineEditLangue->setText(livre.value("langue"));
-        ui->labelTxtImage->setText(livre.value("couverture"));
-        ui->lineEditClassement->setText(livre.value("classement"));
-        ui->horizontalSlider->setValue((livre.value("note").toInt()));
-        ui->label_18->setText(livre.value("note"));
-        ui->editCommentaire->clear();
-        ui->editCommentaire->setPlainText(livre.value("commentaire"));
+        ui->lineEditTitreFilm->setText(livre.value("titre"));
+        ui->lineEditTitreOriginalFilm->setText(livre.value("titreOriginal"));
+        ui->lineEditDirecteurFilm->setText(livre.value("directeur"));
+        ui->plainTextEditSynopsisFilm->clear();
+        ui->plainTextEditSynopsisFilm->setPlainText(livre.value("synopsis"));
+        ui->spinBoxAnneeFilm->setValue(livre.value("annee").toInt());
+        ui->spinBoxDureeFilm->setValue(livre.value("duree").toInt());
+        ui->lineEditNationaliteFilm->setText(livre.value("pays"));
+        ui->lineEditLangueFilm->setText(livre.value("langue"));
+        ui->labelImageFilm->setText(livre.value("couverture"));
+        ui->lineEditClassementFilm->setText(livre.value("classement"));
+        ui->horizontalSliderNoteFilm->setValue((livre.value("note").toInt()));
+        ui->labelNoteFilm->setText(livre.value("note"));
+        ui->plainTextEditCommentaireFilm->clear();
+        ui->plainTextEditCommentaireFilm->setPlainText(livre.value("commentaire"));
         //Récupération de l'image
         QPixmap image;
         if(!livre.value("couverture").startsWith("http")){
@@ -506,16 +536,20 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
                 image = image.scaledToWidth(result);
             }
         }
-        ui->labelImage->setPixmap(image);
+        //ui->labelImage->setPixmap(image);
         //Checkbox
-        ui->checkBoxEmpruntable->setChecked((livre.value("empruntable") == "True") ? true : false);
-        ui->checkBoxPrete->setChecked((livre.value("prete") == "True") ? true : false);
-        ui->checkBoxVu->setChecked((livre.value("vu") == "True") ? true : false);
+        ui->checkBoxEmpruntableFilm->setChecked((livre.value("empruntable") == "True") ? true : false);
+        ui->checkBoxPreteFilm->setChecked((livre.value("prete") == "True") ? true : false);
+        ui->checkBoxVuFilm->setChecked((livre.value("vu") == "True") ? true : false);
         if(livre.value("fichier") == "True"){
-            ui->checkBoxFichier->setChecked(true);
-            ui->lineEditEmplacement->setText(livre.value("emplacement"));
-            ui->pushButtonEmplacement->setEnabled(true);
+            ui->checkBoxFichierFilm->setChecked(true);
+            ui->labelCheminFilm->setText(livre.value("emplacement"));
+            ui->pushButtonEmplacementFilm->setEnabled(true);
         }
+        //Préparation des variables pour les QListWidget
+        ui->listWidgetActeursFilm->addItems(livre.value("acteurs").split(","));
+        ui->listWidgetGenreFilm->addItems(livre.value("genres").split(","));
+        ui->listWidgetEtiquettesDispoFilm->addItems(insXml->getListEtiquettes());
     }
     return;
 }
@@ -527,10 +561,10 @@ void EditBook::getAuteur(QString nom){
 
     QSqlQuery res1 = insSql->query(req1);
     while(res1.next()){
-        ui->comboBox_auteur->addItem(res1.record().value("nom").toString(), res1.record().value("id"));
+        ui->comboBoxAuteurLivre->addItem(res1.record().value("nom").toString(), res1.record().value("id"));
     }
-    if(ui->comboBox_auteur->count() == 0){
-        ui->pushButton_edit_auteur->setText("Actualiser");
+    if(ui->comboBoxAuteurLivre->count() == 0){
+        ui->pushButtonEditAuteurLivre->setText("Actualiser");
     }
 }
 
@@ -541,11 +575,11 @@ void EditBook::getEditeur(QString nom){
 
     QSqlQuery res1 = insSql->query(req1);
         while(res1.next()){
-            ui->comboBox_editeur->addItem(res1.record().value("nom").toString(), res1.record().value("id"));
+            ui->comboBoxEditeurLivre->addItem(res1.record().value("nom").toString(), res1.record().value("id"));
         }
-    if(ui->comboBox_editeur->count() == 0){
+    if(ui->comboBoxEditeurLivre->count() == 0){
         //ui->pushButton_edit_editeur->setEnabled(false);
-        ui->pushButton_edit_editeur->setText("Actualiser");
+        ui->pushButtonEditEditeurLivre->setText("Actualiser");
     }
 }
 
@@ -560,16 +594,16 @@ void EditBook::setAuteur(bool editeur){
     }
     id +=" WHERE nom LIKE \"%";
     if(editeur){
-        if(ui->pushButton_edit_editeur->text() == "Actualiser")
-            id+=ui->lineEdit_editeur->text()+"%\";";
+        if(ui->pushButtonEditEditeurLivre->text() == "Actualiser")
+            id+=ui->lineEditEditeurLivre->text()+"%\";";
         else
-            id+=ToolsManager::guillemets(ui->comboBox_editeur->currentText())+"';";
+            id+=ToolsManager::guillemets(ui->comboBoxEditeurLivre->currentText())+"';";
     }
     else{
-        if(ui->pushButton_edit_auteur->text() == "Actualiser")
-            id+=ui->lineEdit_auteur->text()+"%\"";
+        if(ui->pushButtonEditAuteurLivre->text() == "Actualiser")
+            id+=ui->lineEditAuteurLivre->text()+"%\"";
         else
-            id+=ToolsManager::guillemets(ui->comboBox_auteur->currentText())+"';";
+            id+=ToolsManager::guillemets(ui->comboBoxAuteurLivre->currentText())+"';";
     }
 
     QSqlQuery res = insSql->query(id);
@@ -577,12 +611,12 @@ void EditBook::setAuteur(bool editeur){
     int idl = res.record().value("id").toInt();
     if(idl > 0){
         if(editeur){
-            if(ui->pushButton_edit_editeur->text() == "Actualiser"){
-                ui->comboBox_editeur->clear();
+            if(ui->pushButtonEditEditeurLivre->text() == "Actualiser"){
+                ui->comboBoxEditeurLivre->clear();
                 do{
-                    ui->comboBox_editeur->addItem(res.record().value("nom").toString(), res.record().value("id"));
+                    ui->comboBoxEditeurLivre->addItem(res.record().value("nom").toString(), res.record().value("id"));
                 }while(res.next());
-                ui->pushButton_edit_editeur->setText("Éditer l'éditeur");
+                ui->pushButtonEditEditeurLivre->setText("Éditer l'éditeur");
             }
             else{
                 insAddEditeur->setEditeur(idl);
@@ -590,12 +624,12 @@ void EditBook::setAuteur(bool editeur){
             }
         }
         else{
-            if(ui->pushButton_edit_auteur->text() == "Actualiser"){
-                ui->comboBox_auteur->clear();
+            if(ui->pushButtonEditAuteurLivre->text() == "Actualiser"){
+                ui->comboBoxAuteurLivre->clear();
                 do{
-                    ui->comboBox_auteur->addItem(res.record().value("nom").toString(), res.record().value("id"));
+                    ui->comboBoxAuteurLivre->addItem(res.record().value("nom").toString(), res.record().value("id"));
                 }while(res.next());
-                ui->pushButton_edit_auteur->setText("Éditeur l'auteur");
+                ui->pushButtonEditAuteurLivre->setText("Éditeur l'auteur");
             }
             insAddAuteur->setAuteur(idl);
             insAddAuteur->show();
@@ -614,15 +648,15 @@ void EditBook::setEditeur(){
 
 //Met à jour la liste des auteurs
 void EditBook::updateAuteurs(int id, QString nom){
-    ui->comboBox_auteur->clear();
-    ui->comboBox_auteur->addItem(nom, id);
+    ui->comboBoxAuteurLivre->clear();
+    ui->comboBoxAuteurLivre->addItem(nom, id);
     insAddAuteur->close();
 }
 
 //Met à jour la liste des éditeurs
 void EditBook::updateEditeurs(int id, QString nom){
-    ui->comboBox_editeur->clear();
-    ui->comboBox_editeur->addItem(nom, id);
+    ui->comboBoxEditeurLivre->clear();
+    ui->comboBoxEditeurLivre->addItem(nom, id);
     insAddEditeur->close();
 }
 
@@ -637,10 +671,10 @@ int EditBook::getId(bool editeur){
     }
     id +=" WHERE nom LIKE '";
     if(editeur){
-        id+=ToolsManager::guillemets(ui->comboBox_editeur->currentText())+"';";
+        id+=ToolsManager::guillemets(ui->comboBoxEditeurLivre->currentText())+"';";
     }
     else{
-        id+=ToolsManager::guillemets(ui->comboBox_auteur->currentText())+"';";
+        id+=ToolsManager::guillemets(ui->comboBoxAuteurLivre->currentText())+"';";
     }
 
     QSqlQuery res = insSql->query(id);
@@ -659,8 +693,94 @@ void EditBook::setId(int id){
 void EditBook::uploadEbook(){
     QString ebook = QFileDialog::getOpenFileName(this, "Sélectionnez le fichier", QDir::homePath());
     if(insSettingsManager->getSettings(Type).toString() == "films")
-        ui->lineEditEmplacement->setText(ebook);
+        ui->labelCheminFilm->setText(ebook);
     else
-        ui->lineEdit_emplacement->setText(ebook);
+        ui->labelCheminLivre->setText(ebook);
+    return;
+}
+
+//Prévisualisation de l'image
+void EditBook::showImage(){
+    QString url;
+    if(ui->stackedWidget->currentIndex() == 0)
+        url = ui->labelImageLivre->text();
+    else
+        url = ui->labelImageFilm->text();
+    QPixmap jaquette = ToolsManager::getPixmapFromString(url);
+    QLabel *image = new QLabel;
+    image->setPixmap(jaquette);
+    QPushButton *close = new QPushButton("Fermer");
+    QVBoxLayout *layoutVertical = new QVBoxLayout;
+    layoutVertical->addWidget(image);
+    layoutVertical->addWidget(close);
+    QDialog *preview = new QDialog(this);
+    preview->setLayout(layoutVertical);
+    connect(close, SIGNAL(clicked()), preview, SLOT(close()));
+    preview->exec();
+    delete image;
+    delete close;
+    delete layoutVertical;
+    delete preview;
+    return;
+}
+
+//Nouvelle étiquette
+void EditBook::addEtiquette(){
+    if(ui->stackedWidget->currentIndex() == 0){
+        ui->listWidgetEtiquettesLivreLivre->addItem("Nouvelle étiquette");
+        ui->listWidgetEtiquettesLivreLivre->setCurrentRow(ui->listWidgetEtiquettesLivreLivre->count()-1);
+        ui->listWidgetEtiquettesLivreLivre->currentItem()->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+    }
+    else{
+        ui->listWidgetEtiquettesFilmFilm->addItem("Nouvelle étiquette");
+        ui->listWidgetEtiquettesFilmFilm->setCurrentRow(ui->listWidgetEtiquettesFilmFilm->count()-1);
+        ui->listWidgetEtiquettesFilmFilm->currentItem()->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+    }
+    return;
+}
+
+//Transfert d'une étiquette dispo vers l'élément
+void EditBook::etiquetteDispoToElem(){
+    if(ui->stackedWidget->currentIndex() == 0){
+        if(ui->listWidgetEtiquettesDispoLivre->count() == 0 || ui->listWidgetEtiquettesDispoLivre->currentRow() < 0)
+            return;
+        QString etiquette = ui->listWidgetEtiquettesDispoLivre->currentItem()->text();
+        if(!etiquette.isEmpty()){
+            ui->listWidgetEtiquettesLivreLivre->addItem(etiquette);
+            delete ui->listWidgetEtiquettesDispoLivre->currentItem();
+        }
+    }
+    else{
+        if(ui->listWidgetEtiquettesDispoFilm->count() == 0 || ui->listWidgetEtiquettesDispoFilm->currentRow() < 0)
+            return;
+        QString etiquette = ui->listWidgetEtiquettesDispoFilm->currentItem()->text();
+        if(!etiquette.isEmpty()){
+            ui->listWidgetEtiquettesFilmFilm->addItem(etiquette);
+            delete ui->listWidgetEtiquettesDispoFilm->currentItem();
+        }
+    }
+    return;
+}
+
+//Transfert d'une étiquette de l'élément vers les disponibles
+void EditBook::etiquetteElemToDispo(){
+    if(ui->stackedWidget->currentIndex() == 0){
+        if(ui->listWidgetEtiquettesLivreLivre->count() == 0 || ui->listWidgetEtiquettesLivreLivre->currentRow() < 0)
+            return;
+        QString etiquette = ui->listWidgetEtiquettesLivreLivre->currentItem()->text();
+        if(!etiquette.isEmpty()){
+            ui->listWidgetEtiquettesDispoLivre->addItem(etiquette);
+            delete ui->listWidgetEtiquettesLivreLivre->currentItem();
+        }
+    }
+    else{
+        if(ui->listWidgetEtiquettesFilmFilm->count() == 0 || ui->listWidgetEtiquettesFilmFilm->currentRow() < 0)
+            return;
+        QString etiquette = ui->listWidgetEtiquettesFilmFilm->currentItem()->text();
+        if(!etiquette.isEmpty()){
+            ui->listWidgetEtiquettesDispoFilm->addItem(etiquette);
+            delete ui->listWidgetEtiquettesFilmFilm->currentItem();
+        }
+    }
     return;
 }
