@@ -158,7 +158,7 @@ QMultiMap<QString,QString> Allocine::getBook(QString id){
     film.insert("directeur", directeur.trimmed());
     film.insert("acteurs", acteurs.trimmed());
     film.insert("genres", genres);
-    film.insert("synopsis", synopsis.trimmed());
+    film.insert("synopsis", synopsis.trimmed().remove(QRegExp("<[^>]*>")));
     film.insert("langue", "Français");
     film.insert("couverture", image);
     return film;
