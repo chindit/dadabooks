@@ -144,7 +144,7 @@ void EditBook::accept(){
             //On vérifie que le dossier existe
             QString chemin = insSettingsManager->getSettings(Fichier).toString();
             chemin = chemin.left(chemin.lastIndexOf("/")+1);
-            QDir dossierImage; dossierImage.setPath(chemin+".dadabooksImages");
+            QDir dossierImage; dossierImage.setPath(chemin+"Images");
             nomImage = ToolsManager::downloadFile(ui->labelImageLivre->text(), dossierImage);
         }
 
@@ -271,7 +271,7 @@ void EditBook::accept(){
             //On vérifie que le dossier existe
             QString chemin = insSettingsManager->getSettings(Fichier).toString();
             chemin = chemin.left(chemin.lastIndexOf("/")+1);
-            QDir dossierImage; dossierImage.setPath(chemin+".dadabooksImages");
+            QDir dossierImage; dossierImage.setPath(chemin+"Images");
             nomImage = ToolsManager::downloadFile(ui->labelImageFilm->text(), dossierImage);
         }
 
