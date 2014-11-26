@@ -16,7 +16,8 @@ public:
     SqlManager();
     ~SqlManager();
     QSqlQuery query(QString req);
-    QList<QMultiMap<QString, QString> > convertToXML(QSqlQuery requete, bool films=false);
+    QList<QMultiMap<QString, QString> > convertToXML(QSqlQuery requete);
+    QStringList getListEtiquettes();
 
 private:
     void connect();

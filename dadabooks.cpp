@@ -115,7 +115,7 @@ void DadaBooks::updateOnglet(int id){
 void DadaBooks::setListeLivres(){
     QList<QMultiMap<QString, QString> > resultat;
     QSqlQuery res1;
-    bool films = false;
+
     //XML
     if(insSettingsManager->getSettings(Xml).toBool()){
         insXmlManager = new XmlManager;
@@ -128,9 +128,9 @@ void DadaBooks::setListeLivres(){
             req1 = "SELECT livres.id, livres.titre, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id ORDER BY livres.id DESC LIMIT 0, 25";
         else{
             req1 = "SELECT * FROM films ORDER BY id DESC LIMIT 0, 25";
-            films = true;
         }
         res1 = insSqlManager->query(req1);
+        resultat = insSqlManager->convertToXML(res1);
     }
 
     //Nettoyage & préparation du widget
@@ -142,68 +142,39 @@ void DadaBooks::setListeLivres(){
     liste_headers << "ID" << "Titre" << ((QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) != 0) ? "Auteur" : "Directeur") << ((QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) != 0) ? "Éditeur" : "Acteurs") << "Année";
     ui->tableWidget->setHorizontalHeaderLabels(liste_headers);
 
-    if(insSettingsManager->getSettings(Xml).toBool()){  //Dans le cas où la BDD est en XML
-        int boucle = 25;
-        if(resultat.size() < 25)
-            boucle = resultat.size();
-        for(int i=0; i<boucle; i++){
-            ui->tableWidget->insertRow(0);
-            QTableWidgetItem *item0 = new QTableWidgetItem();
-            QTableWidgetItem *item1 = new QTableWidgetItem();
-            QTableWidgetItem *item2 = new QTableWidgetItem();
-            QTableWidgetItem *item3 = new QTableWidgetItem();
-            QTableWidgetItem *item4 = new QTableWidgetItem();
-            item0->setText(resultat.at(resultat.size()-1-i).value("id"));
-            item1->setText(resultat.at(resultat.size()-1-i).value("titre"));
-            if(QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) != 0){
-                item2->setText(resultat.at(resultat.size()-1-i).value("auteur"));
-                item3->setText(resultat.at(resultat.size()-1-i).value("editeur"));
-            }
-            else{
-                item2->setText(resultat.at(resultat.size()-1-i).value("directeur"));
-                item3->setText(resultat.at(resultat.size()-1-i).value("acteurs"));
-            }
-            item4->setText(resultat.at(resultat.size()-1-i).value("annee"));
-            ui->tableWidget->setItem(0, 0, item0);
-            ui->tableWidget->setItem(0, 1, item1);
-            ui->tableWidget->setItem(0, 2, item2);
-            ui->tableWidget->setItem(0, 3, item3);
-            ui->tableWidget->setItem(0, 4, item4);
+    int boucle = 25;
+    if(resultat.size() < 25)
+        boucle = resultat.size();
+    for(int i=0; i<boucle; i++){
+        ui->tableWidget->insertRow(0);
+        QTableWidgetItem *item0 = new QTableWidgetItem();
+        QTableWidgetItem *item1 = new QTableWidgetItem();
+        QTableWidgetItem *item2 = new QTableWidgetItem();
+        QTableWidgetItem *item3 = new QTableWidgetItem();
+        QTableWidgetItem *item4 = new QTableWidgetItem();
+        item0->setText(resultat.at(resultat.size()-1-i).value("id"));
+        item1->setText(resultat.at(resultat.size()-1-i).value("titre"));
+        if(QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) != 0){
+            item2->setText(resultat.at(resultat.size()-1-i).value("auteur"));
+            item3->setText(resultat.at(resultat.size()-1-i).value("editeur"));
         }
-        //On remplit l'accueil
-        ui->listWidget_accueil->clear();
-        for(int i=0; i<resultat.size(); i++){
-            ui->listWidget_accueil->addItem(resultat.at(i).value("titre"));
+        else{
+            item2->setText(resultat.at(resultat.size()-1-i).value("directeur"));
+            item3->setText(resultat.at(resultat.size()-1-i).value("acteurs"));
         }
-        ui->listWidget_accueil->sortItems();
+        item4->setText(resultat.at(resultat.size()-1-i).value("annee"));
+        ui->tableWidget->setItem(0, 0, item0);
+        ui->tableWidget->setItem(0, 1, item1);
+        ui->tableWidget->setItem(0, 2, item2);
+        ui->tableWidget->setItem(0, 3, item3);
+        ui->tableWidget->setItem(0, 4, item4);
     }
-    else{
-        while(res1.next()){  //Dans le cas où la BDD est en SQL (lite)
-            ui->tableWidget->insertRow(0);
-            QTableWidgetItem *item0 = new QTableWidgetItem();
-            QTableWidgetItem *item1 = new QTableWidgetItem();
-            QTableWidgetItem *item2 = new QTableWidgetItem();
-            QTableWidgetItem *item3 = new QTableWidgetItem();
-            QTableWidgetItem *item4 = new QTableWidgetItem();
-            item0->setText(res1.record().value("id").toString());
-            item1->setText(ToolsManager::stripSlashes(res1.record().value("titre").toString()));
-            item2->setText(res1.record().value((films) ? "directeur" : "nom").toString());
-            item3->setText(res1.record().value((films) ? "acteurs" : "nom_editeur").toString());
-            item4->setText(res1.record().value("annee").toString());
-            ui->tableWidget->setItem(0, 0, item0);
-            ui->tableWidget->setItem(0, 1, item1);
-            ui->tableWidget->setItem(0, 2, item2);
-            ui->tableWidget->setItem(0, 3, item3);
-            ui->tableWidget->setItem(0, 4, item4);
-        }
-        //Et l'accueil
-        QString req2 = (films) ? "SELECT films.titre FROM films ORDER BY films.titre" : "SELECT livres.titre FROM livres ORDER BY livres.titre";
-        QSqlQuery res2 = insSqlManager->query(req2);
-        ui->listWidget_accueil->clear();
-        while(res2.next()){
-            ui->listWidget_accueil->addItem(ToolsManager::stripSlashes(res2.record().value("titre").toString()));
-        }
+    //On remplit l'accueil
+    ui->listWidget_accueil->clear();
+    for(int i=0; i<resultat.size(); i++){
+        ui->listWidget_accueil->addItem(resultat.at(i).value("titre"));
     }
+    ui->listWidget_accueil->sortItems();
 
     ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
@@ -289,7 +260,7 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
     if(!insSettingsManager->getSettings(Xml).toBool()){
         req1 += real_id;
         res1 = insSqlManager->query(req1);
-        res1.next();
+        xmlLivre = insSqlManager->convertToXML(res1).first();
     }
     else{
         real_id.resize(real_id.size()-1);
@@ -298,12 +269,7 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
 
     //Recherche, on récupère le titre
     if(search){
-        if(!insSettingsManager->getSettings(Xml).toBool()){
-            titre = res1.record().value("titre").toString();
-        }
-        else{
             titre = xmlLivre.value("titre");
-        }
         if(titre.size() > 25){
             titre.resize(25);
             titre.append("…");
@@ -317,9 +283,6 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
 
     //Titre au cas où c'est une actualisation
     if(id > 0){
-        if(!insSettingsManager->getSettings(Xml).toBool())
-            titre = res1.record().value("titre").toString();
-        else
             titre = xmlLivre.value("titre");
         if(titre.size() > 25){
             titre.resize(25);
@@ -376,127 +339,58 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
     QSignalMapper *mapper_edit = new QSignalMapper;
     connect(button_edit, SIGNAL(clicked()), mapper_edit, SLOT(map()));
 
-    if(insSettingsManager->getSettings(Xml).toBool()){
-        //XML
-        titre_fen = new QLabel(xmlLivre.value("titre"));
-        id2 = new QLabel(xmlLivre.value("id"));
-        titre2 = new QLabel(xmlLivre.value("titre"));
-        isbn2 = new QLabel(xmlLivre.value((films) ? "genre" : "isbn"));
-        coauteurs2 = new QLabel(xmlLivre.value((films) ? "titreOriginal" : "coauteurs"));
-        if(!xmlLivre.value("couverture").startsWith("http") && !xmlLivre.value("couverture").isEmpty()){
-            QFile fichierImage(xmlLivre.value("couverture"));
-            if(!fichierImage.exists()){
-                QMessageBox::information(this, "Image introuvable", "Une erreur est survenue, la jaquette de ce livre ne peut être trouvée");
-            }
-            else{
-                loader.load(xmlLivre.value("couverture"));
-            }
+    //XML
+    titre_fen = new QLabel(xmlLivre.value("titre"));
+    id2 = new QLabel(xmlLivre.value("id"));
+    titre2 = new QLabel(xmlLivre.value("titre"));
+    isbn2 = new QLabel(xmlLivre.value((films) ? "genre" : "isbn"));
+    coauteurs2 = new QLabel(xmlLivre.value((films) ? "titreOriginal" : "coauteurs"));
+    if(!xmlLivre.value("couverture").startsWith("http") && !xmlLivre.value("couverture").isEmpty()){
+        QFile fichierImage(xmlLivre.value("couverture"));
+        if(!fichierImage.exists()){
+            QMessageBox::information(this, "Image introuvable", "Une erreur est survenue, la jaquette de ce livre ne peut être trouvée");
         }
         else{
-            QNetworkAccessManager nw_manager;
-            QNetworkRequest request(xmlLivre.value("couverture"));
-            QNetworkReply *reponse = nw_manager.get(request);
-            QEventLoop eventLoop;
-            connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
-            eventLoop.exec();
-            QByteArray data = reponse->readAll();
-            loader.loadFromData(data);
+            loader.load(xmlLivre.value("couverture"));
         }
-        int width = loader.width();
-        if(width > 150){
-            float coef = (float)width / 150;
-            int result = loader.width()/coef;
-            loader = loader.scaledToWidth(result);
-        }
-        couverture2->setPixmap(loader);
-        pages2 = new QLabel(xmlLivre.value((films) ? "duree" : "pages"));
-        edition2 = new QLabel(xmlLivre.value((films) ? "pays" : "edition"));
-        langue2 = new QLabel(xmlLivre.value("langue"));
-        exemplaires2 = new QLabel(xmlLivre.value((films) ? "sousTitres" : "exemplaires"));
-        classement2 = new QLabel(xmlLivre.value("classement"));
-        annee2 = new QLabel(xmlLivre.value("annee"));
-        auteur2 = new QLabel(xmlLivre.value((films) ? "directeur" : "auteur"));
-        editeur2 = new  QLabel(xmlLivre.value((films) ? "acteurs" : "editeur"));
-        if(editeur2->text().size() > 50)
-            editeur2->setText(editeur2->text().left(editeur2->text().left(50).lastIndexOf(","))); //On coupe après le dernier nom qui fait moins de 50 caractères
-        note2 = new QLabel(xmlLivre.value("note")+"/20");
-        ebook3 = new QLabel(xmlLivre.value("emplacement", ""));
-        synopsis2->insertPlainText(xmlLivre.value("synopsis"));
-        commentaire2->insertPlainText(xmlLivre.value("commentaire"));
-        prete->setChecked(((xmlLivre.value("prete") == "True") ? true : false));
-        empruntable->setChecked(((xmlLivre.value("empruntable") == "True") ? true : false));
-        ebook1->setChecked(((xmlLivre.value((films) ? "fichier" : "ebook") == "True") ? true : false));
-        mapper_delete->setMapping(button_delete, xmlLivre.value("id").toInt());
-        mapper_edit->setMapping(button_edit, xmlLivre.value("id").toInt());
-        lu->setChecked(((xmlLivre.value((films) ? "vu" : "lu") == "True") ? true : false));
     }
     else{
-        //SQL
-        titre_fen = new QLabel(res1.record().value("titre").toString());
-        id2 = new QLabel(res1.record().value("id").toString());
-        titre2 = new QLabel(res1.record().value("titre").toString());
-        isbn2 = new QLabel(res1.record().value(((films) ? "genre" : "isbn")).toString());
-        coauteurs2 = new QLabel(res1.record().value(((films) ? "titre_original" : "coauteurs")).toString());
-        if(!res1.record().value((films) ? "jaquette" : "couverture").toString().startsWith("http")){
-            QFile fichierImage(res1.record().value((films) ? "jaquette" : "couverture").toString());
-            if(!fichierImage.exists() && !res1.record().value((films) ? "jaquette" : "couverture").toString().isEmpty()){
-                QMessageBox::information(this, "Image introuvable", "Une erreur est survenue, la jaquette de ce livre ne peut être trouvée");
-            }
-            else{
-                loader.load(res1.record().value((films) ? "jaquette" : "couverture").toString());
-            }
-        }
-        else{
-            QNetworkAccessManager nw_manager;
-            QNetworkRequest request(res1.record().value((films) ? "jaquette" : "couverture").toString());
-            QNetworkReply *reponse = nw_manager.get(request);
-            QEventLoop eventLoop;
-            connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
-            eventLoop.exec();
-            QByteArray data = reponse->readAll();
-            loader.loadFromData(data);
-        }
-        int width = loader.width();
-        if(width > 150){
-            float coef = (float)width / 150;
-            int result = loader.width()/coef;
-            loader = loader.scaledToWidth(result);
-        }
-        couverture2->setPixmap(loader);
-        pages2 = new QLabel(res1.record().value((films) ? "duree" : "pages").toString());
-        edition2 = new QLabel(res1.record().value((films) ? "pays" : "edition").toString());
-        langue2 = new QLabel(res1.record().value("langue").toString());
-        exemplaires2 = new QLabel(res1.record().value((films) ? "sous_titres" : "exemplaires").toString());
-        classement2 = new QLabel(res1.record().value("classement").toString());
-        annee2 = new QLabel(res1.record().value("annee").toString());
-        auteur2 = new QLabel(res1.record().value((films) ? "directeur" : "nom").toString());
-        editeur2 = new QLabel(res1.record().value((films) ? "acteurs" : "nom_editeur").toString());
-        if(editeur2->text().size() > 50)
-            editeur2->setText(editeur2->text().left(editeur2->text().left(50).lastIndexOf(","))); //On coupe après le dernier nom qui fait moins de 50 caractères
-        note2 = new QLabel(res1.record().value("note").toString()+"/20");
-        synopsis2->insertPlainText(res1.record().value("synopsis").toString());
-        commentaire2->insertPlainText(res1.record().value("commentaire").toString());
-        ebook3 = new QLabel(res1.record().value("emplacement").toString());
-        empruntable->setChecked(res1.record().value("empruntable").toBool());
-        prete->setChecked(res1.record().value("pret").toBool());
-        ebook1->setChecked(res1.record().value((films) ? "fichier" : "ebook").toBool());
-        mapper_delete->setMapping(button_delete, res1.record().value("id").toInt());
-        mapper_edit->setMapping(button_edit, res1.record().value("id").toInt());
-
-        //Stockage des étiquettes dans un layout propre
-        QSqlQuery liste = insSqlManager->query("SELECT etiquettes.id,etiquettes.nom FROM etiquettes LEFT JOIN liste_etiquettes ON etiquettes.id=liste_etiquettes.id_etiquette WHERE liste_etiquettes.id_livre="+real_id);
-        while(liste.next()){
-            QPushButton *etiquette = new QPushButton(liste.record().value("nom").toString());
-            etiquette->setFlat(true);
-            etiquette->setIcon(QIcon(":/boutons/images/etiquette.png"));
-            etiquette->setStyleSheet("text-decoration: underline;");
-            QSignalMapper *mappeurEtiquette = new QSignalMapper;
-            connect(etiquette, SIGNAL(clicked()), mappeurEtiquette, SLOT(map()));
-            mappeurEtiquette->setMapping(etiquette, liste.record().value("id").toInt());
-            connect(mappeurEtiquette, SIGNAL(mapped(const int &)), this, SLOT(showEtiquette(const int &)));
-            layoutEtiquettes->addWidget(etiquette);
-        }
+        QNetworkAccessManager nw_manager;
+        QNetworkRequest request(xmlLivre.value("couverture"));
+        QNetworkReply *reponse = nw_manager.get(request);
+        QEventLoop eventLoop;
+        connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
+        eventLoop.exec();
+        QByteArray data = reponse->readAll();
+        loader.loadFromData(data);
     }
+    int width = loader.width();
+    if(width > 150){
+        float coef = (float)width / 150;
+        int result = loader.width()/coef;
+        loader = loader.scaledToWidth(result);
+    }
+    couverture2->setPixmap(loader);
+    pages2 = new QLabel(xmlLivre.value((films) ? "duree" : "pages"));
+    edition2 = new QLabel(xmlLivre.value((films) ? "pays" : "edition"));
+    langue2 = new QLabel(xmlLivre.value("langue"));
+    exemplaires2 = new QLabel(xmlLivre.value((films) ? "sousTitres" : "exemplaires"));
+    classement2 = new QLabel(xmlLivre.value("classement"));
+    annee2 = new QLabel(xmlLivre.value("annee"));
+    auteur2 = new QLabel(xmlLivre.value((films) ? "directeur" : "auteur"));
+    editeur2 = new  QLabel(xmlLivre.value((films) ? "acteurs" : "editeur"));
+    if(editeur2->text().size() > 50)
+        editeur2->setText(editeur2->text().left(editeur2->text().left(50).lastIndexOf(","))); //On coupe après le dernier nom qui fait moins de 50 caractères
+    note2 = new QLabel(xmlLivre.value("note")+"/20");
+    ebook3 = new QLabel(xmlLivre.value("emplacement", ""));
+    synopsis2->insertPlainText(xmlLivre.value("synopsis"));
+    commentaire2->insertPlainText(xmlLivre.value("commentaire"));
+    prete->setChecked(((xmlLivre.value("prete") == "True") ? true : false));
+    empruntable->setChecked(((xmlLivre.value("empruntable") == "True") ? true : false));
+    ebook1->setChecked(((xmlLivre.value((films) ? "fichier" : "ebook") == "True") ? true : false));
+    mapper_delete->setMapping(button_delete, xmlLivre.value("id").toInt());
+    mapper_edit->setMapping(button_edit, xmlLivre.value("id").toInt());
+    lu->setChecked(((xmlLivre.value((films) ? "vu" : "lu") == "True") ? true : false));
 
     synopsis2->setReadOnly(true);
     commentaire2->setReadOnly(true);
@@ -592,7 +486,7 @@ void DadaBooks::editLivre(int id){
         if(insSettingsManager->getSettings(Type).toString() != "films")
             listeLivres = insSqlManager->convertToXML(res1);
         else
-            listeLivres = insSqlManager->convertToXML(res1, true);
+            listeLivres = insSqlManager->convertToXML(res1);
         livre = listeLivres.first();
         livre.insert("xml", "0");
     }
@@ -727,6 +621,7 @@ void DadaBooks::makeSearch(){
         requete.append(";");
 
         res1 = insSqlManager->query(requete);
+        resultats = insSqlManager->convertToXML(res1);
     }
     else{
         resultats = insXmlManager->makeSearch(termes);
@@ -744,7 +639,7 @@ void DadaBooks::makeSearch(){
     layout->addWidget(table, 0, 0);
     nv_onglet->setLayout(layout);
 
-    if(!insSettingsManager->getSettings(Xml).toBool()){
+    /*if(!insSettingsManager->getSettings(Xml).toBool()){
         while(res1.next()){
             table->insertRow(0);
             QTableWidgetItem *item0 = new QTableWidgetItem();
@@ -764,7 +659,7 @@ void DadaBooks::makeSearch(){
             table->setItem(0, 4, item4);
         }
     }
-    else{
+    else{*/
         for(int i=0; i<resultats.size(); i++){
             table->insertRow(0);
             QTableWidgetItem *item0 = new QTableWidgetItem();
@@ -774,8 +669,8 @@ void DadaBooks::makeSearch(){
             QTableWidgetItem *item4 = new QTableWidgetItem();
             item0->setText(resultats.at(i).value("id"));
             item1->setText(resultats.at(i).value("titre"));
-            item2->setText(resultats.at(i).value("auteur"));
-            item3->setText(resultats.at(i).value("editeur"));
+            item2->setText(resultats.at(i).value((films) ? "directeur" : "auteur"));
+            item3->setText(resultats.at(i).value((films) ? "acteurs" : "editeur"));
             item4->setText(resultats.at(i).value("annee"));
             table->setItem(0, 0, item0);
             table->setItem(0, 1, item1);
@@ -783,7 +678,7 @@ void DadaBooks::makeSearch(){
             table->setItem(0, 3, item3);
             table->setItem(0, 4, item4);
         }
-    }
+    //}
     table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     connect(table, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(prepareSearchView(int)));
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);

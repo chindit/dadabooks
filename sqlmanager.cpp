@@ -98,7 +98,7 @@ void SqlManager::disconnect(){
     return;
 }
 
-QList<QMultiMap<QString, QString> > SqlManager::convertToXML(QSqlQuery requete, bool films){
+/*QList<QMultiMap<QString, QString> > SqlManager::convertToXML(QSqlQuery requete, bool films){
     QList<QMultiMap<QString, QString> > resultat;
     if(!films){
         while(requete.next()){
@@ -165,4 +165,48 @@ QList<QMultiMap<QString, QString> > SqlManager::convertToXML(QSqlQuery requete, 
         }
     }
     return resultat;
+}*/
+
+QList<QMultiMap<QString, QString> > SqlManager::convertToXML(QSqlQuery requete){
+    QStringList champs, booleanFields;
+    QList<QMultiMap<QString, QString> > data;
+    QMap<QString, QString> conversion;
+    conversion.insert("sous_titres", "sousTitres");
+    conversion.insert("titre_original", "titreOriginal");
+    conversion.insert("jaquette", "couverture");
+    conversion.insert("nom_editeur", "editeur");
+    conversion.insert("nom", "auteur");
+
+    booleanFields << "empruntable" << "prete" << "vu" << "lu" << "fichier" << "ebook";
+
+    for(int i=0; i<requete.record().count(); ++i){
+        champs.append(requete.record().fieldName(i));
+    }
+
+    while(requete.next()){ //Parcours des résultats
+        QMultiMap<QString, QString> item;
+        for(int i=0; i<champs.count(); ++i){ //Parcours des champs
+            if(booleanFields.contains(champs.at(i)))
+                item.insert(champs.at(i), ((requete.record().value(champs.at(i)).toBool()) ? "True" : "False"));
+            else{
+                if(conversion.contains(champs.at(i))){
+                    item.insert(conversion.value(champs.at(i)), requete.record().value(champs.at(i)).toString());
+                }
+                else{
+                    item.insert(champs.at(i), requete.record().value(champs.at(i)).toString());
+                }
+            }
+        }
+        data.append(item);
+    }
+    return data;
+}
+
+QStringList SqlManager::getListEtiquettes(){
+    QSqlQuery liste = this->query("SELECT nom FROM etiquettes");
+    QStringList etiquettes;
+    while(liste.next()){
+        etiquettes.append(liste.record().value("nom").toString());
+    }
+    return etiquettes;
 }

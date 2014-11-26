@@ -499,6 +499,11 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
                     ui->listWidgetEtiquettesLivreLivre->addItem(res1.record().value("nom").toString());
             }
         }
+        //Étiquettes
+        if(insSettingsManager->getSettings(Xml).toBool())
+            ui->listWidgetEtiquettesDispoFilm->addItems(insXml->getListEtiquettes());
+        else
+            ui->listWidgetEtiquettesDispoFilm->addItems(insSql->getListEtiquettes());
     }
     else{
         //FILM
@@ -557,7 +562,10 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
         //Préparation des variables pour les QListWidget
         ui->listWidgetActeursFilm->addItems(livre.value("acteurs").split(","));
         ui->listWidgetGenreFilm->addItems(livre.value("genres").split(","));
-        ui->listWidgetEtiquettesDispoFilm->addItems(insXml->getListEtiquettes());
+        if(insSettingsManager->getSettings(Xml).toBool())
+            ui->listWidgetEtiquettesDispoFilm->addItems(insXml->getListEtiquettes());
+        else
+            ui->listWidgetEtiquettesDispoFilm->addItems(insSql->getListEtiquettes());
     }
     return;
 }
