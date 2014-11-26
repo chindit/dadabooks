@@ -639,46 +639,25 @@ void DadaBooks::makeSearch(){
     layout->addWidget(table, 0, 0);
     nv_onglet->setLayout(layout);
 
-    /*if(!insSettingsManager->getSettings(Xml).toBool()){
-        while(res1.next()){
-            table->insertRow(0);
-            QTableWidgetItem *item0 = new QTableWidgetItem();
-            QTableWidgetItem *item1 = new QTableWidgetItem();
-            QTableWidgetItem *item2 = new QTableWidgetItem();
-            QTableWidgetItem *item3 = new QTableWidgetItem();
-            QTableWidgetItem *item4 = new QTableWidgetItem();
-            item0->setText(res1.record().value("id").toString());
-            item1->setText(res1.record().value("titre").toString());
-            item2->setText(res1.record().value((films) ? "directeur" : "nom").toString());
-            item3->setText(res1.record().value((films) ? "acteurs" : "nom_editeur").toString());
-            item4->setText(res1.record().value("annee").toString());
-            table->setItem(0, 0, item0);
-            table->setItem(0, 1, item1);
-            table->setItem(0, 2, item2);
-            table->setItem(0, 3, item3);
-            table->setItem(0, 4, item4);
-        }
+    for(int i=0; i<resultats.size(); i++){
+        table->insertRow(0);
+        QTableWidgetItem *item0 = new QTableWidgetItem();
+        QTableWidgetItem *item1 = new QTableWidgetItem();
+        QTableWidgetItem *item2 = new QTableWidgetItem();
+        QTableWidgetItem *item3 = new QTableWidgetItem();
+        QTableWidgetItem *item4 = new QTableWidgetItem();
+        item0->setText(resultats.at(i).value("id"));
+        item1->setText(resultats.at(i).value("titre"));
+        item2->setText(resultats.at(i).value((films) ? "directeur" : "auteur"));
+        item3->setText(resultats.at(i).value((films) ? "acteurs" : "editeur"));
+        item4->setText(resultats.at(i).value("annee"));
+        table->setItem(0, 0, item0);
+        table->setItem(0, 1, item1);
+        table->setItem(0, 2, item2);
+        table->setItem(0, 3, item3);
+        table->setItem(0, 4, item4);
     }
-    else{*/
-        for(int i=0; i<resultats.size(); i++){
-            table->insertRow(0);
-            QTableWidgetItem *item0 = new QTableWidgetItem();
-            QTableWidgetItem *item1 = new QTableWidgetItem();
-            QTableWidgetItem *item2 = new QTableWidgetItem();
-            QTableWidgetItem *item3 = new QTableWidgetItem();
-            QTableWidgetItem *item4 = new QTableWidgetItem();
-            item0->setText(resultats.at(i).value("id"));
-            item1->setText(resultats.at(i).value("titre"));
-            item2->setText(resultats.at(i).value((films) ? "directeur" : "auteur"));
-            item3->setText(resultats.at(i).value((films) ? "acteurs" : "editeur"));
-            item4->setText(resultats.at(i).value("annee"));
-            table->setItem(0, 0, item0);
-            table->setItem(0, 1, item1);
-            table->setItem(0, 2, item2);
-            table->setItem(0, 3, item3);
-            table->setItem(0, 4, item4);
-        }
-    //}
+
     table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     connect(table, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(prepareSearchView(int)));
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -849,7 +828,7 @@ void DadaBooks::intabPreview(int id){
         else
             req1 = "SELECT * FROM films WHERE films.id="+QString::number(id);
         res1 = insSqlManager->query(req1);
-        res1.first();
+        xmlLivre = insSqlManager->convertToXML(res1).first();
     }
     else{
         xmlLivre = insXmlManager->getBook(id);
@@ -878,42 +857,48 @@ void DadaBooks::intabPreview(int id){
         ui->plainTextEditCommentaire->clear();
 
         //Remplissage des données
-        ui->labelTitre->setText(((sql) ? res1.record().value("titre").toString() : xmlLivre.value("titre")));
-        ui->labelID->setText(((sql) ? res1.record().value("id").toString() : xmlLivre.value("id")));
-        ui->labelTitreOriginal->setText(((sql) ? res1.record().value("titre_original").toString() : xmlLivre.value("titreOriginal")));
+        ui->labelTitre->setText(xmlLivre.value("titre"));
+        ui->labelID->setText(xmlLivre.value("id"));
+        ui->labelTitreOriginal->setText(xmlLivre.value("titreOriginal"));
         //Image
-        QPixmap loader = ToolsManager::getPixmapFromString((sql) ? res1.record().value("jaquette").toString() : xmlLivre.value("couverture"));
+        QPixmap loader = ToolsManager::getPixmapFromString(xmlLivre.value("couverture"));
         ui->labelImage->setPixmap(loader);
-        ui->labelDirecteur->setText(((sql) ? res1.record().value("directeur").toString() : xmlLivre.value("directeur")));
-        ui->labelAnnee->setText(((sql) ? res1.record().value("annee").toString() : xmlLivre.value("annee")));
-        ui->labelLangue->setText(((sql) ? res1.record().value("langue").toString() : xmlLivre.value("langue")));
-        ui->labelSousTitres->setText(((sql) ? res1.record().value("sous_titres").toString() : xmlLivre.value("sousTitres")));
-        ui->labelNationalite->setText(((sql) ? res1.record().value("pays").toString() : xmlLivre.value("pays")));
-        ui->labelDuree->setText(((sql) ? res1.record().value("duree").toString() : xmlLivre.value("duree")));
-        ui->labelClassement->setText(((sql) ? res1.record().value("classement").toString() : xmlLivre.value("classement")));
-        ui->labelNote->setText(((sql) ? res1.record().value("note").toString() : xmlLivre.value("note"))+"/20");
-        ui->plainTextEditSynopsis->insertPlainText(((sql) ? res1.record().value("synopsis").toString() : xmlLivre.value("synopsis")));
-        ui->plainTextEditCommentaire->insertPlainText(((sql) ? res1.record().value("commentaire").toString() : xmlLivre.value("commentaire")));
-        ui->checkBoxPrete->setChecked((sql) ? res1.record().value("prete").toBool() : ((xmlLivre.value("prete") == "True") ? true : false));
-        ui->checkBoxEmpruntable->setChecked((sql) ? res1.record().value("empruntable").toBool() : ((xmlLivre.value("empruntable") == "True") ? true : false));
-        ui->checkBoxFichier->setChecked((sql) ? res1.record().value("fichier").toBool() : ((xmlLivre.value("fichier") == "True") ? true : false));
+        ui->labelDirecteur->setText((xmlLivre.value("directeur")));
+        ui->labelAnnee->setText(xmlLivre.value("annee"));
+        ui->labelLangue->setText(xmlLivre.value("langue"));
+        ui->labelSousTitres->setText(xmlLivre.value("sousTitres"));
+        ui->labelNationalite->setText(xmlLivre.value("pays"));
+        ui->labelDuree->setText(xmlLivre.value("duree"));
+        ui->labelClassement->setText(xmlLivre.value("classement"));
+        ui->labelNote->setText(xmlLivre.value("note")+"/20");
+        ui->plainTextEditSynopsis->insertPlainText(xmlLivre.value("synopsis"));
+        ui->plainTextEditCommentaire->insertPlainText(xmlLivre.value("commentaire"));
+        ui->checkBoxPrete->setChecked(((xmlLivre.value("prete") == "True") ? true : false));
+        ui->checkBoxEmpruntable->setChecked(((xmlLivre.value("empruntable") == "True") ? true : false));
+        ui->checkBoxFichier->setChecked(((xmlLivre.value("fichier") == "True") ? true : false));
         //TODO chemin FICHIER
-        ui->checkBoxVu->setChecked((sql) ? res1.record().value("vu").toBool() : ((xmlLivre.value("vu") == "True") ? true : false));
-        //TODO Étiquettes SQL
+        ui->checkBoxVu->setChecked(((xmlLivre.value("vu") == "True") ? true : false));
+
+        QString resultat;
         if(!sql){
-            QString resultat;
             QStringList etiquettes = xmlLivre.value("etiquettes").split(",");
             for(int i=0; i<etiquettes.count(); ++i){
                 resultat.append("<a href=\""+etiquettes.at(i)+"\">"+etiquettes.at(i)+"</a> ");
             }
-            ui->labelEtiquettesText->setText(resultat);
-            connect(ui->labelEtiquettesText, SIGNAL(linkActivated(QString)), this, SLOT(showEtiquette(QString)));
         }
+        else{
+            QSqlQuery res1 = insSqlManager->query("SELECT etiquettes.id,etiquettes.nom FROM etiquettes LEFT JOIN liste_etiquettes ON liste_etiquettes.id_etiquette=etiquettes.id WHERE liste_etiquettes.id_livre="+QString::number(id));
+            while(res1.next()){
+                resultat.append("<a href=\""+res1.record().value("id").toString()+"\">"+res1.record().value("nom").toString()+"</a> ");
+            }
+        }
+        ui->labelEtiquettesText->setText(resultat);
+        connect(ui->labelEtiquettesText, SIGNAL(linkActivated(QString)), this, SLOT(showEtiquette(QString)));
 
         //QListWidget pour les acteurs et les genres
         ui->listWidgetActeurs->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        ui->listWidgetActeurs->addItems(((sql) ? res1.record().value("acteurs").toString() : xmlLivre.value("acteurs")).split(","));
-        ui->listWidgetGenres->addItems(((sql) ? res1.record().value("genre").toString() : xmlLivre.value("genre")).split(","));
+        ui->listWidgetActeurs->addItems(xmlLivre.value("acteurs").split(","));
+        ui->listWidgetGenres->addItems(xmlLivre.value("genre").split(","));
     }
     else{
         //------------------------------

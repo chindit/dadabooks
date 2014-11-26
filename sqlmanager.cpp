@@ -190,10 +190,10 @@ QList<QMultiMap<QString, QString> > SqlManager::convertToXML(QSqlQuery requete){
                 item.insert(champs.at(i), ((requete.record().value(champs.at(i)).toBool()) ? "True" : "False"));
             else{
                 if(conversion.contains(champs.at(i))){
-                    item.insert(conversion.value(champs.at(i)), requete.record().value(champs.at(i)).toString());
+                    item.insert(conversion.value(champs.at(i)), ToolsManager::stripSlashes(requete.record().value(champs.at(i)).toString()));
                 }
                 else{
-                    item.insert(champs.at(i), requete.record().value(champs.at(i)).toString());
+                    item.insert(champs.at(i), ToolsManager::stripSlashes(requete.record().value(champs.at(i)).toString()));
                 }
             }
         }
