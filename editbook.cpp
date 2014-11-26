@@ -561,11 +561,33 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
         }
         //Préparation des variables pour les QListWidget
         ui->listWidgetActeursFilm->addItems(livre.value("acteurs").split(","));
-        ui->listWidgetGenreFilm->addItems(livre.value("genres").split(","));
+        ui->listWidgetGenreFilm->addItems(livre.value("genre").split(","));
         if(insSettingsManager->getSettings(Xml).toBool())
             ui->listWidgetEtiquettesDispoFilm->addItems(insXml->getListEtiquettes());
         else
             ui->listWidgetEtiquettesDispoFilm->addItems(insSql->getListEtiquettes());
+
+        //Transfert des étiquettes existantes
+        QString etiquettes;
+        if(livre.value("etiquettes", "FALSE") == "FALSE"){
+            //Dans ce cas là, c'est du SQL ou il n'y a pas d'étiquette
+            if(!insSettingsManager->getSettings(Xml).toBool()){
+                QSqlQuery res1 = insSql->query("SELECT etiquettes.id,etiquettes.nom FROM etiquettes LEFT JOIN liste_etiquettes ON liste_etiquettes.id_etiquette=etiquettes.id WHERE liste_etiquettes.id_livre="+livre.value("id"));
+                while(res1.next()){
+                    etiquettes.append(res1.record().value("nom").toString());
+                    etiquettes.append(",");
+                }
+            }
+        }
+        else
+            etiquettes = livre.value("etiquettes");
+        for(int i=0; i<ui->listWidgetEtiquettesDispoFilm->count(); ++i){
+            if(etiquettes.contains(ui->listWidgetEtiquettesDispoFilm->item(i)->text())){
+                ui->listWidgetEtiquettesDispoFilm->setCurrentRow(i);
+                this->etiquetteDispoToElem();
+                i--;
+            }
+        }
     }
     return;
 }
@@ -708,10 +730,7 @@ void EditBook::setId(int id){
 //Lie l'ebook (ou le film) avec l'item
 void EditBook::uploadEbook(){
     QString ebook = QFileDialog::getOpenFileName(this, "Sélectionnez le fichier", QDir::homePath());
-    if(insSettingsManager->getSettings(Type).toString() == "films")
-        ui->labelCheminFilm->setText(ebook);
-    else
-        ui->labelCheminLivre->setText(ebook);
+    ui->labelCheminLivre->setText(ebook);
     return;
 }
 

@@ -18,7 +18,7 @@
 #include "sqlmanager.h"
 #include "xmlmanager.h"
 
-#define VERSION "0.0.1"
+#define VERSION "0.5.0"
 
 namespace Ui {
 class DadaBooks;
