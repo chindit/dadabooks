@@ -807,7 +807,10 @@ void DadaBooks::showEtiquette(const QString nom){
         ui->tabWidget->setCurrentWidget(nv_onglet);
     }
     else{ //SQL
-        //TODO
+        //Normalement, il s'agit d'un nombre
+        int id = nom.toInt();
+        if(id > 0)
+            this->showEtiquette(id);
     }
     return;
 }
