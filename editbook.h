@@ -43,6 +43,8 @@ private slots:
     void addEtiquette();
     void etiquetteDispoToElem();
     void etiquetteElemToDispo();
+    void addActeur();
+    void addGenre();
 
 signals:
     void editDone(int);

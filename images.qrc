@@ -15,6 +15,8 @@
         <file>images/random.png</file>
         <file>images/fleche_droite.png</file>
         <file>images/fleche_gauche.png</file>
+        <file>images/insert_actor.png</file>
+        <file>images/insert_genre.png</file>
     </qresource>
     <qresource prefix="/programme">
         <file>images/icone.png</file>

@@ -53,6 +53,11 @@ EditBook::EditBook(QWidget *parent) : QDialog(parent), ui(new Ui::EditBook){
     connect(ui->pushButtonEtiquettesToLivreLivre, SIGNAL(clicked()), this, SLOT(etiquetteDispoToElem()));
     connect(ui->pushButtonEtiquetteFilmDispoFilm, SIGNAL(clicked()), this, SLOT(etiquetteElemToDispo()));
     connect(ui->pushButtonEtiquettesLivreDispoLivre, SIGNAL(clicked()), this, SLOT(etiquetteElemToDispo()));
+    //Boutons d'ajout acteurs/genre
+    connect(ui->pushButtonAddActeurFilm, SIGNAL(clicked()), this, SLOT(addActeur()));
+    connect(ui->pushButtonAddGenreFilm, SIGNAL(clicked()), this, SLOT(addGenre()));
+    //Centrage des boutons film
+    ui->verticalLayout_9->setAlignment(Qt::AlignHCenter);
 }
 
 //Destructeur
@@ -284,15 +289,19 @@ void EditBook::accept(){
         }
         QString acteurs;
         for(int i=0; i<ui->listWidgetActeursFilm->count(); ++i){
-            acteurs.append(ui->listWidgetActeursFilm->item(i)->text());
-            if(i < (ui->listWidgetActeursFilm->count()-1))
-                acteurs.append(",");
+            if(!ui->listWidgetActeursFilm->item(i)->text().isEmpty()){
+                acteurs.append(ui->listWidgetActeursFilm->item(i)->text());
+                if(i < (ui->listWidgetActeursFilm->count()-1))
+                    acteurs.append(",");
+            }
         }
         QString genres;
         for(int i=0; i<ui->listWidgetGenreFilm->count(); ++i){
-            genres.append(ui->listWidgetGenreFilm->item(i)->text());
-            if(i < (ui->listWidgetGenreFilm->count()-1))
-                genres.append(",");
+            if(!ui->listWidgetGenreFilm->item(i)->text().isEmpty()){
+                genres.append(ui->listWidgetGenreFilm->item(i)->text());
+                if(i < (ui->listWidgetGenreFilm->count()-1))
+                    genres.append(",");
+            }
         }
 
         //2)On stocke tout en SQL ou XML
@@ -823,5 +832,17 @@ void EditBook::etiquetteElemToDispo(){
             delete ui->listWidgetEtiquettesFilmFilm->currentItem();
         }
     }
+    return;
+}
+
+//Ajoute un nouvel acteur
+void EditBook::addActeur(){
+    ui->listWidgetActeursFilm->addItem("Nouvel acteur");
+    return;
+}
+
+//Ajoute un nouveau genre
+void EditBook::addGenre(){
+    ui->listWidgetGenreFilm->addItem("Nouveau genre");
     return;
 }

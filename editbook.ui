@@ -37,7 +37,7 @@
    <item row="1" column="0">
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="livres">
       <layout class="QGridLayout" name="gridLayout_3">
@@ -555,16 +555,6 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="3">
-        <widget class="QLineEdit" name="lineEditNationaliteFilm"/>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="label_7">
-         <property name="text">
-          <string>Acteurs</string>
-         </property>
-        </widget>
-       </item>
        <item row="2" column="1">
         <widget class="QSpinBox" name="spinBoxAnneeFilm">
          <property name="minimum">
@@ -574,6 +564,16 @@
           <number>2100</number>
          </property>
         </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Acteurs</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QLineEdit" name="lineEditNationaliteFilm"/>
        </item>
        <item row="1" column="1">
         <widget class="QLineEdit" name="lineEditDirecteurFilm"/>
@@ -598,10 +598,13 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="2">
-        <widget class="QLabel" name="label_8">
-         <property name="text">
-          <string>Genres</string>
+       <item row="2" column="3">
+        <widget class="QSpinBox" name="spinBoxDureeFilm">
+         <property name="maximum">
+          <number>1000</number>
+         </property>
+         <property name="value">
+          <number>90</number>
          </property>
         </widget>
        </item>
@@ -615,13 +618,17 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="3">
-        <widget class="QSpinBox" name="spinBoxDureeFilm">
-         <property name="maximum">
-          <number>1000</number>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>Langue</string>
          </property>
-         <property name="value">
-          <number>90</number>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Durée</string>
          </property>
         </widget>
        </item>
@@ -652,20 +659,6 @@
          </item>
         </layout>
        </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label_9">
-         <property name="text">
-          <string>Langue</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="2">
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>Durée</string>
-         </property>
-        </widget>
-       </item>
        <item row="3" column="1">
         <widget class="QLineEdit" name="lineEditLangueFilm"/>
        </item>
@@ -675,6 +668,16 @@
           <string>Options</string>
          </property>
         </widget>
+       </item>
+       <item row="9" column="0">
+        <widget class="QLabel" name="label_15">
+         <property name="text">
+          <string>Étiquettes</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="lineEditTitreFilm"/>
        </item>
        <item row="9" column="1">
         <layout class="QVBoxLayout" name="verticalLayout">
@@ -703,10 +706,10 @@
          </item>
         </layout>
        </item>
-       <item row="9" column="0">
-        <widget class="QLabel" name="label_15">
+       <item row="8" column="1">
+        <widget class="QLabel" name="label_31">
          <property name="text">
-          <string>Étiquettes</string>
+          <string>Classement</string>
          </property>
         </widget>
        </item>
@@ -724,8 +727,8 @@
          </item>
         </layout>
        </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="lineEditTitreFilm"/>
+       <item row="8" column="2" colspan="2">
+        <widget class="QLineEdit" name="lineEditClassementFilm"/>
        </item>
        <item row="6" column="1" colspan="3">
         <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -962,16 +965,6 @@
          </item>
         </layout>
        </item>
-       <item row="8" column="1">
-        <widget class="QLabel" name="label_31">
-         <property name="text">
-          <string>Classement</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="2" colspan="2">
-        <widget class="QLineEdit" name="lineEditClassementFilm"/>
-       </item>
        <item row="4" column="1">
         <widget class="QListWidget" name="listWidgetActeursFilm">
          <property name="maximumSize">
@@ -981,6 +974,75 @@
           </size>
          </property>
         </widget>
+       </item>
+       <item row="4" column="2">
+        <layout class="QVBoxLayout" name="verticalLayout_9">
+         <item>
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>Genres</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonAddActeurFilm">
+           <property name="minimumSize">
+            <size>
+             <width>31</width>
+             <height>31</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>31</width>
+             <height>31</height>
+            </size>
+           </property>
+           <property name="icon">
+            <iconset resource="images.qrc">
+             <normaloff>:/boutons/images/insert_actor.png</normaloff>:/boutons/images/insert_actor.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>25</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="flat">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonAddGenreFilm">
+           <property name="minimumSize">
+            <size>
+             <width>31</width>
+             <height>31</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>31</width>
+             <height>31</height>
+            </size>
+           </property>
+           <property name="icon">
+            <iconset resource="images.qrc">
+             <normaloff>:/boutons/images/insert_genre.png</normaloff>:/boutons/images/insert_genre.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>25</width>
+             <height>25</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
