@@ -501,9 +501,9 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
         }
         //Étiquettes
         if(insSettingsManager->getSettings(Xml).toBool())
-            ui->listWidgetEtiquettesDispoFilm->addItems(insXml->getListEtiquettes());
+            ui->listWidgetEtiquettesDispoLivre->addItems(insXml->getListEtiquettes());
         else
-            ui->listWidgetEtiquettesDispoFilm->addItems(insSql->getListEtiquettes());
+            ui->listWidgetEtiquettesDispoLivre->addItems(insSql->getListEtiquettes());
     }
     else{
         //FILM
@@ -549,7 +549,7 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
                 image = image.scaledToWidth(result);
             }
         }
-        //ui->labelImage->setPixmap(image);
+
         //Checkbox
         ui->checkBoxEmpruntableFilm->setChecked((livre.value("empruntable") == "True") ? true : false);
         ui->checkBoxPreteFilm->setChecked((livre.value("prete") == "True") ? true : false);
@@ -560,32 +560,38 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
             ui->pushButtonEmplacementFilm->setEnabled(true);
         }
         //Préparation des variables pour les QListWidget
-        ui->listWidgetActeursFilm->addItems(livre.value("acteurs").split(","));
-        ui->listWidgetGenreFilm->addItems(livre.value("genre").split(","));
+        if(!livre.value("acteurs").isEmpty())
+            ui->listWidgetActeursFilm->addItems(livre.value("acteurs").split(","));
+        if(!livre.value("genre").isEmpty())
+            ui->listWidgetGenreFilm->addItems(livre.value("genre").split(","));
         if(insSettingsManager->getSettings(Xml).toBool())
             ui->listWidgetEtiquettesDispoFilm->addItems(insXml->getListEtiquettes());
         else
             ui->listWidgetEtiquettesDispoFilm->addItems(insSql->getListEtiquettes());
 
         //Transfert des étiquettes existantes
-        QString etiquettes;
-        if(livre.value("etiquettes", "FALSE") == "FALSE"){
-            //Dans ce cas là, c'est du SQL ou il n'y a pas d'étiquette
-            if(!insSettingsManager->getSettings(Xml).toBool()){
-                QSqlQuery res1 = insSql->query("SELECT etiquettes.id,etiquettes.nom FROM etiquettes LEFT JOIN liste_etiquettes ON liste_etiquettes.id_etiquette=etiquettes.id WHERE liste_etiquettes.id_livre="+livre.value("id"));
-                while(res1.next()){
-                    etiquettes.append(res1.record().value("nom").toString());
-                    etiquettes.append(",");
+        if(idEdit > 0){
+            QString etiquettes;
+            if(livre.value("etiquettes", "FALSE") == "FALSE"){
+                //Dans ce cas là, c'est du SQL ou il n'y a pas d'étiquette
+                if(!insSettingsManager->getSettings(Xml).toBool()){
+                    QSqlQuery res1 = insSql->query("SELECT etiquettes.id,etiquettes.nom FROM etiquettes LEFT JOIN liste_etiquettes ON liste_etiquettes.id_etiquette=etiquettes.id WHERE liste_etiquettes.id_livre="+livre.value("id"));
+                    while(res1.next()){
+                        etiquettes.append(res1.record().value("nom").toString());
+                        etiquettes.append(",");
+                    }
                 }
             }
-        }
-        else
-            etiquettes = livre.value("etiquettes");
-        for(int i=0; i<ui->listWidgetEtiquettesDispoFilm->count(); ++i){
-            if(etiquettes.contains(ui->listWidgetEtiquettesDispoFilm->item(i)->text())){
-                ui->listWidgetEtiquettesDispoFilm->setCurrentRow(i);
-                this->etiquetteDispoToElem();
-                i--;
+            else
+                etiquettes = livre.value("etiquettes");
+            if(etiquettes.isEmpty())
+                return;
+            for(int i=0; i<ui->listWidgetEtiquettesDispoFilm->count(); ++i){
+                if(etiquettes.contains(ui->listWidgetEtiquettesDispoFilm->item(i)->text())){
+                    ui->listWidgetEtiquettesDispoFilm->setCurrentRow(i);
+                    this->etiquetteDispoToElem();
+                    i--;
+                }
             }
         }
     }

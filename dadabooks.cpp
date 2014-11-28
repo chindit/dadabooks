@@ -8,16 +8,16 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     ui->setupUi(this);
 
     //Initialisations des classes
-    insPreviewBook = new PreviewBook;
+    insPreviewBook = new PreviewBook(this);
     insSettingsManager = new SettingsManager;
-    insAddBook = new AddBook;
+    insAddBook = new AddBook(this);
     insSiteManager = new SiteManager;
 
     idOngletEdit = -1;
 
     //On vérifie si le programme est initialisé ou non
     if(!insSettingsManager->getSettings(Initialized).toBool()){
-        FirstLaunch *insFirstLaunch = new FirstLaunch;
+        FirstLaunch *insFirstLaunch = new FirstLaunch(this);
         insFirstLaunch->exec();
         delete insFirstLaunch;
 
