@@ -33,8 +33,8 @@ public:
     ~DadaBooks();
 
 private slots:
-    void rechercheInternet(QString requete, QString site);
-    void getBook(QString id);
+    void rechercheInternet(QString requete, QString site, QString langue);
+    void getBook(QString id, QString site);
     void updateOnglet(int id);
     void setListeLivres();
     void activatePreview(int id=0, bool search=false, bool idOk=false);
@@ -72,7 +72,6 @@ private:
     XmlManager *insXmlManager;
 
     int idOngletEdit;
-    QString nomSiteRecherche;
 };
 
 #endif // DADABOOKS_H

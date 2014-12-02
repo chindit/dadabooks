@@ -75,6 +75,7 @@ QList< QMultiMap<QString,QString> > Casadellibro::makeSearch(QString search){
         apercu_livre.insert("auteur", w_auteur);
         apercu_livre.insert("annee", w_annee);
         apercu_livre.insert("editeur", w_editeur);
+        apercu_livre.insert("site", "Casa del libro");
         contenu.append(apercu_livre);
     }//Fin de la boucle
 
@@ -174,6 +175,15 @@ QMultiMap<QString,QString> Casadellibro::getBook( QString id ){
 QString Casadellibro::getName(){
     QString nom = "Casa del libro";
     return nom;
+}
+
+QString Casadellibro::getType(){
+    QString type = "livres";
+    return type;
+}
+
+QString Casadellibro::getLanguage(){
+    return "ES";
 }
 
 QString Casadellibro::ucFirst(QString chaine){

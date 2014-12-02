@@ -2,6 +2,7 @@
 #include "ui_addbook.h"
 
 #include <QMessageBox>
+#include <QStandardItem>
 
 AddBook::AddBook(QWidget *parent) : QDialog(parent), ui(new Ui::AddBook){
     ui->setupUi(this);
@@ -21,6 +22,8 @@ AddBook::AddBook(QWidget *parent) : QDialog(parent), ui(new Ui::AddBook){
         //Ajout des sites disponibles
         ui->comboBox_recherche->addItems(insSiteManager->getPluginList());
     }
+    ui->comboBoxLangue->addItems(insSiteManager->getLanguePlugins());
+    this->setModal(true);
 }
 
 AddBook::~AddBook(){
@@ -40,7 +43,7 @@ void AddBook::addInternetBook(){
         return;
     }
     //Si on est ici, c'est que tout est OK.
-    emit searchInternet(ui->lineEdit_recherche->text(), ui->comboBox_recherche->currentText());
+    emit searchInternet(ui->lineEdit_recherche->text(), ui->comboBox_recherche->currentText(), ((ui->checkBoxLangue->isChecked()) ? ui->comboBoxLangue->currentText() : ""));
 }
 
 void AddBook::addManualBook(){

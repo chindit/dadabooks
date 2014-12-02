@@ -514,8 +514,15 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
         else
             ui->listWidgetEtiquettesDispoLivre->addItems(insSql->getListEtiquettes());
     }
-    else{
-        //FILM
+    else{ //FILM
+        //Nettoyage des QListWidget
+       ui->listWidgetActeursFilm->clear();
+       ui->listWidgetEtiquettesDispoFilm->clear();
+       ui->listWidgetEtiquettesDispoLivre->clear();
+       ui->listWidgetEtiquettesFilmFilm->clear();
+       ui->listWidgetEtiquettesLivreLivre->clear();
+       ui->listWidgetGenreFilm->clear();
+
         ui->stackedWidget->setCurrentIndex(1);
         ui->lineEditTitreFilm->setText(livre.value("titre"));
         ui->lineEditTitreOriginalFilm->setText(livre.value("titreOriginal"));

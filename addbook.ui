@@ -99,6 +99,24 @@
      </layout>
     </item>
     <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QCheckBox" name="checkBoxLangue">
+        <property name="text">
+         <string>Rechercher sur tous les sites en langue</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBoxLangue">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
      <spacer name="verticalSpacer_2">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
@@ -175,8 +193,8 @@
    <slot>addInternetBook()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>338</x>
-     <y>125</y>
+     <x>394</x>
+     <y>119</y>
     </hint>
     <hint type="destinationlabel">
      <x>309</x>
@@ -191,12 +209,28 @@
    <slot>addManualBook()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>227</x>
-     <y>208</y>
+     <x>232</x>
+     <y>232</y>
     </hint>
     <hint type="destinationlabel">
      <x>206</x>
      <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxLangue</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>comboBoxLangue</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>38</x>
+     <y>137</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>314</x>
+     <y>137</y>
     </hint>
    </hints>
   </connection>

@@ -63,6 +63,7 @@ QList< QMultiMap<QString,QString> > Allocine::makeSearch(QString search){
         apercu_livre.insert("auteur", w_directeur);
         apercu_livre.insert("annee", w_annee);
         apercu_livre.insert("editeur", acteurs);
+        apercu_livre.insert("site", "Allocine");
         contenu.append(apercu_livre);
     }//Fin de la boucle
 
@@ -172,6 +173,10 @@ QString Allocine::getName(){
 QString Allocine::getType(){
     QString type = "films";
     return type;
+}
+
+QString Allocine::getLanguage(){
+    return "FR";
 }
 
 QString Allocine::download(QString url){

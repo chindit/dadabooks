@@ -39,9 +39,9 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
 
     //Connexion des signaux et des slots
     connect(ui->pushButton_add, SIGNAL(clicked()), insAddBook, SLOT(show()));
-    connect(insAddBook, SIGNAL(searchInternet(QString,QString)), this, SLOT(rechercheInternet(QString,QString)));
+    connect(insAddBook, SIGNAL(searchInternet(QString,QString,QString)), this, SLOT(rechercheInternet(QString,QString,QString)));
     connect(ui->pushButton_random, SIGNAL(clicked()), this, SLOT(selectRandom()));
-    connect(insPreviewBook, SIGNAL(bookSelected(QString)), this, SLOT(getBook(QString)));
+    connect(insPreviewBook, SIGNAL(bookSelected(QString, QString)), this, SLOT(getBook(QString, QString)));
     connect(ui->tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
     connect(insEditBook, SIGNAL(editDone(int)), this, SLOT(updateOnglet(int)));
     connect(insEditBook, SIGNAL(bookAdded()), this, SLOT(setListeLivres()));
@@ -79,11 +79,10 @@ DadaBooks::~DadaBooks(){
 }
 
 //Transfère les données de AddBook à PreviewBook
-void DadaBooks::rechercheInternet(QString requete, QString site){
+void DadaBooks::rechercheInternet(QString requete, QString site, QString langue){
     insAddBook->close();
     QList< QMultiMap<QString,QString> > resultats;
-    resultats = insSiteManager->makeSearch(requete, site);
-    nomSiteRecherche = site;
+    resultats = insSiteManager->makeSearch(requete, site, langue, insSettingsManager->getSettings(Type).toString());
     //On envoie à la fenêtre d'aperçu
     insPreviewBook->setTable(resultats);
     insPreviewBook->show();
@@ -91,10 +90,10 @@ void DadaBooks::rechercheInternet(QString requete, QString site){
 }
 
 //Sélectionne le livre fourni en paramètre
-void DadaBooks::getBook(QString id){
+void DadaBooks::getBook(QString id, QString site){
     insPreviewBook->close();
     QMultiMap<QString,QString> livre;
-    livre = insSiteManager->getBook(id, nomSiteRecherche);
+    livre = insSiteManager->getBook(id, site);
     insEditBook->updateUi(livre);
     insEditBook->show();
 }

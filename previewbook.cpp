@@ -83,6 +83,6 @@ void PreviewBook::setTable(QList<QMultiMap<QString, QString> > elem){
 
 void PreviewBook::detectClic(int row, int column){
     if(column == 5)
-        emit bookSelected(tableau.at(row).value("id"));
+        emit bookSelected(tableau.at(row).value("id"), tableau.at(row).value("site"));
     return;
 }

@@ -268,7 +268,8 @@ QStringList XmlManager::getListEtiquettes(){
         temp = base.at(i).value("etiquettes").split(",");
         for(int j=0; j<temp.count(); ++j){
             if(!retour.contains(temp.at(j).trimmed(), Qt::CaseInsensitive))
-                retour.append(temp.at(j).trimmed());
+                if(!temp.at(j).trimmed().isEmpty())
+                    retour.append(temp.at(j).trimmed());
         }
     }
     return retour;

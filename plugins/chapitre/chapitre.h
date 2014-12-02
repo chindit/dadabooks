@@ -22,6 +22,7 @@ public:
     QMultiMap<QString,QString> getBook( QString id );
     QString getName();
     QString getType();
+    QString getLanguage();
 };
 
 //Q_EXPORT_PLUGIN2(chapitre, Chapitre)

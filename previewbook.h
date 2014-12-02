@@ -25,7 +25,7 @@ public:
     void setTable(QList< QMultiMap<QString,QString> > elem);
 
 signals:
-    void bookSelected(QString id);
+    void bookSelected(QString id, QString site);
     
 private slots:
     void detectClic(int row, int column);

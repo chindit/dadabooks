@@ -58,6 +58,7 @@ QList< QMultiMap<QString,QString> > Amazon::makeSearch(QString search){
         apercu_livre.insert("auteur", w_auteur);
         apercu_livre.insert("annee", w_annee);
         apercu_livre.insert("editeur", w_editeur);
+        apercu_livre.insert("site", "Amazon.com");
         contenu.append(apercu_livre);
     }//Fin de la boucle
 
@@ -161,4 +162,8 @@ QString Amazon::getName(){
 QString Amazon::getType(){
     QString type = "livres";
     return type;
+}
+
+QString Amazon::getLanguage(){
+    return "FR";
 }

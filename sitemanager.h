@@ -4,6 +4,7 @@
 #include <QApplication>
 #include <QDir>
 #include <QList>
+#include <QMap>
 #include <QObject>
 #include <QPluginLoader>
 
@@ -17,7 +18,9 @@ public:
     ~SiteManager();
     static SiteManager * instance();
     QStringList getPluginList(QString type="livres");
-    QList< QMultiMap<QString,QString> > makeSearch(QString search, QString site);
+    QStringList getLanguePlugins();
+    QStringList getPluginsByLangue(QString langue);
+    QList< QMultiMap<QString,QString> > makeSearch(QString search, QString site, QString langue, QString type);
     QMultiMap<QString,QString> getBook( QString id, QString site );
     
 signals:
@@ -30,7 +33,8 @@ private:
     QList<Plugin *> pluginList;
     static SiteManager * m_instance;
     Plugin *pluginSite( QString nom );
-    
+    QStringList langue;
+    QString currentType;
 };
 
 #endif // SITEMANAGER_H

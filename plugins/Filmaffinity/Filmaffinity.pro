@@ -10,8 +10,7 @@ TARGET = filmaffinity
 TEMPLATE = lib
 CONFIG += plugin
 
-#DESTDIR = $$[QT_INSTALL_PLUGINS]/
-DESTDIR = //mnt/david/Documents/Programmation/build-dadabooks-Desktop-Debug/plugins/
+DESTDIR = /home/david/Linux/david/Documents/Programmation/Compilations/dadabooks/Debug/plugins/
 
 SOURCES += filmaffinity.cpp
 

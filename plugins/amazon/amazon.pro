@@ -10,7 +10,7 @@ TARGET = amazon
 TEMPLATE = lib
 CONFIG += plugin
 
-DESTDIR = /tmp/dadabooks_Debug/
+DESTDIR = /home/david/Linux/david/Documents/Programmation/Compilations/dadabooks/Debug/plugins/
 
 SOURCES += \
     amazon.cpp

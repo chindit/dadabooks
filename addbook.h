@@ -1,8 +1,9 @@
 #ifndef NV_LIVRE_H
 #define NV_LIVRE_H
 
-#include <QDialog>
 #include <QAbstractButton>
+#include <QCheckBox>
+#include <QDialog>
 
 #include "editbook.h"
 #include "sitemanager.h"
@@ -20,7 +21,7 @@ public:
     ~AddBook();
 
 signals:
-    void searchInternet(QString titre, QString site);
+    void searchInternet(QString titre, QString site, QString langue);
 
 private slots:
     void addInternetBook();

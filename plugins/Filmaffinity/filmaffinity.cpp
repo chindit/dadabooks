@@ -73,6 +73,7 @@ QList< QMultiMap<QString, QString> > Filmaffinity::makeSearch(QString search){
         film.insert("auteur", directeur);
         film.insert("editeur", acteurs);
         film.insert("annee", annee);
+        film.insert("site", "Filmaffinity");
         contenu.append(film);
 
         return contenu;
@@ -133,6 +134,7 @@ QList< QMultiMap<QString, QString> > Filmaffinity::makeSearch(QString search){
         apercu_livre.insert("auteur", w_auteur);
         apercu_livre.insert("annee", w_annee);
         apercu_livre.insert("editeur", w_editeur);
+        apercu_livre.insert("site", "Filmaffinity");
         contenu.append(apercu_livre);
     }//Fin de la boucle
 
@@ -265,6 +267,10 @@ QString Filmaffinity::getName(){
 QString Filmaffinity::getType(){
     QString type = "films";
     return type;
+}
+
+QString Filmaffinity::getLanguage(){
+    return "ES";
 }
 
 #if QT_VERSION < 0x050000

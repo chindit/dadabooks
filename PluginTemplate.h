@@ -13,6 +13,7 @@ public:
     virtual QMultiMap<QString,QString> getBook( QString id ) = 0;
     virtual QString getName() = 0;
     virtual QString getType() = 0;
+    virtual QString getLanguage() = 0;
 };
 
 Q_DECLARE_INTERFACE(Plugin, "DadaBooks.Plugin")

@@ -33,9 +33,9 @@ QStringList SiteManager::getPluginList(QString type){
     QStringList liste;
     foreach(Plugin * pg, pluginList){
         if(!type.isEmpty()){
-            QString truc = pg->getName();
             if(QString::compare(pg->getType(), type)==0){
                 liste.append(pg->getName());
+                langue.append(pg->getLanguage());
             }
         }
         else{
@@ -45,13 +45,37 @@ QStringList SiteManager::getPluginList(QString type){
     return liste;
 }
 
-QList< QMultiMap<QString,QString> > SiteManager::makeSearch(QString search, QString site){
-    Plugin *pg = selectPlugin(site);
-        if(pg){
-            return pg->makeSearch(search);
+QStringList SiteManager::getLanguePlugins(){
+    return langue;
+}
+
+QStringList SiteManager::getPluginsByLangue(QString langue){
+    QStringList liste;
+    foreach(Plugin * pg, pluginList){
+        if((QString::compare(pg->getLanguage(), langue)==0) && (QString::compare(pg->getType(), currentType)==0)){
+            liste.append(pg->getName());
         }
-        QList< QMultiMap<QString,QString> > empty;
-        return empty;
+    }
+    return liste;
+}
+
+QList< QMultiMap<QString,QString> > SiteManager::makeSearch(QString search, QString site, QString langue, QString type){
+    QList< QMultiMap<QString,QString> > resultats;
+    currentType = type;
+    if(!langue.isEmpty()){
+        QStringList pluginsLangue = this->getPluginsByLangue(langue);
+        for(int i=0; i<pluginsLangue.size(); ++i){
+            Plugin *pg = selectPlugin(pluginsLangue.at(i));
+            if(pg)
+                resultats.append(pg->makeSearch(search));
+        }
+    }
+    else{
+    Plugin *pg = selectPlugin(site);
+        if(pg)
+            resultats.append(pg->makeSearch(search));
+    }
+    return resultats;
 }
 
 QMultiMap<QString,QString> SiteManager::getBook( QString id, QString site ){
@@ -59,8 +83,7 @@ QMultiMap<QString,QString> SiteManager::getBook( QString id, QString site ){
     if(pg){
         return pg->getBook(id);
     }
-    QMultiMap<QString,QString> empty;
-    return empty;
+    return QMultiMap<QString,QString>();
 }
 
 Plugin* SiteManager::selectPlugin(QString nom){
