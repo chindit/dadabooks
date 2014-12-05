@@ -176,11 +176,24 @@ void DadaBooks::setListeLivres(){
     }
     //On remplit l'accueil
     ui->listWidget_accueil->clear();
-    for(int i=0; i<resultat.size(); i++){
-        ui->listWidget_accueil->addItem(resultat.at(i).value("titre"));
+    if(!insSettingsManager->getSettings(Xml).toBool()){
+        QString req1;
+        if(insSettingsManager->getSettings(Type).toString() == "livres")
+            req1 = "SELECT titre FROM livres";
+        else
+            req1 = "SELECT titre FROM films";
+        QSqlQuery res1 = insSqlManager->query(req1);
+        while(res1.next()){
+            ui->listWidget_accueil->addItem(res1.record().value("titre").toString());
+        }
+    }
+    else{
+        for(int i=0; i<resultat.size(); i++){
+            ui->listWidget_accueil->addItem(resultat.at(i).value("titre"));
+        }
     }
     ui->listWidget_accueil->sortItems();
-
+    ui->labelNombre->setText(QString::number(ui->listWidget_accueil->count())+((insSettingsManager->getSettings(Type).toString() == "livres") ? " livres" : " films"));
     ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
 
@@ -874,7 +887,7 @@ void DadaBooks::intabPreview(int id){
         ui->labelDirecteur->setText((xmlLivre.value("directeur")));
         ui->labelAnnee->setText(xmlLivre.value("annee"));
         ui->labelLangue->setText(xmlLivre.value("langue"));
-        ui->labelSousTitres->setText(xmlLivre.value("sousTitres"));
+        ui->labelSousTitres->setText(ToolsManager::raccourci(xmlLivre.value("sousTitres"),50));
         ui->labelNationalite->setText(xmlLivre.value("pays"));
         ui->labelDuree->setText(xmlLivre.value("duree"));
         ui->labelClassement->setText(xmlLivre.value("classement"));

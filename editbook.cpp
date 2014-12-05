@@ -391,6 +391,7 @@ void EditBook::accept(){
             emit bookAdded();
         }
     }
+    this->hide();
     this->close();
     return;
 }

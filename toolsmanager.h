@@ -24,6 +24,7 @@ public:
     static void exportMovieList(QList<QMultiMap<QString, QString> > base, QString output, bool films, bool pdf=false);
     static QString guillemets(QString input);
     static QString stripSlashes(QString input);
+    static QString raccourci(QString data, int longueur=50);
 
 private:
     QByteArray downloadLink(QString url);

@@ -234,3 +234,12 @@ QString ToolsManager::stripSlashes(QString input){
     QString output = input;
     return output.replace("\\\'", "\'");
 }
+
+//Raccourcis la chaine à la longueur maximum
+QString ToolsManager::raccourci(QString data, int longueur){
+    QString nvData = data.left(longueur);
+    if(nvData.lastIndexOf(",") > 0){
+        return nvData.left(nvData.lastIndexOf(","));
+    }
+    return nvData;
+}
