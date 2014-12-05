@@ -72,6 +72,7 @@ private:
     XmlManager *insXmlManager;
 
     int idOngletEdit;
+    bool isCalling;
 };
 
 #endif // DADABOOKS_H

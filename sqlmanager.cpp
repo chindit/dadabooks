@@ -10,7 +10,7 @@ SqlManager::SqlManager(){
         QString requete = "SELECT * FROM films LIMIT 1";
         if(instance.exec(requete).lastError().isValid()){
             requete = "CREATE TABLE IF NOT EXISTS `etiquettes` (`id` INTEGER PRIMARY KEY, `nom` VARCHAR(50) NOT NULL)";
-            instance.exec(requete);
+            instance.exec(requete); qDebug() << instance.lastError();
             requete = "CREATE TABLE IF NOT EXISTS `liste_etiquettes` (`id` INTEGER PRIMARY KEY, `id_livre` INTEGER NOT NULL, `id_etiquette` INTEGER NOT NULL)";
             instance.exec(requete);
             requete = "CREATE TABLE IF NOT EXISTS `films` (`id` INTEGER PRIMARY KEY,`titre` VARCHAR(250) NOT NULL,`titre_original` VARCHAR(250) NOT NULL,`directeur` VARCHAR(100) NOT NULL,`acteurs` VARCHAR(1000) NOT NULL,`synopsis` TEXT NOT NULL,`annee` YEAR(4) NOT NULL,`duree` INTEGER NOT NULL,`genre` VARCHAR(500) NOT NULL,`pays` VARCHAR(150) NOT NULL,`langue` VARCHAR(100) NOT NULL,`classement` VARCHAR(100) NOT NULL,`sous_titres` VARCHAR(200) NOT NULL,`commentaire` TEXT NOT NULL,`note` INTEGER NOT NULL,`jaquette` VARCHAR(150) NOT NULL,`empruntable` TINYINT NOT NULL DEFAULT '1',`prete` TINYINT NOT NULL DEFAULT '0',`vu` TINYINT NOT NULL DEFAULT '0',`fichier` TINYINT NOT NULL DEFAULT '0',`emplacement` VARCHAR(250) NOT NULL,`qualite` VARCHAR(100) NOT NULL)";

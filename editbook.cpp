@@ -470,13 +470,13 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
             }
         }
         else{
-            QNetworkAccessManager nw_manager;
+            /*QNetworkAccessManager nw_manager;
             QNetworkRequest request(livre.value("couverture"));
             QNetworkReply *reponse = nw_manager.get(request);
             QEventLoop eventLoop;
             connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));
-            eventLoop.exec();
-            image.loadFromData(reponse->readAll());
+            eventLoop.exec();*/
+            image = ToolsManager::getPixmapFromString(livre.value("couverture"));
             int width = image.width();
             if(width > 150){
                 float coef = (float)width / 150;

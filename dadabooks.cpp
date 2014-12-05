@@ -14,6 +14,7 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     insSiteManager = new SiteManager;
 
     idOngletEdit = -1;
+    isCalling = false;
 
     //On vérifie si le programme est initialisé ou non
     if(!insSettingsManager->getSettings(Initialized).toBool()){
@@ -91,6 +92,9 @@ void DadaBooks::rechercheInternet(QString requete, QString site, QString langue)
 
 //Sélectionne le livre fourni en paramètre
 void DadaBooks::getBook(QString id, QString site){
+    if(isCalling) //Mécanisme de sécurité.  Le slot est appelé un fois par film ajouté ce qui peut vite monter haut
+        return; //Et faire clignoter l'écran.  J'ignore, pour l'instant, d'où vient le problème.
+    isCalling=true;
     insPreviewBook->close();
     QMultiMap<QString,QString> livre;
     livre = insSiteManager->getBook(id, site);
@@ -101,12 +105,13 @@ void DadaBooks::getBook(QString id, QString site){
 //Actualise l'onglet courant
 void DadaBooks::updateOnglet(int id){
     //Si c'est un autre onglet, on le ferme et on le ré-ouvre pour l'actualiser
-    if(idOngletEdit >= 0){
+    if(idOngletEdit >= 0 && (ui->tabWidget->tabText(idOngletEdit) != "Accueil" || ui->tabWidget->tabText(idOngletEdit) != "Récents")){
         ui->tabWidget->removeTab(idOngletEdit);
         this->activatePreview(id, false, true);
         ui->tabWidget->setCurrentIndex(idOngletEdit);
         idOngletEdit = -1;
     }
+    isCalling = false;
     return;
 }
 
@@ -114,7 +119,7 @@ void DadaBooks::updateOnglet(int id){
 void DadaBooks::setListeLivres(){
     QList<QMultiMap<QString, QString> > resultat;
     QSqlQuery res1;
-
+    isCalling = false;
     //XML
     if(insSettingsManager->getSettings(Xml).toBool()){
         insXmlManager = new XmlManager;
