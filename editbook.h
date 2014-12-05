@@ -36,6 +36,7 @@ public slots:
 
 private slots:
     void accept();
+    void reject();
     void setAuteur(bool editeur=false);
     void setEditeur();
     void uploadImage();
@@ -50,6 +51,7 @@ private slots:
 signals:
     void editDone(int);
     void bookAdded();
+    void editCanceled();
     
 private:
     void getAuteur(QString nom);

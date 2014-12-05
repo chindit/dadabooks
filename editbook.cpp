@@ -76,6 +76,12 @@ EditBook::~EditBook(){
     delete insSettingsManager;
 }
 
+//Envoie le signal d'édition annulée
+void EditBook::reject(){
+    emit editCanceled();
+    return;
+}
+
 //Enregistre l'item en cours d'édition ou le met à jour
 void EditBook::accept(){
     //---------------------------
@@ -576,10 +582,22 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
             ui->pushButtonEmplacementFilm->setEnabled(true);
         }
         //Préparation des variables pour les QListWidget
-        if(!livre.value("acteurs").isEmpty())
-            ui->listWidgetActeursFilm->addItems(livre.value("acteurs").split(","));
-        if(!livre.value("genre").isEmpty())
-            ui->listWidgetGenreFilm->addItems(livre.value("genre").split(","));
+        if(!livre.value("acteurs").isEmpty()){
+            QStringList listActeurs = livre.value("acteurs").split(",");
+            for(int i=0; i<listActeurs.count(); ++i){
+                ui->listWidgetActeursFilm->addItem(listActeurs.at(i).trimmed());
+                ui->listWidgetActeursFilm->setCurrentRow(ui->listWidgetActeursFilm->count()-1);
+                ui->listWidgetActeursFilm->currentItem()->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+            }
+        }
+        if(!livre.value("genre").isEmpty()){
+            QStringList listGenres = livre.value("genre").split(",");
+            for(int i=0; i<listGenres.count(); ++i){
+                ui->listWidgetGenreFilm->addItem(listGenres.at(i).trimmed());
+                ui->listWidgetGenreFilm->setCurrentRow(ui->listWidgetGenreFilm->count()-1);
+                ui->listWidgetGenreFilm->currentItem()->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+            }
+        }
         if(insSettingsManager->getSettings(Xml).toBool())
             ui->listWidgetEtiquettesDispoFilm->addItems(insXml->getListEtiquettes());
         else
@@ -845,11 +863,15 @@ void EditBook::etiquetteElemToDispo(){
 //Ajoute un nouvel acteur
 void EditBook::addActeur(){
     ui->listWidgetActeursFilm->addItem("Nouvel acteur");
+    ui->listWidgetActeursFilm->setCurrentRow(ui->listWidgetActeursFilm->count()-1);
+    ui->listWidgetActeursFilm->currentItem()->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     return;
 }
 
 //Ajoute un nouveau genre
 void EditBook::addGenre(){
     ui->listWidgetGenreFilm->addItem("Nouveau genre");
+    ui->listWidgetGenreFilm->setCurrentRow(ui->listWidgetGenreFilm->count()-1);
+    ui->listWidgetGenreFilm->currentItem()->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     return;
 }

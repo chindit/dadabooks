@@ -56,6 +56,7 @@ private slots:
     void selectRandom();
     void exportAsHTML();
     void exportAsPDF();
+    void setEditCanceled();
 
 
 private:

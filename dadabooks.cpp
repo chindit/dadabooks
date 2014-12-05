@@ -46,6 +46,7 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     connect(ui->tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
     connect(insEditBook, SIGNAL(editDone(int)), this, SLOT(updateOnglet(int)));
     connect(insEditBook, SIGNAL(bookAdded()), this, SLOT(setListeLivres()));
+    connect(insEditBook, SIGNAL(editCanceled()), this, SLOT(setEditCanceled()));
     connect(ui->pushButton_options, SIGNAL(clicked()), insSettingsDialog, SLOT(show()));
     connect(ui->actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->action_propos_de_DadaBooks, SIGNAL(triggered()), this, SLOT(about()));
@@ -1060,5 +1061,11 @@ void DadaBooks::exportAsPDF(){
             //FILMS SQL
         }
     }
+    return;
+}
+
+//Annule l'édition d'un livre/film
+void DadaBooks::setEditCanceled(){
+    isCalling = false;
     return;
 }
