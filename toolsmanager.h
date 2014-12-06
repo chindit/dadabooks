@@ -29,6 +29,7 @@ public:
     static QString guillemets(QString input);
     static QString stripSlashes(QString input);
     static QString raccourci(QString data, int longueur=50);
+    static QString stripDeterminants(QString titre);
 
 private:
     QByteArray downloadLink(QString url);

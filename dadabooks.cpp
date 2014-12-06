@@ -184,7 +184,7 @@ void DadaBooks::setListeLivres(){
             req1 = "SELECT titre FROM films";
         QSqlQuery res1 = insSqlManager->query(req1);
         while(res1.next()){
-            ui->listWidget_accueil->addItem(res1.record().value("titre").toString());
+            ui->listWidget_accueil->addItem(ToolsManager::stripDeterminants(res1.record().value("titre").toString()));
         }
     }
     else{

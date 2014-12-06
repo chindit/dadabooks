@@ -267,3 +267,19 @@ QString ToolsManager::raccourci(QString data, int longueur){
     }
     return nvData;
 }
+
+//Retire les déterminants dans les listes de films
+QString ToolsManager::stripDeterminants(QString titre){
+    QStringList determinants; determinants << "L'" << "La " << "Le " << "Les " << "Un " << "Une ";
+    QString output = titre;
+    foreach(const QString &elem, determinants){
+        if(titre.startsWith(elem, Qt::CaseInsensitive)){
+            output = titre.right(titre.size()-elem.size());
+            output.append(" (");
+            output.append(elem.trimmed());
+            output.append(")");
+            output.replace(0, 1, output.at(0).toUpper());
+        }
+    }
+    return output.trimmed();
+}
