@@ -56,6 +56,7 @@ signals:
 private:
     void getAuteur(QString nom);
     void getEditeur(QString nom);
+    void clearAll();
     int getId(bool editeur=false);
     Ui::EditBook *ui;
     SqlManager *insSql;

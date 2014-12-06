@@ -398,6 +398,7 @@ void EditBook::accept(){
 
 //Dans le cas où il ne s'agit pas d'un remplissage automatique, on affiche quelques outils pour l'édition manuelle
 void EditBook::setManual(){
+    this->clearAll();
     QStringList etiquettes;
     if(!insSettingsManager->getSettings(Xml).toBool()){
         QSqlQuery res1 = insSql->query("SELECT nom FROM etiquettes");
@@ -874,5 +875,44 @@ void EditBook::addGenre(){
     ui->listWidgetGenreFilm->addItem("Nouveau genre");
     ui->listWidgetGenreFilm->setCurrentRow(ui->listWidgetGenreFilm->count()-1);
     ui->listWidgetGenreFilm->currentItem()->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+    return;
+}
+
+//Vide tous les champs
+void EditBook::clearAll(){
+    if((QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive))){
+        ui->lineEditTitreFilm->clear();
+        ui->lineEditTitreOriginalFilm->clear();
+        ui->lineEditDirecteurFilm->clear();
+        ui->lineEditNationaliteFilm->clear();
+        ui->spinBoxAnneeFilm->clear();
+        ui->spinBoxDureeFilm->clear();
+        ui->listWidgetActeursFilm->clear();
+        ui->listWidgetGenreFilm->clear();
+        ui->labelCheminFilm->clear();
+        ui->labelImageFilm->clear();
+        ui->listWidgetEtiquettesFilmFilm->clear();
+        ui->listWidgetEtiquettesDispoFilm->clear();
+        ui->plainTextEditCommentaireFilm->clear();
+        ui->plainTextEditSynopsisFilm->clear();
+    }
+    else{ //Livres
+        ui->lineEditTitreLivre->clear();
+        ui->lineEditAuteurLivre->clear();
+        ui->lineEditEditeurLivre->clear();
+        ui->comboBoxAuteurLivre->clear();
+        ui->comboBoxEditeurLivre->clear();
+        ui->spinBoxAnneeLivre->clear();
+        ui->spinBoxPagesLivre->clear();
+        ui->lineEditCoAuteurLivre->clear();
+        ui->lineEditISBNLivre->clear();
+        ui->lineEditLangueLivre->clear();
+        ui->labelCheminLivre->clear();
+        ui->labelImageLivre->clear();
+        ui->listWidgetEtiquettesLivreLivre->clear();
+        ui->listWidgetEtiquettesDispoLivre->clear();
+        ui->plainTextEditCommentaireLivre->clear();
+        ui->plainTextEditSynopsisLivre->clear();
+    }
     return;
 }
