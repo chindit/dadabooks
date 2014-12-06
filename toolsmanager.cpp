@@ -82,16 +82,16 @@ void ToolsManager::exportMovieList(QList<QMultiMap<QString, QString> > base, QSt
             }
 
             for(int i=0; i<base.count(); ++i){
-                QString image = base.at(i).value("couverture");
-                if(image.startsWith("http")){
-                    image = ToolsManager::downloadFile(base.at(i).value("couverture"), QDir::temp());
-                }
                 document.append("<div class=\"film\"> \n \
-                                <img src=\""+image+"\" /> \n \
+                                <img src=\""+base.at(i).value("couverture")+"\" /> \n \
                         <span class=\"titre\">"+base.at(i).value("titre")+"</span> \n \
                         <div class=\"prop\"> \n \
-                        <span class=\"duree\">"+base.at(i).value("duree")+" min</span> \n \
+                        <span class=\"duree\">"+base.at(i).value("duree")+"</span> \n \
                         <span class=\"genre\">"+base.at(i).value("genre")+"</span> \n \
+                        <div class=\"ssBloc\"> \n \
+                        <span class=\"directeur\">"+base.at(i).value("directeur")+" min</span> \n \
+                        <span class=\"classement\">"+base.at(i).value("classement")+"</span> \n \
+                        </div> \n \
                         <span class=\"date\">"+base.at(i).value("date")+"</span> \n \
                         </div> \n \
                         <span class=\"acteurs\">"+base.at(i).value("acteurs")+"</span> \n \
@@ -106,6 +106,18 @@ void ToolsManager::exportMovieList(QList<QMultiMap<QString, QString> > base, QSt
             schema.close();
         }
         else{//PDF
+            QDialog *waiting = new QDialog();
+            waiting->setWindowIcon(QIcon(":/programme/images/icone.png"));
+            waiting->setWindowModality(Qt::ApplicationModal);
+            QVBoxLayout *layout = new QVBoxLayout;
+            waiting->setLayout(layout);
+            QProgressBar *bar = new QProgressBar;
+            QLabel *texte = new QLabel("Création du PDF");
+            layout->addWidget(texte);
+            layout->addWidget(bar);
+            bar->setValue(0);
+            waiting->show();
+
             QPainter page;
             QPrinter printer;
             int totalWidth = printer.width();
@@ -124,6 +136,8 @@ void ToolsManager::exportMovieList(QList<QMultiMap<QString, QString> > base, QSt
             if (!page.begin(&printer))
                 return;
             for(int i=0; i<base.count(); ++i){
+                bar->setValue((i*100)/base.count());
+                bar->show();
                 QString image = base.at(i).value("couverture");
                 if(image.startsWith("http")){
                     image = ToolsManager::downloadFile(base.at(i).value("couverture"), QDir::temp());
@@ -147,12 +161,22 @@ void ToolsManager::exportMovieList(QList<QMultiMap<QString, QString> > base, QSt
                 page.drawText(160, currentHeight, totalWidth, placeGenre.height(), Qt::AlignJustify, base.at(i).value("duree")+"min");
                 currentHeight += placeGenre.height();
                 page.drawText(160, currentHeight-placeGenre.height(), totalWidth-150-160, placeGenre.height(), Qt::AlignRight, base.at(i).value("genre"));
+                page.setFont(standard);
+                placeGenre = metricsItalique.boundingRect(base.at(i).value("directeur"));
+                page.drawText(160, currentHeight, totalWidth, placeGenre.height(), Qt::AlignLeft, base.at(i).value("directeur"));
+                page.setFont(italique);
+                page.drawText(160, currentHeight, totalWidth-150-160, placeGenre.height(), Qt::AlignRight, base.at(i).value("classement"));
+                currentHeight += placeGenre.height();
                 page.drawText(160, currentHeight, totalWidth, placeGenre.height(), Qt::TextDontClip, base.at(i).value("acteurs").left(base.at(i).value("acteurs").left(75).lastIndexOf(",")));
                 page.setFont(standard);
                 page.drawText(160, currentHeight+placeGenre.height(), (totalWidth-150-160), (((iPage+1)*230)-currentHeight), Qt::AlignJustify|Qt::TextDontClip|Qt::TextWordWrap, base.at(i).value("synopsis"));
                 currentHeight = (iPage+1)*230;
                 iPage++;
             }
+
+            waiting->close();
+            delete waiting;
+
             //Numéro de la dernière page
             page.drawText(printer.width(), printer.height()+60, QString::number(nbPages));
             page.end();

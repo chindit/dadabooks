@@ -1048,7 +1048,8 @@ void DadaBooks::exportAsHTML(){
             ToolsManager::exportMovieList(insSqlManager->convertToXML(insSqlManager->query(requete)), output, false, false);
         }
         else{
-            //Films SQL
+            QString requete = "SELECT `titre`,`directeur`,`acteurs`,`synopsis`,`annee`,`duree`,`genre`,`classement`,`jaquette` FROM `films` ORDER BY `titre`";
+            ToolsManager::exportMovieList(insSqlManager->convertToXML(insSqlManager->query(requete)), output, true, false);
         }
     }
     return;
@@ -1071,9 +1072,11 @@ void DadaBooks::exportAsPDF(){
             ToolsManager::exportMovieList(insSqlManager->convertToXML(insSqlManager->query(requete)), output, false, true);
         }
         else{
-            //FILMS SQL
+            QString requete = "SELECT `titre`,`directeur`,`acteurs`,`synopsis`,`annee`,`duree`,`genre`,`classement`,`jaquette` FROM `films` ORDER BY `titre`";
+            ToolsManager::exportMovieList(insSqlManager->convertToXML(insSqlManager->query(requete)), output, true, true);
         }
     }
+    QMessageBox::information(this, "PDF généré", "Le fichier PDF a été généré avec succès.  Vous pourrez le trouver ici: "+output);
     return;
 }
 

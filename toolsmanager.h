@@ -5,15 +5,19 @@
 #include <QDir>
 #include <QEventLoop>
 #include <QFileDialog>
+#include <QIcon>
+#include <QLabel>
 #include <QMessageBox>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QPainter>
 #include <QPixmap>
+#include <QProgressBar>
 #include <QtPrintSupport/QPrinter>
 #include <QString>
 #include <QTextDocument>
+#include <QVBoxLayout>
 
 class ToolsManager
 {
