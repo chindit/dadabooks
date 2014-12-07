@@ -13,8 +13,6 @@ QList< QMultiMap<QString, QString> > Filmaffinity::makeSearch(QString search){
         base_url.append(search.replace(" ", "+"));
         contenu_page = this->download(base_url);
     }
-    std::freopen("output.txt", "w",stdout);
-    std::cout<<contenu_page.toStdString();
 
     //Tableau des données
     QList< QMultiMap<QString, QString> > contenu;
