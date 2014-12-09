@@ -249,7 +249,7 @@ QMultiMap<QString,QString> Filmaffinity::getBook( QString id ){
     film.insert("pays", pays.trimmed());
     film.insert("directeur", directeur.trimmed());
     film.insert("acteurs", acteurs.trimmed());
-    film.insert("genres", genres);
+    film.insert("genre", genres);
     film.insert("synopsis", synopsis.trimmed());
     film.insert("langue", "Castellano");
     film.insert("couverture", image);
