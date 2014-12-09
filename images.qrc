@@ -21,6 +21,7 @@
     <qresource prefix="/programme">
         <file>images/icone.png</file>
         <file>images/icone_125.jpg</file>
+        <file>images/chargement.png</file>
     </qresource>
     <qresource prefix="/menus">
         <file>images/a_propos.png</file>
