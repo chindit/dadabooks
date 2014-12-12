@@ -987,7 +987,7 @@ void DadaBooks::selectRandom(){
         }
         if(films){
             if(insSettingsManager->getSettings(MariaDB).toBool())
-                req1 = "SELECT id FROM films WHERE vu=0 ORDER BY RAN() LIMIT 1";
+                req1 = "SELECT id FROM films WHERE vu=0 ORDER BY RAND() LIMIT 1";
             else
             req1 = "SELECT id FROM films WHERE vu=0 ORDER BY RANDOM() LIMIT 1";
         }
