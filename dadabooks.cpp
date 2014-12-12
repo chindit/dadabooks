@@ -179,12 +179,14 @@ void DadaBooks::setListeLivres(){
     if(!insSettingsManager->getSettings(Xml).toBool()){
         QString req1;
         if(insSettingsManager->getSettings(Type).toString() == "livres")
-            req1 = "SELECT titre FROM livres";
+            req1 = "SELECT id,titre FROM livres";
         else
-            req1 = "SELECT titre FROM films";
+            req1 = "SELECT id,titre FROM films";
         QSqlQuery res1 = insSqlManager->query(req1);
         while(res1.next()){
-            ui->listWidget_accueil->addItem(ToolsManager::stripDeterminants(res1.record().value("titre").toString()));
+            QListWidgetItem *newItem = new QListWidgetItem(ToolsManager::stripDeterminants(res1.record().value("titre").toString()));
+            newItem->setData(Qt::UserRole, res1.record().value("id").toInt());
+            ui->listWidget_accueil->addItem(newItem);
         }
     }
     else{
@@ -213,13 +215,8 @@ void DadaBooks::preparePreview(){
             id = insXmlManager->getIdByTitle(ui->listWidget_accueil->selectedItems().first()->text());
     }
     else{
-        QSqlQuery resultat;
-        if(insSettingsManager->getSettings(Type).toString() == "livres")
-            resultat = insSqlManager->query("SELECT id FROM livres WHERE titre=\""+ToolsManager::guillemets(ui->listWidget_accueil->currentItem()->text())+"\"");
-        else
-            resultat = insSqlManager->query("SELECT id FROM films WHERE titre=\""+ToolsManager::guillemets(ui->listWidget_accueil->currentItem()->text())+"\"");
-        resultat.first();
-        id = resultat.record().value("id").toInt();
+        id = ui->listWidget_accueil->currentItem()->data(Qt::UserRole).toInt();
+
     }
     if(id > 0){
         this->activatePreview(id, false, true);
