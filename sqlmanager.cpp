@@ -75,12 +75,12 @@ SqlManager::~SqlManager (){
 
 void SqlManager::connect(){
     if(insManager->getSettings(Sqlite).toBool()){
-        instance = QSqlDatabase::addDatabase("QSQLITE", "instance_sql");
+        instance = QSqlDatabase::addDatabase("QSQLITE", "sqlite_at_"+QTime::currentTime().toString());
         QString chemin_repertoire = insManager->getSettings(Fichier).toString();
         instance.setDatabaseName(chemin_repertoire);
     }
     else if(insManager->getSettings(MariaDB).toBool()){
-        instance = QSqlDatabase::addDatabase("QMYSQL");
+        instance = QSqlDatabase::addDatabase("QMYSQL", "mysql_at_"+QTime::currentTime().toString());
         instance.setHostName(insManager->getSettings(DBHost).toString());
         instance.setUserName(insManager->getSettings(DBUser).toString());
         instance.setPassword(insManager->getSettings(DBPass).toString());

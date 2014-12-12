@@ -6,6 +6,8 @@
 #include <QtSql/QSqlRecord>
 #include <QtSql/QSqlError>
 #include <QDebug>
+#include <QTime>
+
 
 #include "settingsmanager.h"
 #include "toolsmanager.h"
