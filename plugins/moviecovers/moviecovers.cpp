@@ -163,7 +163,7 @@ QMultiMap<QString,QString> MovieCovers::getBook( QString id ){
     film.insert("acteurs", acteurs.trimmed());
     film.insert("genre", genres);
     film.insert("synopsis", synopsis.trimmed());
-    film.insert("langue", "Castellano");
+    film.insert("langue", "Français");
     film.insert("couverture", image);
 
     return film;
