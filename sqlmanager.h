@@ -6,7 +6,7 @@
 #include <QtSql/QSqlRecord>
 #include <QtSql/QSqlError>
 #include <QDebug>
-#include <QTime>
+#include <QElapsedTimer>
 
 
 #include "settingsmanager.h"
@@ -26,6 +26,7 @@ private:
     void disconnect();
     QSqlDatabase instance;
     SettingsManager *insManager;
+    QElapsedTimer name;
 };
 
 #endif // SQL_H
