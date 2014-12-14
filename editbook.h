@@ -10,6 +10,7 @@
 
 #include "addauteur.h"
 #include "addediteur.h"
+#include "imageuploaddialog.h"
 #include "sqlmanager.h"
 #include "settingsmanager.h"
 #include "toolsmanager.h"
@@ -58,6 +59,7 @@ private:
     void getEditeur(QString nom);
     void clearAll();
     int getId(bool editeur=false);
+
     Ui::EditBook *ui;
     SqlManager *insSql;
     AddAuteur *insAddAuteur;
@@ -65,6 +67,9 @@ private:
     SettingsManager *insSettingsManager;
     XmlManager *insXml;
     int idEdit;
+
+    QDialog *dialogUploadImage;
+    QLabel *labelResultatLocal;
 };
 
 #endif // BOOK_EDIT_H

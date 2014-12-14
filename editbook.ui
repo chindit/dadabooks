@@ -1199,12 +1199,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>388</x>
-     <y>242</y>
+     <x>73</x>
+     <y>66</y>
     </hint>
     <hint type="destinationlabel">
-     <x>667</x>
-     <y>241</y>
+     <x>98</x>
+     <y>66</y>
     </hint>
    </hints>
   </connection>
@@ -1215,12 +1215,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>151</x>
-     <y>239</y>
+     <x>47</x>
+     <y>66</y>
     </hint>
     <hint type="destinationlabel">
-     <x>250</x>
-     <y>240</y>
+     <x>60</x>
+     <y>66</y>
     </hint>
    </hints>
   </connection>

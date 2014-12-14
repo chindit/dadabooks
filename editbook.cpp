@@ -20,6 +20,8 @@ EditBook::EditBook(QWidget *parent) : QDialog(parent), ui(new Ui::EditBook){
         connect(insAddAuteur, SIGNAL(makeClose(int, QString)), this, SLOT(updateAuteurs(int, QString)));
         connect(ui->pushButtonNouvelEditeurLivre, SIGNAL(clicked()), insAddEditeur, SLOT(show()));
         connect(insAddEditeur, SIGNAL(makeClose(int, QString)), this, SLOT(updateEditeurs(int, QString)));
+        connect(ui->pushButtonModifImageFilm, SIGNAL(clicked()), this, SLOT(uploadImage()));
+        connect(ui->pushButtonModifImageLivre, SIGNAL(clicked()), this, SLOT(uploadImage()));
         //On cache les éléments d'auteur si besoin
         if(insSettingsManager->getSettings(AutoAuteur).toBool()){
             ui->comboBoxAuteurLivre->setHidden(true);
@@ -422,15 +424,17 @@ void EditBook::setManual(){
 
 //Upload une image locale comme jaquette
 void EditBook::uploadImage(){
-    QString image = QFileDialog::getOpenFileName(this, "Choisir une photo", QString(), "Images (*.png *.gif *.jpg *.jpeg)");
-    if(ui->stackedWidget->currentIndex() == 1)
+    ImageUploadDialog insIUD;
+    insIUD.exec();
+    QString image = insIUD.getImage();
+    if(ui->stackedWidget->currentIndex() == 0)
         ui->labelImageLivre->setText(image);
     else
         ui->labelImageFilm->setText(image);
     return;
 }
 
-//Mets à jour l'UI avec le tableau fourni en paramètre
+//Met à jour l'UI avec le tableau fourni en paramètre
 void EditBook::updateUi(QMultiMap<QString, QString> livre){
     //On détecte s'il s'agit d'un livre ou d'un film
     bool films = ((QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) != 0) ? false : true);
