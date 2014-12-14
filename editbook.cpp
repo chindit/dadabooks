@@ -81,6 +81,7 @@ EditBook::~EditBook(){
 //Envoie le signal d'édition annulée
 void EditBook::reject(){
     emit editCanceled();
+    this->hide();
     this->close();
     return;
 }
@@ -879,7 +880,8 @@ void EditBook::addGenre(){
 
 //Vide tous les champs
 void EditBook::clearAll(){
-    if((QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive))){
+    bool films = ((QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) != 0) ? false : true);
+    if(films){
         ui->lineEditTitreFilm->clear();
         ui->lineEditTitreOriginalFilm->clear();
         ui->lineEditDirecteurFilm->clear();
