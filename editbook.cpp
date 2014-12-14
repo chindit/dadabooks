@@ -81,6 +81,7 @@ EditBook::~EditBook(){
 //Envoie le signal d'édition annulée
 void EditBook::reject(){
     emit editCanceled();
+    this->close();
     return;
 }
 
