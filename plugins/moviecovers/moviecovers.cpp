@@ -121,6 +121,9 @@ QMultiMap<QString,QString> MovieCovers::getBook( QString id ){
     if(genres.endsWith(",")){
         genres = genres.left(genres.size()-1);
     }
+    converter.setHtml(genres);
+    genres = converter.toPlainText();
+    converter.clear();
 
     //Durée
     QString duree = contenu_page.right(contenu_page.size()-contenu_page.indexOf("Dur&eacute;e"));
