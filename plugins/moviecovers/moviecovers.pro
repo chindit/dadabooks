@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core network
 
 TARGET = moviecovers
 TEMPLATE = lib
