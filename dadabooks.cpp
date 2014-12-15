@@ -1055,6 +1055,9 @@ void DadaBooks::exportAsHTML(){
 //Exporte la liste des fichiers en PDF
 void DadaBooks::exportAsPDF(){
     QString output = QFileDialog::getSaveFileName(this, "Dossier de sortie", QDir::homePath(), "Fichiers PDF (*.pdf)");
+    if(!output.endsWith(".pdf", Qt::CaseInsensitive)){
+        output.append(".pdf");
+    }
     if(insSettingsManager->getSettings(Xml).toBool()){
         if(insSettingsManager->getSettings(Type).toString() == "livres"){
             ToolsManager::exportMovieList(insXmlManager->readBase(), output, false, true);
