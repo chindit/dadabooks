@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core sql
+QT       += core network
 
 TARGET = casadellibro
 TEMPLATE = lib
