@@ -207,6 +207,9 @@ QString MovieCovers::download(QString url){
 }
 
 QString MovieCovers::ucFirst(QString chaine){
+    if(chaine.isEmpty()){
+        return QString();
+    }
     QString lowed = chaine.toLower().trimmed();
     QChar actual;
     actual = lowed.at(0).toUpper();
