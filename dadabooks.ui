@@ -1293,6 +1293,17 @@
             </item>
            </layout>
           </widget>
+          <widget class="QWidget" name="loading">
+           <layout class="QGridLayout" name="gridLayout_8">
+            <item row="0" column="0">
+             <widget class="QLabel" name="labelLoading">
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </widget>
         </item>
        </layout>
@@ -1419,8 +1430,8 @@
    <slot>makeSearch()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>606</x>
-     <y>59</y>
+     <x>841</x>
+     <y>68</y>
     </hint>
     <hint type="destinationlabel">
      <x>354</x>
@@ -1435,8 +1446,8 @@
    <slot>makeSearch()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>502</x>
-     <y>66</y>
+     <x>790</x>
+     <y>68</y>
     </hint>
     <hint type="destinationlabel">
      <x>371</x>

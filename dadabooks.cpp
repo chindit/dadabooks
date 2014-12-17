@@ -39,13 +39,16 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     insSettingsDialog = new SettingsDialog;
 
     //Connexion des signaux et des slots
-    connect(ui->pushButton_add, SIGNAL(clicked()), insAddBook, SLOT(show()));
+    connect(ui->pushButton_add, SIGNAL(clicked()), this, SLOT(showAddBook()));
+    connect(insAddBook, SIGNAL(canceled()), this, SLOT(showInitStacked()));
+    connect(insPreviewBook, SIGNAL(canceled()), this, SLOT(showInitStacked()));
     connect(insAddBook, SIGNAL(searchInternet(QString,QString,QString)), this, SLOT(rechercheInternet(QString,QString,QString)));
     connect(ui->pushButton_random, SIGNAL(clicked()), this, SLOT(selectRandom()));
     connect(insPreviewBook, SIGNAL(bookSelected(QString, QString)), this, SLOT(getBook(QString, QString)));
     connect(ui->tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
     connect(insEditBook, SIGNAL(editDone(int)), this, SLOT(updateOnglet(int)));
     connect(insEditBook, SIGNAL(bookAdded()), this, SLOT(setListeLivres()));
+    connect(insEditBook, SIGNAL(bookAdded()), this, SLOT(showInitStacked()));
     connect(insEditBook, SIGNAL(editCanceled()), this, SLOT(setEditCanceled()));
     connect(ui->pushButton_options, SIGNAL(clicked()), insSettingsDialog, SLOT(show()));
     connect(ui->actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
@@ -60,6 +63,11 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     connect(ui->pushButtonDeleteLivre, SIGNAL(clicked()), this, SLOT(deleteLivre()));
     connect(ui->pushButtonEdit, SIGNAL(clicked()), this, SLOT(editLivre()));
     connect(ui->pushButtonEditLivre, SIGNAL(clicked()), this, SLOT(editLivre()));
+
+    //Chargement du GIF de… chargement
+    movieLoading = new QMovie(":/programme/images/loader.gif");
+    ui->labelLoading->setMovie(movieLoading);
+    movieLoading->start();
 
     //Et on liste les livres
     this->setListeLivres();
@@ -78,11 +86,13 @@ DadaBooks::~DadaBooks(){
        else
            delete insSqlManager;
     delete insSettingsManager;
+    delete movieLoading;
 }
 
 //Transfère les données de AddBook à PreviewBook
 void DadaBooks::rechercheInternet(QString requete, QString site, QString langue){
     insAddBook->close();
+    ui->stackedWidget->setCurrentIndex(3);
     QList< QMultiMap<QString,QString> > resultats;
     resultats = insSiteManager->makeSearch(requete, site, langue, insSettingsManager->getSettings(Type).toString());
     //On envoie à la fenêtre d'aperçu
@@ -97,6 +107,7 @@ void DadaBooks::getBook(QString id, QString site){
         return; //Et faire clignoter l'écran.  J'ignore, pour l'instant, d'où vient le problème.
     isCalling=true;
     insPreviewBook->close();
+    ui->stackedWidget->setCurrentIndex(3);
     QMultiMap<QString,QString> livre;
     livre = insSiteManager->getBook(id, site);
     insEditBook->updateUi(livre);
@@ -1083,5 +1094,18 @@ void DadaBooks::exportAsPDF(){
 //Annule l'édition d'un livre/film
 void DadaBooks::setEditCanceled(){
     isCalling = false;
+    return;
+}
+
+//Appelle l'ajout de livre et affiche le chargement
+void DadaBooks::showAddBook(){
+    ui->stackedWidget->setCurrentIndex(3);
+    insAddBook->show();
+    return;
+}
+
+//Affiche l'accueil du QStackedWidget
+void DadaBooks::showInitStacked(){
+    ui->stackedWidget->setCurrentWidget(ui->stackedWidget->widget(0));
     return;
 }

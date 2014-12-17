@@ -4,6 +4,7 @@
 PreviewBook::PreviewBook(QWidget *parent) : QDialog(parent), ui(new Ui::PreviewBook){
     insSettingsManager = new SettingsManager();
     ui->setupUi(this);
+    connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(emitClose()));
 }
 
 PreviewBook::~PreviewBook(){
@@ -84,5 +85,11 @@ void PreviewBook::setTable(QList<QMultiMap<QString, QString> > elem){
 void PreviewBook::detectClic(int row, int column){
     if(column == 5)
         emit bookSelected(tableau.at(row).value("id"), tableau.at(row).value("site"));
+    return;
+}
+
+void PreviewBook::emitClose(){
+    emit canceled();
+    this->close();
     return;
 }

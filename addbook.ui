@@ -171,22 +171,6 @@
  </resources>
  <connections>
   <connection>
-   <sender>pushButton_cancel</sender>
-   <signal>clicked()</signal>
-   <receiver>AddBook</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>343</x>
-     <y>283</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>334</x>
-     <y>233</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>pushButton_recherche</sender>
    <signal>clicked()</signal>
    <receiver>AddBook</receiver>

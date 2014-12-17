@@ -26,9 +26,11 @@ public:
 
 signals:
     void bookSelected(QString id, QString site);
+    void canceled();
     
 private slots:
     void detectClic(int row, int column);
+    void emitClose();
 
 private:
     Ui::PreviewBook *ui;

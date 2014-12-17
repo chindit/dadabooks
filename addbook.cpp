@@ -11,6 +11,8 @@ AddBook::AddBook(QWidget *parent) : QDialog(parent), ui(new Ui::AddBook){
     insSiteManager = new SiteManager;
     insSettingsManager = new SettingsManager;
 
+    connect(ui->pushButton_cancel, SIGNAL(clicked()), this, SLOT(emitClose()));
+
     //Si c'est des films, on change
     if(insSettingsManager->getSettings(Type).toString() == "films"){
         ui->labelTitre->setText("Ajouter un nouveau film");
@@ -49,6 +51,12 @@ void AddBook::addInternetBook(){
 void AddBook::addManualBook(){
     insEditBook->setManual();
     insEditBook->show();
+    this->close();
+    return;
+}
+
+void AddBook::emitClose(){
+    emit canceled();
     this->close();
     return;
 }

@@ -5,6 +5,7 @@
 #include <QGridLayout>
 #include <QListWidget>
 #include <QMainWindow>
+#include <QMovie>
 #include <QProcess>
 #include <QTextEdit>
 
@@ -57,6 +58,8 @@ private slots:
     void exportAsHTML();
     void exportAsPDF();
     void setEditCanceled();
+    void showAddBook();
+    void showInitStacked();
 
 
 private:
@@ -71,6 +74,7 @@ private:
     SiteManager *insSiteManager;
     SqlManager *insSqlManager;
     XmlManager *insXmlManager;
+    QMovie *movieLoading;
 
     int idOngletEdit;
     bool isCalling;

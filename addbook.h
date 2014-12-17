@@ -22,10 +22,12 @@ public:
 
 signals:
     void searchInternet(QString titre, QString site, QString langue);
+    void canceled();
 
 private slots:
     void addInternetBook();
     void addManualBook();
+    void emitClose();
 
 private:
     Ui::AddBook *ui;
