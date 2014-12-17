@@ -219,14 +219,6 @@ QString AmazonFilms::download(QString url){
     QByteArray data = reponse->readAll();
     QString contenu_page(data);
 
-    QVariant possibleRedirectUrl = reponse->attribute(QNetworkRequest::RedirectionTargetAttribute);
-    if(!possibleRedirectUrl.toUrl().isEmpty()){
-        QString newUrl = possibleRedirectUrl.toUrl().toString();
-        if(!newUrl.startsWith("http")){
-            newUrl.prepend("http://www.filmaffinity.com");
-        }
-        contenu_page = this->download(newUrl);
-    }
     return contenu_page;
 }
 
