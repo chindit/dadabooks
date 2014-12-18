@@ -46,4 +46,5 @@ void LendDialog::accept(){
         }
         emit lendCurrent();
     }
+    this->close();
 }
