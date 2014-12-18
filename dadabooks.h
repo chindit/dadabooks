@@ -12,6 +12,7 @@
 #include "addbook.h"
 #include "editbook.h"
 #include "firstlaunch.h"
+#include "lenddialog.h"
 #include "previewbook.h"
 #include "settingsdialog.h"
 #include "settingsmanager.h"
@@ -60,6 +61,7 @@ private slots:
     void setEditCanceled();
     void showAddBook();
     void showInitStacked();
+    void prepareLendDialog();
 
 
 private:
@@ -68,6 +70,7 @@ private:
     AddBook *insAddBook;
     Ui::DadaBooks *ui;
     EditBook *insEditBook;
+    LendDialog *insLendDialog;
     PreviewBook *insPreviewBook;
     SettingsDialog *insSettingsDialog;
     SettingsManager *insSettingsManager;

@@ -12,6 +12,7 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     insSettingsManager = new SettingsManager;
     insAddBook = new AddBook(this);
     insSiteManager = new SiteManager;
+    insLendDialog = new LendDialog;
 
     idOngletEdit = -1;
     isCalling = false;
@@ -63,6 +64,8 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     connect(ui->pushButtonDeleteLivre, SIGNAL(clicked()), this, SLOT(deleteLivre()));
     connect(ui->pushButtonEdit, SIGNAL(clicked()), this, SLOT(editLivre()));
     connect(ui->pushButtonEditLivre, SIGNAL(clicked()), this, SLOT(editLivre()));
+    connect(ui->pushButtonPret, SIGNAL(clicked()), this, SLOT(prepareLendDialog()));
+    connect(ui->pushButtonPretLivre, SIGNAL(clicked()), this, SLOT(prepareLendDialog()));
 
     //Chargement du GIF de… chargement
     movieLoading = new QMovie(":/programme/images/loader.gif");
@@ -77,6 +80,7 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
 DadaBooks::~DadaBooks(){
     delete ui;
     delete insAddBook;
+    delete insLendDialog;
     delete insSiteManager;
     delete insPreviewBook;
     delete insEditBook;
@@ -1107,5 +1111,27 @@ void DadaBooks::showAddBook(){
 //Affiche l'accueil du QStackedWidget
 void DadaBooks::showInitStacked(){
     ui->stackedWidget->setCurrentWidget(ui->stackedWidget->widget(0));
+    return;
+}
+
+//Prépare la fenêtre de prêt en sélectionnant le QStackedWidget
+void DadaBooks::prepareLendDialog(){
+    if((QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) == 0)){
+        //FILMS
+        if(ui->checkBoxPrete->isChecked())
+            insLendDialog->setAction(Return);
+        else
+            insLendDialog->setAction(Lend);
+        insLendDialog->setTitle(ui->labelTitre->text());
+    }
+    else{
+        //LIVRES
+        if(ui->checkBoxPreteLivre->isChecked())
+            insLendDialog->setAction(Return);
+        else
+            insLendDialog->setAction(Lend);
+        insLendDialog->setTitle(ui->labelTitreLivre->text());
+    }
+    insLendDialog->exec();
     return;
 }

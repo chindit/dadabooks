@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     settingsdialog.cpp \
     firstlaunch.cpp \
     toolsmanager.cpp \
-    imageuploaddialog.cpp
+    imageuploaddialog.cpp \
+    lenddialog.cpp
 
 HEADERS  += dadabooks.h \
     settingsmanager.h \
@@ -40,7 +41,8 @@ HEADERS  += dadabooks.h \
     settingsdialog.h \
     firstlaunch.h \
     toolsmanager.h \
-    imageuploaddialog.h
+    imageuploaddialog.h \
+    lenddialog.h
 
 FORMS    += dadabooks.ui \
     addbook.ui \
@@ -50,7 +52,8 @@ FORMS    += dadabooks.ui \
     previewbook.ui \
     settingsdialog.ui \
     firstlaunch.ui \
-    imageuploaddialog.ui
+    imageuploaddialog.ui \
+    lenddialog.ui
 
 RESOURCES += \
     images.qrc

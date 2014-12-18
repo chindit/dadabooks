@@ -16,16 +16,12 @@ SqlManager::SqlManager(){
             instance.exec(requete);
             requete = "CREATE TABLE IF NOT EXISTS `films` (`id` INTEGER PRIMARY KEY,`titre` VARCHAR(250) NOT NULL,`titre_original` VARCHAR(250) NOT NULL,`directeur` VARCHAR(100) NOT NULL,`acteurs` VARCHAR(1000) NOT NULL,`synopsis` TEXT NOT NULL,`annee` YEAR(4) NOT NULL,`duree` INTEGER NOT NULL,`genre` VARCHAR(500) NOT NULL,`pays` VARCHAR(150) NOT NULL,`langue` VARCHAR(100) NOT NULL,`classement` VARCHAR(100) NOT NULL,`sous_titres` VARCHAR(200) NOT NULL,`commentaire` TEXT NOT NULL,`note` INTEGER NOT NULL,`jaquette` VARCHAR(150) NOT NULL,`empruntable` TINYINT NOT NULL DEFAULT '1',`prete` TINYINT NOT NULL DEFAULT '0',`vu` TINYINT NOT NULL DEFAULT '0',`fichier` TINYINT NOT NULL DEFAULT '0',`emplacement` VARCHAR(250) NOT NULL,`qualite` VARCHAR(100) NOT NULL)";
             instance.exec(requete);
-            //if(insManager->getSettings(MariaDB).toBool()){
-                instance.exec("ALTER TABLE `etiquettes` CHANGE `id` `id` INT(3) NOT NULL AUTO_INCREMENT;");
-                instance.exec("ALTER TABLE `liste_etiquettes` CHANGE `id` `id` INT(5) NOT NULL AUTO_INCREMENT;");
-                instance.exec("ALTER TABLE `films` CHANGE `id` `id` INT(11) NOT NULL AUTO_INCREMENT;");
-            /*}
-            else{
-                instance.exec("ALTER TABLE `etiquettes` CHANGE `id` `id` INT(3) NOT NULL AUTOINCREMENT;");
-                instance.exec("ALTER TABLE `liste_etiquettes` CHANGE `id` `id` INT(5) NOT NULL AUTOINCREMENT;");
-                instance.exec("ALTER TABLE `films` CHANGE `id` `id` INT(11) NOT NULL AUTOINCREMENT;");
-            }*/
+            requete = "CREATE TABLE IF NOT EXISTS `prets` (`id` INTEGER PRIMARY KEY,`emprunteur` VARCHAR(75) NOT NULL, `email` VARCHAR(150) NOT NULL,`date` DATE NOT NULL,`date_rappel` DATE NOT NULL)";
+            instance.exec(requete);
+            instance.exec("ALTER TABLE `etiquettes` CHANGE `id` `id` INT(3) NOT NULL AUTO_INCREMENT;");
+            instance.exec("ALTER TABLE `liste_etiquettes` CHANGE `id` `id` INT(5) NOT NULL AUTO_INCREMENT;");
+            instance.exec("ALTER TABLE `films` CHANGE `id` `id` INT(11) NOT NULL AUTO_INCREMENT;");
+            instance.exec("ALTER TABLE `prets` CHANGE `id` `id` INT(4) NOT NULL AUTO_INCREMENT;");
         }
     }
     else{
@@ -43,12 +39,15 @@ SqlManager::SqlManager(){
             instance.exec(requete);
             requete = "CREATE TABLE IF NOT EXISTS `liste_etiquettes` (`id` INTEGER PRIMARY KEY NOT NULL, `id_livre` INTEGER NOT NULL, `id_etiquette` INTEGER NOT NULL)";
             instance.exec(requete);
+            requete = "CREATE TABLE IF NOT EXISTS `prets` (`id` INTEGER PRIMARY KEY,`emprunteur` VARCHAR(75) NOT NULL, `email` VARCHAR(150) NOT NULL,`date` DATE NOT NULL,`date_rappel` DATE NOT NULL)";
+            instance.exec(requete);
             //On ajoute les clés et les auto-increment
             instance.exec("ALTER TABLE `auteurs` CHANGE `id` `id` INT(11) NOT NULL AUTO_INCREMENT;");
             instance.exec("ALTER TABLE `editeurs` CHANGE `id` `id` INT(11) NOT NULL AUTO_INCREMENT;");
             instance.exec("ALTER TABLE `etiquettes` CHANGE `id` `id` INT(3) NOT NULL AUTO_INCREMENT;");
             instance.exec("ALTER TABLE `liste_etiquettes` CHANGE `id` `id` INT(5) NOT NULL AUTO_INCREMENT;");
             instance.exec("ALTER TABLE `livres` CHANGE `id` `id` INT(11) NOT NULL AUTO_INCREMENT;");
+            instance.exec("ALTER TABLE `prets` CHANGE `id` `id` INT(4) NOT NULL AUTO_INCREMENT;");
         }
     }
 }
@@ -60,17 +59,13 @@ QSqlQuery SqlManager::query(QString req){
     if(!temp.lastError().isValid())
         return temp;
     else{
-        qDebug() << temp.lastQuery();
         QMessageBox::critical(0, "Erreur lors de la requête", "La requête n'a pu être effectuée.  Voici le message retourné : \n"+temp.lastError().text());
         return temp;
     }
 }
 
 SqlManager::~SqlManager (){
-    if(instance.isValid()){
-        this->disconnect();
-        delete insManager;
-    }
+    this->disconnect();
     return;
 }
 

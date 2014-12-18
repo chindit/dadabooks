@@ -345,26 +345,23 @@
            <layout class="QGridLayout" name="gridLayout_5">
             <item row="2" column="2">
              <layout class="QGridLayout" name="gridLayout_7">
-              <item row="7" column="0">
+              <item row="8" column="0">
+               <widget class="QCheckBox" name="checkBoxFichier">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="text">
+                 <string>Fichier</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="0">
                <widget class="QLabel" name="labelFichier">
                 <property name="text">
                  <string/>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="0">
-               <widget class="QLabel" name="label_10">
-                <property name="font">
-                 <font>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Classement</string>
                 </property>
                </widget>
               </item>
@@ -422,7 +419,7 @@
                 </property>
                </widget>
               </item>
-              <item row="5" column="0">
+              <item row="6" column="0">
                <widget class="QLabel" name="labelClassement">
                 <property name="text">
                  <string/>
@@ -432,13 +429,29 @@
                 </property>
                </widget>
               </item>
-              <item row="6" column="0">
-               <widget class="QCheckBox" name="checkBoxFichier">
-                <property name="enabled">
-                 <bool>false</bool>
+              <item row="4" column="0">
+               <widget class="QPushButton" name="pushButtonPret">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>24</height>
+                 </size>
                 </property>
                 <property name="text">
-                 <string>Fichier</string>
+                 <string>Gérer le prêt</string>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="0">
+               <widget class="QLabel" name="label_10">
+                <property name="font">
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Classement</string>
                 </property>
                </widget>
               </item>
@@ -1106,6 +1119,13 @@
                <widget class="QLabel" name="labelClassementLivre">
                 <property name="text">
                  <string>TextLabel</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="1">
+               <widget class="QPushButton" name="pushButtonPretLivre">
+                <property name="text">
+                 <string>Prêt</string>
                 </property>
                </widget>
               </item>
