@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>852</width>
-    <height>752</height>
+    <height>765</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1357,7 +1357,7 @@
    </property>
    <widget class="QMenu" name="menuFichier">
     <property name="title">
-     <string>Fichier</string>
+     <string>&amp;Fichier</string>
     </property>
     <widget class="QMenu" name="menuExporter">
      <property name="title">
@@ -1372,8 +1372,9 @@
    </widget>
    <widget class="QMenu" name="menuAide">
     <property name="title">
-     <string>Aide</string>
+     <string>&amp;Aide</string>
     </property>
+    <addaction name="actionRerchercher_une_mise_jour"/>
     <addaction name="action_propos_de_DadaBooks"/>
     <addaction name="action_propos_de_Qt"/>
    </widget>
@@ -1436,6 +1437,15 @@
    </property>
    <property name="text">
     <string>PDF</string>
+   </property>
+  </action>
+  <action name="actionRerchercher_une_mise_jour">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/menus/images/maj.png</normaloff>:/menus/images/maj.png</iconset>
+   </property>
+   <property name="text">
+    <string>Rerchercher une mise à jour</string>
    </property>
   </action>
  </widget>

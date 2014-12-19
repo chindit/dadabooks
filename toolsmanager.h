@@ -30,9 +30,9 @@ public:
     static QString stripSlashes(QString input);
     static QString raccourci(QString data, int longueur=50);
     static QString stripDeterminants(QString titre);
+    static QByteArray downloadLink(QString url);
 
 private:
-    QByteArray downloadLink(QString url);
     QPixmap makeThumbnail(QPixmap image);
 };
 

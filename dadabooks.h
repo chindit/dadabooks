@@ -20,6 +20,7 @@
 #include "settingsmanager.h"
 #include "sitemanager.h"
 #include "sqlmanager.h"
+#include "updater.h"
 #include "xmlmanager.h"
 
 #define VERSION "0.8.2"
@@ -78,6 +79,7 @@ private:
     SettingsManager *insSettingsManager;
     SiteManager *insSiteManager;
     SqlManager *insSqlManager;
+    Updater *insUpdater;
     XmlManager *insXmlManager;
     QMovie *movieLoading;
 

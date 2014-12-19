@@ -31,5 +31,6 @@
         <file>images/nouveau.png</file>
         <file>images/html.png</file>
         <file>images/pdf.png</file>
+        <file>images/maj.png</file>
     </qresource>
 </RCC>

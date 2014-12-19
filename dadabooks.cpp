@@ -9,10 +9,11 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
 
     //Initialisations des classes
     insPreviewBook = new PreviewBook(this);
-    insSettingsManager = new SettingsManager;
+    insSettingsManager = new SettingsManager(this);
     insAddBook = new AddBook(this);
-    insSiteManager = new SiteManager;
-    insLendDialog = new LendDialog;
+    insSiteManager = new SiteManager(this);
+    insLendDialog = new LendDialog(this);
+    insUpdater = new Updater(QString(VERSION), this);
 
     idOngletEdit = -1;
     isCalling = false;
@@ -58,6 +59,7 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     connect(ui->actionNouveau, SIGNAL(triggered()), this, SLOT(openNewColl()));
     connect(ui->actionHTML, SIGNAL(triggered()), this, SLOT(exportAsHTML()));
     connect(ui->actionPDF, SIGNAL(triggered()), this, SLOT(exportAsPDF()));
+    connect(ui->actionRerchercher_une_mise_jour, SIGNAL(triggered()), insUpdater, SLOT(showUpdateDialog()));
 
     //Slots de visualisation intabPreview
     connect(ui->pushButtonDelete, SIGNAL(clicked()), this, SLOT(deleteLivre()));
@@ -91,6 +93,7 @@ DadaBooks::~DadaBooks(){
            delete insSqlManager;
     delete insSettingsManager;
     delete movieLoading;
+    delete insUpdater;
 }
 
 //Transfère les données de AddBook à PreviewBook
