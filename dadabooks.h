@@ -9,6 +9,8 @@
 #include <QProcess>
 #include <QTextEdit>
 
+#include <time.h>
+
 #include "addbook.h"
 #include "editbook.h"
 #include "firstlaunch.h"
@@ -20,7 +22,7 @@
 #include "sqlmanager.h"
 #include "xmlmanager.h"
 
-#define VERSION "0.5.0"
+#define VERSION "0.8.2"
 
 namespace Ui {
 class DadaBooks;
