@@ -44,7 +44,8 @@ void LendDialog::accept(){
             QMessageBox::warning(this, tr("Email invalide"), tr("L'adresse email fournie est invalide"));
             return;
         }
-        emit lendCurrent();
+        emit lendCurrent(ui->lineEditNom->text().trimmed(), ui->lineEditEmail->text().trimmed());
     }
     this->close();
+    return;
 }

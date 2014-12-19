@@ -15,7 +15,7 @@ class LendDialog : public QDialog
     Q_OBJECT
 
 signals:
-    void lendCurrent();
+    void lendCurrent(QString, QString);
     void returnCurrent();
 
 public:

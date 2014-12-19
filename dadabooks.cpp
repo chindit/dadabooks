@@ -68,6 +68,7 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     connect(ui->pushButtonEditLivre, SIGNAL(clicked()), this, SLOT(editLivre()));
     connect(ui->pushButtonPret, SIGNAL(clicked()), this, SLOT(prepareLendDialog()));
     connect(ui->pushButtonPretLivre, SIGNAL(clicked()), this, SLOT(prepareLendDialog()));
+    connect(insLendDialog, SIGNAL(lendCurrent(QString, QString)), this, SLOT(lendItem(QString, QString)));
 
     //Chargement du GIF de… chargement
     movieLoading = new QMovie(":/programme/images/loader.gif");
@@ -1137,4 +1138,35 @@ void DadaBooks::prepareLendDialog(){
     }
     insLendDialog->exec();
     return;
+}
+
+//Marque un item comme en prêt
+void DadaBooks::lendItem(QString nom, QString email){
+    if(!insSettingsManager->getSettings(Xml).toBool()){
+        insSqlManager->query("INSERT INTO prets(id_item,emprunteur,email,date,date_rappel) VALUES("+QString::number(this->getCurrentItemID())+", \""+ToolsManager::guillemets(nom)+"\", \""+ToolsManager::guillemets(email)+"\", now(), now())");
+        QString req1 = "UPDATE ";
+        req1 += (insSettingsManager->getSettings(Type).toString() == "films") ? "films" : "livres";
+        req1 += " SET pret";
+        req1 += (insSettingsManager->getSettings(Type).toString() == "films") ? " " : "e ";
+        req1 += "=1 WHERE id="+this->getCurrentItemID();
+        insSqlManager->query(req1);
+    }
+    return;
+}
+
+//Renvoie l'ID de l'élément courant
+int DadaBooks::getCurrentItemID(){
+    if(insSettingsManager->getSettings(Type).toString() == "films"){
+        if(insSettingsManager->getSettings(OpenInTab).toBool()){
+            //FILMS + INTAB
+            return ui->labelID->text().toInt();
+        }
+    }
+    else{
+        if(insSettingsManager->getSettings(OpenInTab).toBool()){
+            //LIVRES + INTAB
+            return ui->labelIDLivre->text().toInt();
+        }
+    }
+    return -1;
 }

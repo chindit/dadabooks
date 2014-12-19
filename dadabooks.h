@@ -65,10 +65,12 @@ private slots:
     void showAddBook();
     void showInitStacked();
     void prepareLendDialog();
+    void lendItem(QString nom, QString email);
 
 
 private:
     void intabPreview(int id);
+    int getCurrentItemID();
 
     AddBook *insAddBook;
     Ui::DadaBooks *ui;
