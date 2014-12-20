@@ -5,6 +5,7 @@
 #include <QGridLayout>
 #include <QListWidget>
 #include <QMainWindow>
+#include <QMenuBar>
 #include <QMovie>
 #include <QProcess>
 #include <QTextEdit>

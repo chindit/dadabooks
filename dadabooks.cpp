@@ -40,6 +40,27 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     insEditBook = new EditBook;
     insSettingsDialog = new SettingsDialog;
 
+    QMenu *menuFichier = this->menuBar()->addMenu(tr("&Fichier"));
+    QAction *actionNouveau = menuFichier->addAction(tr("Nouvelle collection"));
+    actionNouveau->setShortcut(QKeySequence("Ctrl+Maj+N"));
+    actionNouveau->setIcon(QIcon(":/menus/images/nouveau.png"));
+    QMenu *menuFichierExport = menuFichier->addMenu("&Exporter");
+    QAction *actionExportHTML = menuFichierExport->addAction("HTML");
+    actionExportHTML->setIcon(QIcon(":/menus/images/html.png"));
+    QAction *actionExportPDF = menuFichierExport->addAction("PDF");
+    actionExportPDF->setIcon(QIcon(":/menus/images/pdf.png"));
+    QAction *actionQuitter = menuFichier->addAction(tr("Quitter"));
+    actionQuitter->setShortcut(QKeySequence("Ctrl+Q"));
+    actionQuitter->setIcon(QIcon(":/menus/images/quitter.png"));
+
+    QMenu *menuAide = this->menuBar()->addMenu((tr("&Aide")));
+    QAction *actionUpdate = menuAide->addAction(tr("Rechercher une mise à jour"));
+    actionUpdate->setIcon(QIcon(":/menus/images/maj.png"));
+    QAction *actionAbout = menuAide->addAction(tr("À propos de DadaBooks"));
+    actionAbout->setIcon(QIcon(":/menus/images/a_propos.png"));
+    QAction *actionAboutQt = menuAide->addAction(tr("À propos de Qt"));
+    actionAboutQt->setIcon(QIcon(":/menus/images/logo_qt.jpg"));
+
     //Connexion des signaux et des slots
     connect(ui->pushButton_add, SIGNAL(clicked()), this, SLOT(showAddBook()));
     connect(insAddBook, SIGNAL(canceled()), this, SLOT(showInitStacked()));
@@ -53,13 +74,13 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     connect(insEditBook, SIGNAL(bookAdded()), this, SLOT(showInitStacked()));
     connect(insEditBook, SIGNAL(editCanceled()), this, SLOT(setEditCanceled()));
     connect(ui->pushButton_options, SIGNAL(clicked()), insSettingsDialog, SLOT(show()));
-    connect(ui->actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
-    connect(ui->action_propos_de_DadaBooks, SIGNAL(triggered()), this, SLOT(about()));
-    connect(ui->action_propos_de_Qt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
-    connect(ui->actionNouveau, SIGNAL(triggered()), this, SLOT(openNewColl()));
-    connect(ui->actionHTML, SIGNAL(triggered()), this, SLOT(exportAsHTML()));
-    connect(ui->actionPDF, SIGNAL(triggered()), this, SLOT(exportAsPDF()));
-    connect(ui->actionRerchercher_une_mise_jour, SIGNAL(triggered()), insUpdater, SLOT(showUpdateDialog()));
+    connect(actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
+    connect(actionAbout, SIGNAL(triggered()), this, SLOT(about()));
+    connect(actionAboutQt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+    connect(actionNouveau, SIGNAL(triggered()), this, SLOT(openNewColl()));
+    connect(actionExportHTML, SIGNAL(triggered()), this, SLOT(exportAsHTML()));
+    connect(actionExportPDF, SIGNAL(triggered()), this, SLOT(exportAsPDF()));
+    connect(actionUpdate, SIGNAL(triggered()), insUpdater, SLOT(showUpdateDialog()));
 
     //Slots de visualisation intabPreview
     connect(ui->pushButtonDelete, SIGNAL(clicked()), this, SLOT(deleteLivre()));

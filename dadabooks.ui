@@ -1346,41 +1346,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>852</width>
-     <height>19</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuFichier">
-    <property name="title">
-     <string>&amp;Fichier</string>
-    </property>
-    <widget class="QMenu" name="menuExporter">
-     <property name="title">
-      <string>Exporter</string>
-     </property>
-     <addaction name="actionHTML"/>
-     <addaction name="actionPDF"/>
-    </widget>
-    <addaction name="actionNouveau"/>
-    <addaction name="menuExporter"/>
-    <addaction name="actionQuitter"/>
-   </widget>
-   <widget class="QMenu" name="menuAide">
-    <property name="title">
-     <string>&amp;Aide</string>
-    </property>
-    <addaction name="actionRerchercher_une_mise_jour"/>
-    <addaction name="action_propos_de_DadaBooks"/>
-    <addaction name="action_propos_de_Qt"/>
-   </widget>
-   <addaction name="menuFichier"/>
-   <addaction name="menuAide"/>
-  </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionQuitter">
    <property name="icon">
@@ -1392,60 +1357,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
-   </property>
-  </action>
-  <action name="action_propos_de_DadaBooks">
-   <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/menus/images/a_propos.png</normaloff>:/menus/images/a_propos.png</iconset>
-   </property>
-   <property name="text">
-    <string>À propos de DadaBooks</string>
-   </property>
-  </action>
-  <action name="action_propos_de_Qt">
-   <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/menus/images/logo_qt.jpg</normaloff>:/menus/images/logo_qt.jpg</iconset>
-   </property>
-   <property name="text">
-    <string>À propos de Qt</string>
-   </property>
-  </action>
-  <action name="actionNouveau">
-   <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/menus/images/nouveau.png</normaloff>:/menus/images/nouveau.png</iconset>
-   </property>
-   <property name="text">
-    <string>Nouveau</string>
-   </property>
-  </action>
-  <action name="actionHTML">
-   <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/menus/images/html.png</normaloff>:/menus/images/html.png</iconset>
-   </property>
-   <property name="text">
-    <string>HTML</string>
-   </property>
-  </action>
-  <action name="actionPDF">
-   <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/menus/images/pdf.png</normaloff>:/menus/images/pdf.png</iconset>
-   </property>
-   <property name="text">
-    <string>PDF</string>
-   </property>
-  </action>
-  <action name="actionRerchercher_une_mise_jour">
-   <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/menus/images/maj.png</normaloff>:/menus/images/maj.png</iconset>
-   </property>
-   <property name="text">
-    <string>Rerchercher une mise à jour</string>
    </property>
   </action>
  </widget>
@@ -1461,7 +1372,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>841</x>
-     <y>68</y>
+     <y>49</y>
     </hint>
     <hint type="destinationlabel">
      <x>354</x>
@@ -1477,7 +1388,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>790</x>
-     <y>68</y>
+     <y>49</y>
     </hint>
     <hint type="destinationlabel">
      <x>371</x>
@@ -1492,8 +1403,8 @@
    <slot>openFile()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>34</x>
-     <y>55</y>
+     <x>44</x>
+     <y>49</y>
     </hint>
     <hint type="destinationlabel">
      <x>214</x>
