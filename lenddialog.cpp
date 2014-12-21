@@ -3,6 +3,9 @@
 
 LendDialog::LendDialog(QWidget *parent) : QDialog(parent), ui(new Ui::LendDialog){
     ui->setupUi(this);
+    ui->pushButtonRappel->setHidden(true);
+
+    connect(ui->pushButtonRendu, SIGNAL(clicked()), this, SLOT(sendReturned()));
 }
 
 LendDialog::~LendDialog(){
@@ -20,6 +23,7 @@ void LendDialog::setAction(lendAction lact){
 void LendDialog::setTitle(QString title){
     ui->labelContenuPret->setText(title);
     ui->labelTitre->setText(title);
+    this->titre = title;
     return;
 }
 
@@ -46,6 +50,20 @@ void LendDialog::accept(){
         }
         emit lendCurrent(ui->lineEditNom->text().trimmed(), ui->lineEditEmail->text().trimmed());
     }
+    this->close();
+    return;
+}
+
+void LendDialog::setBorrower(int id, int idItem, QString nom, QString email, QDate dateEmprunt){
+    this->idPret = id;
+    this->idItem = idItem;
+    this->courriel = email;
+    ui->labelContenu->setText(tr("%1 a emprunté %2 le %3.").arg(nom).arg(this->titre).arg(dateEmprunt.toString("dd/MM/yy")));
+    return;
+}
+
+void LendDialog::sendReturned(){
+    emit returnCurrent(this->idPret, this->idItem);
     this->close();
     return;
 }

@@ -90,6 +90,7 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     connect(ui->pushButtonPret, SIGNAL(clicked()), this, SLOT(prepareLendDialog()));
     connect(ui->pushButtonPretLivre, SIGNAL(clicked()), this, SLOT(prepareLendDialog()));
     connect(insLendDialog, SIGNAL(lendCurrent(QString, QString)), this, SLOT(lendItem(QString, QString)));
+    connect(insLendDialog, SIGNAL(returnCurrent(int,int)), this, SLOT(returnItem(int, int)));
 
     //Chargement du GIF de… chargement
     movieLoading = new QMovie(":/programme/images/loader.gif");
@@ -1143,15 +1144,19 @@ void DadaBooks::showInitStacked(){
 void DadaBooks::prepareLendDialog(){
     if((QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) == 0)){
         //FILMS
+        insLendDialog->setTitle(ui->labelTitre->text());
         if(!ui->checkBoxEmpruntable->isChecked()){
             QMessageBox::information(this, tr("Film non empruntable"), tr("Désolé, mais il n'est pas possible d'emprunter ce film :("));
             return;
         }
-        if(ui->checkBoxPrete->isChecked())
+        if(ui->checkBoxPrete->isChecked()){
             insLendDialog->setAction(Return);
+            QSqlQuery resultat = insSqlManager->query("SELECT * FROM prets WHERE id_item="+QString::number(this->getCurrentItemID()));
+            resultat.first();
+            insLendDialog->setBorrower(resultat.record().value("id").toInt(), resultat.record().value("id_item").toInt(), resultat.record().value("emprunteur").toString(), resultat.record().value("email").toString(), resultat.record().value("date").toDate());
+        }
         else
             insLendDialog->setAction(Lend);
-        insLendDialog->setTitle(ui->labelTitre->text());
     }
     else{
         //LIVRES
@@ -1175,9 +1180,10 @@ void DadaBooks::lendItem(QString nom, QString email){
         insSqlManager->query("INSERT INTO prets(id_item,emprunteur,email,date,date_rappel) VALUES("+QString::number(this->getCurrentItemID())+", \""+ToolsManager::guillemets(nom)+"\", \""+ToolsManager::guillemets(email)+"\", now(), now())");
         QString req1 = "UPDATE ";
         req1 += (insSettingsManager->getSettings(Type).toString() == "films") ? "films" : "livres";
-        req1 += " SET pret";
+        req1 += " SET prete";
         req1 += "=1 WHERE id="+QString::number(this->getCurrentItemID());
         insSqlManager->query(req1);
+        QMessageBox::information(this, tr("Prêt enregistré"), tr("Le prêt a été correctement enregistré"));
     }
     return;
 }
@@ -1198,4 +1204,18 @@ int DadaBooks::getCurrentItemID(){
         }
     }
     return valeur;
+}
+
+//Marque un élément comme revenu
+void DadaBooks::returnItem(int idLend, int idItem){
+    //1)Virer la ligne de prêt
+    insSqlManager->query("DELETE FROM prets WHERE id="+QString::number(idLend));
+    //2)Marquer l'item comme !prêté
+    QString req1 = "UPDATE ";
+    req1 += (insSettingsManager->getSettings(Type).toString() == "films") ? "films" : "livres";
+    req1 += " SET prete";
+    req1 += "=0 WHERE id="+QString::number(idItem);
+    insSqlManager->query(req1);
+    QMessageBox::information(this, tr("Retour enregistré"), tr("Le retour a été correctement enregistré"));
+    return;
 }

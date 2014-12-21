@@ -67,6 +67,7 @@ private slots:
     void showInitStacked();
     void prepareLendDialog();
     void lendItem(QString nom, QString email);
+    void returnItem(int idLend, int idItem);
 
 
 private:
