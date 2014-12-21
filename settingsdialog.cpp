@@ -122,7 +122,7 @@ void SettingsDialog::exportForGCStar(){
     else{
         //On crée manuellement la liste
     SqlManager sql;
-        QSqlQuery requete = sql.query("SELECT livres.id, livres.titre, livres.ISBN, livres.coauteurs, livres.synopsis, livres.couverture, livres.pages, livres.edition, livres.langue, livres.classement, livres.exemplaires, livres.commentaire, livres.lu, livres.note, livres.empruntable, livres.pret, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id ORDER BY id");
+        QSqlQuery requete = sql.query("SELECT livres.id, livres.titre, livres.ISBN, livres.coauteurs, livres.synopsis, livres.couverture, livres.pages, livres.edition, livres.langue, livres.classement, livres.exemplaires, livres.commentaire, livres.lu, livres.note, livres.empruntable, livres.prete, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id ORDER BY id");
         while(requete.next()){
             QMultiMap <QString, QString> livre;
             livre.insert("id", requete.record().value("id").toString());
@@ -138,6 +138,7 @@ void SettingsDialog::exportForGCStar(){
             livre.insert("editeur", requete.record().value("nom_editeur").toString());
             livre.insert("annee", requete.record().value("annee").toString());
             livre.insert("lu", requete.record().value("lu").toBool() ? "True" : "False");
+            livre.insert("prete", requete.record().value("prete").toBool() ? "True" : "False");
             base.append(livre);
         }
     }

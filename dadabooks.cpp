@@ -1164,12 +1164,10 @@ void DadaBooks::prepareLendDialog(){
 //Marque un item comme en prêt
 void DadaBooks::lendItem(QString nom, QString email){
     if(!insSettingsManager->getSettings(Xml).toBool()){
-        int id = this->getCurrentItemID();
         insSqlManager->query("INSERT INTO prets(id_item,emprunteur,email,date,date_rappel) VALUES("+QString::number(this->getCurrentItemID())+", \""+ToolsManager::guillemets(nom)+"\", \""+ToolsManager::guillemets(email)+"\", now(), now())");
         QString req1 = "UPDATE ";
         req1 += (insSettingsManager->getSettings(Type).toString() == "films") ? "films" : "livres";
         req1 += " SET pret";
-        req1 += (insSettingsManager->getSettings(Type).toString() == "films") ? " " : "e ";
         req1 += "=1 WHERE id="+QString::number(this->getCurrentItemID());
         insSqlManager->query(req1);
     }
