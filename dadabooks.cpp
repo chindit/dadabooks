@@ -1143,6 +1143,10 @@ void DadaBooks::showInitStacked(){
 void DadaBooks::prepareLendDialog(){
     if((QString::compare(insSettingsManager->getSettings(Type).toString(), "films", Qt::CaseInsensitive) == 0)){
         //FILMS
+        if(!ui->checkBoxEmpruntable->isChecked()){
+            QMessageBox::information(this, tr("Film non empruntable"), tr("Désolé, mais il n'est pas possible d'emprunter ce film :("));
+            return;
+        }
         if(ui->checkBoxPrete->isChecked())
             insLendDialog->setAction(Return);
         else
@@ -1151,6 +1155,10 @@ void DadaBooks::prepareLendDialog(){
     }
     else{
         //LIVRES
+        if(!ui->checkBoxEmpruntableLivre->isChecked()){
+            QMessageBox::information(this, tr("Livre non-empruntable"), tr("Désolé, mais il n'est pas possible d'emprunter ce livre :("));
+            return;
+        }
         if(ui->checkBoxPreteLivre->isChecked())
             insLendDialog->setAction(Return);
         else
