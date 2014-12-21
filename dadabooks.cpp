@@ -54,8 +54,10 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     actionQuitter->setIcon(QIcon(":/menus/images/quitter.png"));
 
     QMenu *menuAide = this->menuBar()->addMenu((tr("&Aide")));
+#ifdef Q_WS_WIN
     QAction *actionUpdate = menuAide->addAction(tr("Rechercher une mise à jour"));
     actionUpdate->setIcon(QIcon(":/menus/images/maj.png"));
+#endif
     QAction *actionAbout = menuAide->addAction(tr("À propos de DadaBooks"));
     actionAbout->setIcon(QIcon(":/menus/images/a_propos.png"));
     QAction *actionAboutQt = menuAide->addAction(tr("À propos de Qt"));
@@ -80,7 +82,9 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     connect(actionNouveau, SIGNAL(triggered()), this, SLOT(openNewColl()));
     connect(actionExportHTML, SIGNAL(triggered()), this, SLOT(exportAsHTML()));
     connect(actionExportPDF, SIGNAL(triggered()), this, SLOT(exportAsPDF()));
+#ifdef Q_WS_WIN
     connect(actionUpdate, SIGNAL(triggered()), insUpdater, SLOT(showUpdateDialog()));
+#endif
 
     //Slots de visualisation intabPreview
     connect(ui->pushButtonDelete, SIGNAL(clicked()), this, SLOT(deleteLivre()));

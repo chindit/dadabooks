@@ -4,11 +4,12 @@ Updater::Updater(QString version, QWidget *parent) : QWidget(parent){
     this->version = version;
     download = new QWidget();
     bar = new QProgressBar();
+    currentProgress = new QLabel();
+    currentSize = new QLabel();
 }
 
 Updater::~Updater(){
     delete download;
-    delete bar;
 }
 
 bool Updater::hasNewVersion(){
@@ -48,9 +49,16 @@ void Updater::showUpdateDialog(){
 }
 
 void Updater::updateSoftware(){
-    QHBoxLayout *layout = new QHBoxLayout(this);
-    layout->addWidget(bar);
+    QLabel *separator = new QLabel("/");
+    QGridLayout *layout = new QGridLayout(this);
+    layout->addWidget(bar, 0, 0, 1, 3, Qt::AlignHCenter);
+    layout->addWidget(currentProgress, 1, 0);
+    layout->addWidget(separator, 1, 1);
+    layout->addWidget(currentSize, 1, 2);
     download->setLayout(layout);
+    download->setWindowIcon(QIcon(":/programme/images/icon_125.png"));
+    download->setWindowModality(Qt::ApplicationModal);
+    download->setWindowTitle(tr("DadaBooks - Téléchargement d'une mise à jour"));
     this->downloadFile();
     return;
 }
@@ -58,7 +66,7 @@ void Updater::updateSoftware(){
 void Updater::downloadFile(){
     download->show();
 
-    reply = manager.get(QNetworkRequest(QUrl("https://www.mailtunnel.eu/iamabm24.7z.001")));
+    reply = manager.get(QNetworkRequest(QUrl("https://www.mailtunnel.eu/dadabooks/dadabooks_latest.exe")));
 
     connect(reply, SIGNAL(finished()), this, SLOT(finished()));
     connect(reply, SIGNAL(downloadProgress(qint64, qint64)), this, SLOT(updateBar(qint64, qint64)));
@@ -69,18 +77,23 @@ void Updater::updateBar(qint64 current, qint64 total){
     if (total != -1){
         bar->setRange(0, total);
         bar->setValue(current);
+        currentProgress->setText(QString::number((double)current/1048576, 'f', 2)+"Mo");
+        currentSize->setText(QString::number((double)total/1048576, 'f', 2)+"Mo");
     }
     return;
 }
 
 void Updater::finished(){
     reply->deleteLater();
-    QFile lastversion("application.exe");
+    QFile lastversion("setup_dadabooks.exe");
 
     if(lastversion.open(QIODevice::WriteOnly)){
         lastversion.write(reply->readAll());
         lastversion.close();
-        QMessageBox::information(this, "Fin de téléchargement", "Téléchargement terminé !");
+        QMessageBox::information(this, "Fin de téléchargement", "Téléchargement terminé !<br />DadaBooks va maintenant se fermer pour lancer le processus de mise à jour");
+        QProcess *qUpdater = new QProcess(this);
+        qUpdater->startDetached("setup_dadabooks.exe");
+        qApp->quit();
     }
     download->close();
     return;

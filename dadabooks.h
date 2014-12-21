@@ -24,7 +24,7 @@
 #include "updater.h"
 #include "xmlmanager.h"
 
-#define VERSION "0.8.2"
+#define VERSION "0.8.3"
 
 namespace Ui {
 class DadaBooks;

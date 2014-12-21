@@ -1,9 +1,11 @@
 #ifndef UPDATER_H
 #define UPDATER_H
 
+#include <QApplication>
 #include <QObject>
 #include <QProgressBar>
 #include <QPushButton>
+#include <QProcess>
 #include <QWidget>
 
 #include "toolsmanager.h"
@@ -33,6 +35,8 @@ private:
     QProgressBar *bar;
     QWidget *download;
     QNetworkReply *reply;
+    QLabel *currentProgress;
+    QLabel *currentSize;
 
     QString version;
     QString newVersion;
