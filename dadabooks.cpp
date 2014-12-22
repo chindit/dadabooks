@@ -271,6 +271,7 @@ void DadaBooks::preparePreview(){
 //Affiche le livre sélectionné dans un nouvel onglet
 void DadaBooks::activatePreview(int id, bool search, bool idOk){
     if(idOk && insSettingsManager->getSettings(OpenInTab).toBool()){
+        ui->tabWidget->setCurrentIndex(0);
         this->intabPreview(id);
         return;
     }
