@@ -735,7 +735,7 @@ void DadaBooks::prepareSearchView(int row){
     QTableWidget *tWidget = liste.at(0);
     QTableWidgetItem *item = tWidget->item(row, 0);
     QString id = item->text();
-    this->activatePreview(id.toInt(), true);
+    this->activatePreview(id.toInt(), true, true);
     return;
 }
 
@@ -788,9 +788,9 @@ void DadaBooks::showEtiquette(const int &id){
     QSqlQuery requete;
     bool films = insSettingsManager->getSettings(Type).toString() == "films";
     if(!films)
-        requete = insSqlManager->query("SELECT livres.id, livres.titre, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN liste_etiquettes ON livres.id=liste_etiquettes.id_livre LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id WHERE liste_etiquettes.id_etiquette="+QString::number(id)+" ORDER BY id DESC");
+        requete = insSqlManager->query("SELECT livres.id, livres.titre, livres.annee, auteurs.nom, editeurs.nom AS nom_editeur FROM livres LEFT JOIN liste_etiquettes ON livres.id=liste_etiquettes.id_livre LEFT JOIN auteurs ON livres.auteur = auteurs.id LEFT JOIN editeurs ON livres.editeur = editeurs.id WHERE liste_etiquettes.id_etiquette="+QString::number(id)+" ORDER BY livres.id DESC");
     else
-        requete = insSqlManager->query("SELECT * FROM films LEFT JOIN liste_etiquettes ON films.id=liste_etiquettes.id_livre WHERE liste_etiquettes.id_etiquette="+QString::number(id)+" ORDER BY id DESC");
+        requete = insSqlManager->query("SELECT * FROM films LEFT JOIN liste_etiquettes ON films.id=liste_etiquettes.id_livre WHERE liste_etiquettes.id_etiquette="+QString::number(id)+" ORDER BY films.id DESC");
 
     QWidget *nv_onglet = new QWidget(ui->tabWidget);
     ui->tabWidget->addTab(nv_onglet, "Recherche...");
