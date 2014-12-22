@@ -151,7 +151,7 @@ void DadaBooks::getBook(QString id, QString site){
 //Actualise l'onglet courant
 void DadaBooks::updateOnglet(int id){
     //Si c'est un autre onglet, on le ferme et on le ré-ouvre pour l'actualiser
-    if(idOngletEdit >= 0 && (ui->tabWidget->tabText(idOngletEdit) != "Accueil" || ui->tabWidget->tabText(idOngletEdit) != "Récents")){
+    if(idOngletEdit >= 0 && (ui->tabWidget->tabText(idOngletEdit) != "Accueil" && ui->tabWidget->tabText(idOngletEdit) != "Récents")){
         ui->tabWidget->removeTab(idOngletEdit);
         this->activatePreview(id, false, true);
         ui->tabWidget->setCurrentIndex(idOngletEdit);
