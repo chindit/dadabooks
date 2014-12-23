@@ -13,6 +13,7 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     insAddBook = new AddBook(this);
     insSiteManager = new SiteManager(this);
     insLendDialog = new LendDialog(this);
+    insSearchDialog = new SearchDialog(this);
     insUpdater = new Updater(QString(VERSION), this);
 
     idOngletEdit = -1;
@@ -32,8 +33,10 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
         }
     }
 
-    if(insSettingsManager->getSettings(Xml).toBool())
+    if(insSettingsManager->getSettings(Xml).toBool()){
         insXmlManager = new XmlManager();
+        ui->pushButton_recherche->setHidden(true);
+    }
     else
         insSqlManager = new SqlManager();
 
@@ -76,6 +79,7 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     connect(insEditBook, SIGNAL(bookAdded()), this, SLOT(showInitStacked()));
     connect(insEditBook, SIGNAL(editCanceled()), this, SLOT(setEditCanceled()));
     connect(ui->pushButton_options, SIGNAL(clicked()), insSettingsDialog, SLOT(show()));
+    connect(ui->pushButton_recherche, SIGNAL(clicked()), insSearchDialog, SLOT(show()));
     connect(actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
     connect(actionAbout, SIGNAL(triggered()), this, SLOT(about()));
     connect(actionAboutQt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
@@ -114,6 +118,7 @@ DadaBooks::~DadaBooks(){
     delete insPreviewBook;
     delete insEditBook;
     delete insSettingsDialog;
+    delete insSearchDialog;
     if(insSettingsManager->getSettings(Xml).toBool())
            delete insXmlManager;
        else

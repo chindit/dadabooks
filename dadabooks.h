@@ -17,6 +17,7 @@
 #include "firstlaunch.h"
 #include "lenddialog.h"
 #include "previewbook.h"
+#include "searchdialog.h"
 #include "settingsdialog.h"
 #include "settingsmanager.h"
 #include "sitemanager.h"
@@ -79,6 +80,7 @@ private:
     EditBook *insEditBook;
     LendDialog *insLendDialog;
     PreviewBook *insPreviewBook;
+    SearchDialog *insSearchDialog;
     SettingsDialog *insSettingsDialog;
     SettingsManager *insSettingsManager;
     SiteManager *insSiteManager;

@@ -17,6 +17,7 @@
         <file>images/fleche_gauche.png</file>
         <file>images/insert_actor.png</file>
         <file>images/insert_genre.png</file>
+        <file>images/recherche.png</file>
     </qresource>
     <qresource prefix="/programme">
         <file>images/icone.png</file>
