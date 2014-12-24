@@ -23,7 +23,6 @@ SearchDialog::SearchDialog(QWidget *parent) : QDialog(parent), ui(new Ui::Search
     }
     ui->listWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->listWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    connect(ui->listWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(setSelected(QListWidgetItem*)));
 }
 
 SearchDialog::~SearchDialog(){
