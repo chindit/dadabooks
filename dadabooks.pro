@@ -9,6 +9,8 @@ QT       += core gui sql xml network widgets printsupport
 TARGET = dadabooks
 TEMPLATE = app
 
+LIBS += -lmysqld
+QTPLUGIN += qsqlmysql
 
 SOURCES += main.cpp\
         dadabooks.cpp \

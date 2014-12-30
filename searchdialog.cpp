@@ -6,11 +6,13 @@ SearchDialog::SearchDialog(QWidget *parent) : QDialog(parent), ui(new Ui::Search
     ui->comboBox->addItem("OR");
     ui->comboBox->addItem("AND");
 
+    insSettingsManager = new SettingsManager;
+    if(insSettingsManager->getSettings(Xml).toBool())
+        return;
     insSqlManager = new SqlManager;
     QSqlQuery resultat = insSqlManager->query("SELECT id,nom FROM etiquettes");
     while(resultat.next())
         ui->listWidget_2->addItem(resultat.record().value("nom").toString());
-    insSettingsManager = new SettingsManager;
     if(insSettingsManager->getSettings(Type).toString() == "livres"){
         QStringList champs;
         champs << "livres.titre" << "auteurs.nom" << "livres.coauteurs" << "livres.synopsis" << "editeurs.nom";
@@ -27,11 +29,16 @@ SearchDialog::SearchDialog(QWidget *parent) : QDialog(parent), ui(new Ui::Search
 
 SearchDialog::~SearchDialog(){
     delete ui;
-    delete insSqlManager;
+    if(!insSettingsManager->getSettings(Xml).toBool())
+        delete insSqlManager;
     delete insSettingsManager;
 }
 
 void SearchDialog::accept(){
+    if(insSettingsManager->getSettings(Xml).toBool()){
+        QMessageBox::warning(this, tr("Recherche avancée non disponible"), tr("Malheureusement, la recherche avancée n'est disponible que pour une base de données type SQLite ou MySQL :/"));
+        return;
+    }
     //On regarde les champs sélectionnés
     QList<QListWidgetItem*> selectedFields = ui->listWidget->selectedItems();
     QList<QListWidgetItem*> selectedLabels = ui->listWidget_2->selectedItems();

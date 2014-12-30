@@ -70,13 +70,13 @@ SqlManager::~SqlManager (){
     return;
 }
 
-void SqlManager::connect(){
+void SqlManager::connect(){;
     if(insManager->getSettings(Sqlite).toBool()){
         instance = QSqlDatabase::addDatabase("QSQLITE", "sqlite_at_"+QString::number(name.nsecsElapsed()));
         QString chemin_repertoire = insManager->getSettings(Fichier).toString();
         instance.setDatabaseName(chemin_repertoire);
     }
-    else if(insManager->getSettings(MariaDB).toBool()){
+    else{
         instance = QSqlDatabase::addDatabase("QMYSQL", "mysql_at_"+QString::number(name.nsecsElapsed()));
         instance.setHostName(insManager->getSettings(DBHost).toString());
         instance.setUserName(insManager->getSettings(DBUser).toString());

@@ -11,6 +11,7 @@
 
 #include "settingsmanager.h"
 #include "toolsmanager.h"
+#include <QtPlugin>
 
 class SqlManager
 {
