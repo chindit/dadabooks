@@ -67,7 +67,7 @@ QPixmap ToolsManager::makeThumbnail(QPixmap image){
     return pixmap;
 }
 
-void ToolsManager::exportMovieList(QList<QMultiMap<QString, QString> > base, QString output, bool films, bool pdf){
+void ToolsManager::exportMovieList(QList<QMultiMap<QString, QString> > base, QString output, bool films, bool pdf, QList<int> ordre){
     if(base.isEmpty())
         return;
     if(films){
@@ -135,12 +135,24 @@ void ToolsManager::exportMovieList(QList<QMultiMap<QString, QString> > base, QSt
             int nbPages = 1;
             if (!page.begin(&printer))
                 return;
+            QMap <int, int> concordance;
+            if(ordre.size() > 0){
+                for(int i=0; i<base.size(); ++i){
+                    concordance.insert(base.at(i).value("id").toInt(), i);
+                    qDebug() << base.at(i).value("id") << " | " << i;
+                }
+            }
+
             for(int i=0; i<base.count(); ++i){
+                int pos = i;
+                if(ordre.size() > 0 && ordre.size() == base.size()){
+                    pos = concordance.value(ordre.at(i));
+                }
                 bar->setValue((i*100)/base.count());
                 bar->show();
-                QString image = base.at(i).value("couverture");
+                QString image = base.at(pos).value("couverture");
                 if(image.startsWith("http")){
-                    image = ToolsManager::downloadFile(base.at(i).value("couverture"), QDir::temp());
+                    image = ToolsManager::downloadFile(base.at(pos).value("couverture"), QDir::temp());
                 }
                 if((iPage*230) > (printer.height()-200)){
                     iPage = 0;
@@ -153,23 +165,23 @@ void ToolsManager::exportMovieList(QList<QMultiMap<QString, QString> > base, QSt
                 page.drawPixmap(0, (iPage*230), 150, 220, QPixmap(image));
                 //2)Titre
                 page.setFont(titre);
-                QRect placeTitre = metrics.boundingRect(base.at(i).value("titre"));
-                page.drawText(160, currentHeight, totalWidth-150-160, placeTitre.height(), Qt::TextDontClip, base.at(i).value("titre"));
+                QRect placeTitre = metrics.boundingRect(base.at(pos).value("titre"));
+                page.drawText(160, currentHeight, totalWidth-150-160, placeTitre.height(), Qt::TextDontClip, base.at(pos).value("titre"));
                 currentHeight += placeTitre.height();
                 page.setFont(italique);
-                QRect placeGenre = metricsItalique.boundingRect(base.at(i).value("duree"));
-                page.drawText(160, currentHeight, totalWidth, placeGenre.height(), Qt::AlignJustify, base.at(i).value("duree")+"min");
+                QRect placeGenre = metricsItalique.boundingRect(base.at(pos).value("duree"));
+                page.drawText(160, currentHeight, totalWidth, placeGenre.height(), Qt::AlignJustify, base.at(pos).value("duree")+"min");
                 currentHeight += placeGenre.height();
-                page.drawText(160, currentHeight-placeGenre.height(), totalWidth-150-160, placeGenre.height(), Qt::AlignRight, base.at(i).value("genre"));
+                page.drawText(160, currentHeight-placeGenre.height(), totalWidth-150-160, placeGenre.height(), Qt::AlignRight, base.at(pos).value("genre"));
                 page.setFont(standard);
-                placeGenre = metricsItalique.boundingRect(base.at(i).value("directeur"));
-                page.drawText(160, currentHeight, totalWidth, placeGenre.height(), Qt::AlignLeft, base.at(i).value("directeur"));
+                placeGenre = metricsItalique.boundingRect(base.at(pos).value("directeur"));
+                page.drawText(160, currentHeight, totalWidth, placeGenre.height(), Qt::AlignLeft, base.at(pos).value("directeur"));
                 page.setFont(italique);
-                page.drawText(160, currentHeight, totalWidth-150-160, placeGenre.height(), Qt::AlignRight, base.at(i).value("classement"));
+                page.drawText(160, currentHeight, totalWidth-150-160, placeGenre.height(), Qt::AlignRight, base.at(pos).value("classement"));
                 currentHeight += placeGenre.height();
-                page.drawText(160, currentHeight, totalWidth, placeGenre.height(), Qt::TextDontClip, base.at(i).value("acteurs").left(base.at(i).value("acteurs").left(75).lastIndexOf(",")));
+                page.drawText(160, currentHeight, totalWidth, placeGenre.height(), Qt::TextDontClip, base.at(pos).value("acteurs").left(base.at(pos).value("acteurs").left(75).lastIndexOf(",")));
                 page.setFont(standard);
-                page.drawText(160, currentHeight+placeGenre.height(), (totalWidth-150-160), (((iPage+1)*230)-currentHeight), Qt::AlignJustify|Qt::TextDontClip|Qt::TextWordWrap, base.at(i).value("synopsis"));
+                page.drawText(160, currentHeight+placeGenre.height(), (totalWidth-150-160), (((iPage+1)*230)-currentHeight), Qt::AlignJustify|Qt::TextDontClip|Qt::TextWordWrap, ToolsManager::splitWordString(base.at(pos).value("synopsis"), 115));
                 currentHeight = (iPage+1)*230;
                 iPage++;
             }
@@ -282,4 +294,19 @@ QString ToolsManager::stripDeterminants(QString titre){
         }
     }
     return output.trimmed();
+}
+
+//Coupe après X mots
+QString ToolsManager::splitWordString(QString chaine, int nbMots){
+    QStringList mots = chaine.split(" ");
+    if(mots.size() <= nbMots){
+        return chaine;
+    }
+    QString retour;
+    for(int i=0; i<nbMots; ++i){
+        retour.append(mots.at(i));
+        retour.append(" ");
+    }
+    retour.append("…");
+    return retour;
 }

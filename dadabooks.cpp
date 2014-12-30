@@ -1123,8 +1123,12 @@ void DadaBooks::exportAsPDF(){
             ToolsManager::exportMovieList(insSqlManager->convertToXML(insSqlManager->query(requete)), output, false, true);
         }
         else{
-            QString requete = "SELECT `titre`,`directeur`,`acteurs`,`synopsis`,`annee`,`duree`,`genre`,`classement`,`jaquette` FROM `films` ORDER BY `titre`";
-            ToolsManager::exportMovieList(insSqlManager->convertToXML(insSqlManager->query(requete)), output, true, true);
+            QList <int> ordre;
+            for(int i=0; i<ui->listWidget_accueil->count(); ++i){
+                ordre.append(ui->listWidget_accueil->item(i)->data(Qt::UserRole).toInt());
+            }
+            QString requete = "SELECT `id`,`titre`,`directeur`,`acteurs`,`synopsis`,`annee`,`duree`,`genre`,`classement`,`jaquette` FROM `films` ORDER BY `titre`";
+            ToolsManager::exportMovieList(insSqlManager->convertToXML(insSqlManager->query(requete)), output, true, true, ordre);
         }
     }
     QMessageBox::information(this, "PDF généré", "Le fichier PDF a été généré avec succès.  Vous pourrez le trouver ici: "+output);

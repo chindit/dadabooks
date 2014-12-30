@@ -25,12 +25,13 @@ public:
     ToolsManager();
     static QString downloadFile(QString file, QDir dossier);
     static QPixmap getPixmapFromString(QString adresse);
-    static void exportMovieList(QList<QMultiMap<QString, QString> > base, QString output, bool films, bool pdf=false);
+    static void exportMovieList(QList<QMultiMap<QString, QString> > base, QString output, bool films, bool pdf=false, QList<int> ordre=QList<int>());
     static QString guillemets(QString input);
     static QString stripSlashes(QString input);
     static QString raccourci(QString data, int longueur=50);
     static QString stripDeterminants(QString titre);
     static QByteArray downloadLink(QString url);
+    static QString splitWordString(QString chaine, int nbMots);
 
 private:
     QPixmap makeThumbnail(QPixmap image);
