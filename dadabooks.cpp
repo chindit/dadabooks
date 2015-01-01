@@ -1110,7 +1110,11 @@ void DadaBooks::exportAsPDF(){
             ToolsManager::exportMovieList(insXmlManager->readBase(), output, false, true);
         }
         else{
-            ToolsManager::exportMovieList(insXmlManager->readBase(), output, true, true);
+            QList <int> ordre;
+            for(int i=0; i<ui->listWidget_accueil->count(); ++i){
+                ordre.append(ui->listWidget_accueil->item(i)->data(Qt::UserRole).toInt());
+            }
+            ToolsManager::exportMovieList(insXmlManager->readBase(), output, true, true, ordre);
         }
     }
     else{
