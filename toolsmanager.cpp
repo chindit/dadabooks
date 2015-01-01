@@ -172,7 +172,7 @@ void ToolsManager::exportMovieList(QList<QMultiMap<QString, QString> > base, QSt
                 QRect placeGenre = metricsItalique.boundingRect(base.at(pos).value("duree"));
                 page.drawText(160, currentHeight, totalWidth, placeGenre.height(), Qt::AlignJustify, base.at(pos).value("duree")+"min");
                 currentHeight += placeGenre.height();
-                page.drawText(160, currentHeight-placeGenre.height(), totalWidth-150-160, placeGenre.height(), Qt::AlignRight, base.at(pos).value("genre"));
+                page.drawText(160, currentHeight-placeGenre.height(), totalWidth-150-160, placeGenre.height(), Qt::AlignRight, ToolsManager::raccourci(base.at(pos).value("genre"), 75));
                 page.setFont(standard);
                 placeGenre = metricsItalique.boundingRect(base.at(pos).value("directeur"));
                 page.drawText(160, currentHeight, totalWidth, placeGenre.height(), Qt::AlignLeft, base.at(pos).value("directeur"));
