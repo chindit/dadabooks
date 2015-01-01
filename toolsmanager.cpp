@@ -292,6 +292,7 @@ QString ToolsManager::stripDeterminants(QString titre){
             output.append(" (");
             output.append(elem.trimmed());
             output.append(")");
+            output = output.trimmed();
             output.replace(0, 1, output.at(0).toUpper());
         }
     }
