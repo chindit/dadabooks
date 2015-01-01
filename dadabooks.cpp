@@ -241,7 +241,9 @@ void DadaBooks::setListeLivres(){
     }
     else{
         for(int i=0; i<resultat.size(); i++){
-            ui->listWidget_accueil->addItem(resultat.at(i).value("titre"));
+            QListWidgetItem *newItem = new QListWidgetItem(ToolsManager::stripDeterminants(resultat.at(i).value("titre")));
+            newItem->setData(Qt::UserRole, resultat.at(i).value("id"));
+            ui->listWidget_accueil->addItem(newItem);
         }
     }
     ui->listWidget_accueil->sortItems();
@@ -260,14 +262,8 @@ void DadaBooks::setListeLivres(){
 void DadaBooks::preparePreview(){
     //Le but de cette fonction est simplement de convertir l'ID d'index du QTableView en un ID de livre pour appeler ensuite activatePreview()
     int id = 0;
-    if(insSettingsManager->getSettings(Xml).toBool()){
-        if(!ui->listWidget_accueil->selectedItems().isEmpty())
-            id = insXmlManager->getIdByTitle(ui->listWidget_accueil->selectedItems().first()->text());
-    }
-    else{
+    if(!ui->listWidget_accueil->selectedItems().isEmpty())
         id = ui->listWidget_accueil->currentItem()->data(Qt::UserRole).toInt();
-
-    }
     if(id > 0){
         this->activatePreview(id, false, true);
     }
