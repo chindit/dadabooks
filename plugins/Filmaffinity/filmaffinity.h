@@ -6,6 +6,7 @@
 #include <QEventLoop>
 #include <QMultiMap>
 #include <QString>
+#include <QTextDocument>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>

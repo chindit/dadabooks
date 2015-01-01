@@ -234,8 +234,11 @@ QMultiMap<QString,QString> Filmaffinity::getBook( QString id ){
     synopsis = synopsis.right(synopsis.size()-synopsis.indexOf("<dd>")-4);
     synopsis = synopsis.left(synopsis.indexOf("</dd>"));
     //On vire les parenthèses
-    synopsis = synopsis.replace("([a-zA-Z0-9]{0,})", "");
+    synopsis = synopsis.remove(QRegExp(QRegExp("\\((.*)\\)")));
     synopsis = synopsis.trimmed();
+    QTextDocument converter;
+    converter.setHtml(synopsis);
+    synopsis = converter.toPlainText().trimmed();
 
     //Image
     QString image = contenu_page.right(contenu_page.size()-contenu_page.indexOf("og:image"));
