@@ -284,9 +284,9 @@ void EditBook::accept(){
         QString nomImage = ui->labelImageFilm->text();
         if(!insSettingsManager->getSettings(MariaDB).toBool() && insSettingsManager->getSettings(DownPics).toBool() && nomImage.contains("http")){
             //On vérifie que le dossier existe
-            QString chemin = insSettingsManager->getSettings(Fichier).toString();
-            chemin = chemin.left(chemin.lastIndexOf("/")+1);
-            QDir dossierImage; dossierImage.setPath(chemin+"Images");
+            //QString chemin = insSettingsManager->getSettings(Fichier).toString();
+            //chemin = chemin.left(chemin.lastIndexOf("/")+1);
+            QDir dossierImage; dossierImage.setPath("Images");
             nomImage = ToolsManager::downloadFile(ui->labelImageFilm->text(), dossierImage);
         }
 
