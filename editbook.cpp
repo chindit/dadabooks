@@ -415,12 +415,16 @@ void EditBook::setManual(){
             ui->listWidgetEtiquettesDispoFilm->addItems(insXml->getListEtiquettes());
         else
             ui->listWidgetEtiquettesDispoFilm->addItems(etiquettes);
+        if(insSettingsManager->getSettings(Empruntable).toBool())
+            ui->checkBoxEmpruntableFilm->setChecked(true);
     }
     else{
         if(insSettingsManager->getSettings(Xml).toBool())
             ui->listWidgetEtiquettesDispoLivre->addItems(insXml->getListEtiquettes());
         else
             ui->listWidgetEtiquettesDispoLivre->addItems(etiquettes);
+        if(insSettingsManager->getSettings(Empruntable).toBool())
+            ui->checkBoxEmpruntableLivre->setChecked(true);
     }
 }
 
@@ -471,6 +475,9 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
         }
         ui->horizontalSliderNoteLivre->setValue(livre.value("note").toInt());
         ui->labelNoteLivre->setText(QString::number(livre.value("note").toInt())+"/20");
+
+        if(insSettingsManager->getSettings(Empruntable).toBool())
+            ui->checkBoxEmpruntableLivre->setChecked(true);
 
         //Récupération de l'image
         QPixmap image;
@@ -547,6 +554,10 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
         ui->labelNoteFilm->setText(livre.value("note"));
         ui->plainTextEditCommentaireFilm->clear();
         ui->plainTextEditCommentaireFilm->setPlainText(livre.value("commentaire"));
+
+        if(insSettingsManager->getSettings(Empruntable).toBool())
+            ui->checkBoxEmpruntableFilm->setChecked(true);
+
         //Récupération de l'image
         QPixmap image;
         if(!livre.value("couverture").startsWith("http")){

@@ -43,6 +43,7 @@ void SettingsDialog::accept(){
     }
     insSettingsManager->setSettings(OpenInTab, ui->checkBox_ongletPrincipal->isChecked());
     insSettingsManager->setSettings(DownPics, ui->checkBoxImages->isChecked());
+    insSettingsManager->setSettings(Empruntable, ui->checkBoxEmpruntable->isChecked());
     this->close();
 }
 
@@ -71,6 +72,7 @@ void SettingsDialog::prepareUi(){
     }
     ui->checkBox_ongletPrincipal->setChecked(insSettingsManager->getSettings(OpenInTab).toBool());
     ui->checkBoxImages->setChecked(insSettingsManager->getSettings(DownPics).toBool());
+    ui->checkBoxEmpruntable->setChecked(insSettingsManager->getSettings(Empruntable).toBool());
     return;
 }
 

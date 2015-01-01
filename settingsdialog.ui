@@ -239,6 +239,13 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QCheckBox" name="checkBoxEmpruntable">
+         <property name="text">
+          <string>Les éléments sont empruntables par défaut</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </widget>

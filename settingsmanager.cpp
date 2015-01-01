@@ -3,8 +3,8 @@
 SettingsManager::SettingsManager(QObject *parent) :
     QObject(parent)
 {
-    names = new QString[14];
-    settings = new QVariant[14];
+    names = new QString[15];
+    settings = new QVariant[15];
 
     names[AutoAuteur] = "AutoAuteur";
     names[AutoEditeur] = "AutoEditeur";
@@ -20,6 +20,7 @@ SettingsManager::SettingsManager(QObject *parent) :
     names[OpenInTab] = "ouvrirOngletPrincipal";
     names[DownPics] = "telechargerImages";
     names[Type] = "typeCollection";
+    names[Empruntable] = "isEmpruntable";
 
     loadSettings();
 
@@ -57,6 +58,7 @@ void SettingsManager::loadSettings(){
     settings[OpenInTab] = options.value(names[OpenInTab], true);
     settings[DownPics] = options.value(names[DownPics], true);
     settings[Type] = options.value(names[Type], "livres");
+    settings[Empruntable] = options.value(names[Empruntable], true);
     return;
 }
 
