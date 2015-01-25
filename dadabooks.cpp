@@ -1092,7 +1092,8 @@ void DadaBooks::exportAsHTML(){
             ToolsManager::exportMovieList(insSqlManager->convertToXML(insSqlManager->query(requete)), output, false, false);
         }
         else{
-            QString requete = "SELECT `titre`,`directeur`,`acteurs`,`synopsis`,`annee`,`duree`,`genre`,`classement`,`jaquette` FROM `films` ORDER BY `titre`";
+            //TODO ORDER
+            QString requete = "SELECT `titre`,`directeur`,`acteurs`,`synopsis`,`annee`,`duree`,`genre`,`classement`,`jaquette` FROM `films`";
             ToolsManager::exportMovieList(insSqlManager->convertToXML(insSqlManager->query(requete)), output, true, false);
         }
     }
@@ -1127,7 +1128,7 @@ void DadaBooks::exportAsPDF(){
             for(int i=0; i<ui->listWidget_accueil->count(); ++i){
                 ordre.append(ui->listWidget_accueil->item(i)->data(Qt::UserRole).toInt());
             }
-            QString requete = "SELECT `id`,`titre`,`directeur`,`acteurs`,`synopsis`,`annee`,`duree`,`genre`,`classement`,`jaquette` FROM `films` ORDER BY `titre`";
+            QString requete = "SELECT `id`,`titre`,`directeur`,`acteurs`,`synopsis`,`annee`,`duree`,`genre`,`classement`,`jaquette` FROM `films`";
             ToolsManager::exportMovieList(insSqlManager->convertToXML(insSqlManager->query(requete)), output, true, true, ordre);
         }
     }

@@ -555,9 +555,6 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
         ui->plainTextEditCommentaireFilm->clear();
         ui->plainTextEditCommentaireFilm->setPlainText(livre.value("commentaire"));
 
-        if(insSettingsManager->getSettings(Empruntable).toBool())
-            ui->checkBoxEmpruntableFilm->setChecked(true);
-
         //Récupération de l'image
         QPixmap image;
         if(!livre.value("couverture").startsWith("http")){
@@ -586,7 +583,12 @@ void EditBook::updateUi(QMultiMap<QString, QString> livre){
         }
 
         //Checkbox
-        ui->checkBoxEmpruntableFilm->setChecked((livre.value("empruntable") == "True") ? true : false);
+        if(livre.value("empruntable", "EE") == "EE"){
+            if(insSettingsManager->getSettings(Empruntable).toBool())
+                ui->checkBoxEmpruntableFilm->setChecked(true);
+        }
+        else
+            ui->checkBoxEmpruntableFilm->setChecked((livre.value("empruntable") == "True") ? true : false);
         ui->checkBoxPreteFilm->setChecked((livre.value("prete") == "True") ? true : false);
         ui->checkBoxVuFilm->setChecked((livre.value("vu") == "True") ? true : false);
         if(livre.value("fichier") == "True"){
