@@ -64,9 +64,13 @@ QMultiMap<QString,QString> AmazonFilms::getBook( QString id ){
     QString contenu_page = this->download(id);
 
     //Titre
+    QTextDocument converter;
     QString titre = contenu_page.right(contenu_page.size()-contenu_page.lastIndexOf("productTitle"));
     titre = titre.right(titre.size()-titre.indexOf(">")-1);
     titre = titre.left(titre.indexOf("<"));
+    converter.setHtml(titre);
+    titre = converter.toPlainText();
+    converter.clear();
 
     //Acteurs
     QString acteursTemp = contenu_page.right(contenu_page.size()-contenu_page.indexOf("<b>Acteurs", Qt::CaseSensitive)-10);
@@ -163,7 +167,6 @@ QMultiMap<QString,QString> AmazonFilms::getBook( QString id ){
     //D'abord, on décode les %20
     synopsis = QUrl::fromPercentEncoding(synopsis.toUtf8());
     //Ensuite on décode le HTML
-    QTextDocument converter;
     converter.setHtml(synopsis);
     synopsis = converter.toPlainText();
     converter.clear();
