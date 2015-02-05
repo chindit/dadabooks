@@ -17,8 +17,8 @@ QString ToolsManager::downloadFile(QString file, QDir dossier){
 
     image = instance.makeThumbnail(image);
 
-    QDateTime timestamp; timestamp = QDateTime::currentDateTime();
-    QString nomImage = dossier.path()+"/"+QString::number(timestamp.toTime_t())+".png";
+    QTime timestamp; timestamp = QTime::msecsSinceStartOfDay();
+    QString nomImage = dossier.path()+"/"+QString::number(timestamp)+".png";
     image.save(nomImage);
 
     return nomImage;
@@ -139,7 +139,6 @@ void ToolsManager::exportMovieList(QList<QMultiMap<QString, QString> > base, QSt
             if(ordre.size() > 0){
                 for(int i=0; i<base.size(); ++i){
                     concordance.insert(base.at(i).value("id").toInt(), i);
-                    qDebug() << base.at(i).value("id") << " | " << i;
                 }
             }
 
@@ -174,7 +173,7 @@ void ToolsManager::exportMovieList(QList<QMultiMap<QString, QString> > base, QSt
                     sTitre.append("…");
                 }
                 QRect placeTitre = metrics.boundingRect(sTitre);
-                page.drawText(160, currentHeight, totalWidth-150-160, placeTitre.height(), Qt::TextDontClip, base.at(pos).value("titre"));
+                page.drawText(160, currentHeight, totalWidth-150-160, placeTitre.height(), Qt::TextDontClip, sTitre);
                 currentHeight += placeTitre.height();
                 page.setFont(italique);
                 QRect placeGenre = metricsItalique.boundingRect(base.at(pos).value("duree"));
