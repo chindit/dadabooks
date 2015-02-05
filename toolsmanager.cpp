@@ -165,7 +165,15 @@ void ToolsManager::exportMovieList(QList<QMultiMap<QString, QString> > base, QSt
                 page.drawPixmap(0, (iPage*230), 150, 220, QPixmap(image));
                 //2)Titre
                 page.setFont(titre);
-                QRect placeTitre = metrics.boundingRect(base.at(pos).value("titre"));
+                //On vérifie la taille du titre
+                QString sTitre = base.at(pos).value("titre");
+                if(sTitre.size() > 32){
+                    //Si c'est trop grand, on raccourci
+                    QString travail = sTitre.left(32);
+                    sTitre = travail.left(travail.lastIndexOf(" "));
+                    sTitre.append("…");
+                }
+                QRect placeTitre = metrics.boundingRect(sTitre);
                 page.drawText(160, currentHeight, totalWidth-150-160, placeTitre.height(), Qt::TextDontClip, base.at(pos).value("titre"));
                 currentHeight += placeTitre.height();
                 page.setFont(italique);
@@ -285,6 +293,8 @@ QString ToolsManager::stripDeterminants(QString titre){
     QStringList determinants; determinants << "L'" << "La " << "Le " << "Les " << "Un " << "Une ";
     //Les espagnols
     determinants << "Al " << "El " << "Un " << "Una " << "Las " << "Los ";
+    //Les anglais
+    determinants << "The ";
     QString output = titre;
     foreach(const QString &elem, determinants){
         if(titre.startsWith(elem, Qt::CaseInsensitive)){
