@@ -17,8 +17,8 @@ QString ToolsManager::downloadFile(QString file, QDir dossier){
 
     image = instance.makeThumbnail(image);
 
-    QTime timestamp; timestamp = QTime::msecsSinceStartOfDay();
-    QString nomImage = dossier.path()+"/"+QString::number(timestamp)+".png";
+    QTime timestamp;
+    QString nomImage = dossier.path()+"/"+QString::number(timestamp.msecsSinceStartOfDay())+".png";
     image.save(nomImage);
 
     return nomImage;
