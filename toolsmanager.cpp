@@ -13,12 +13,15 @@ QString ToolsManager::downloadFile(QString file, QDir dossier){
 
     QPixmap image;
     ToolsManager instance;
-    image.loadFromData(instance.downloadLink(file));
+    QByteArray imageData = instance.downloadLink(file);
+    image.loadFromData(imageData);
 
     image = instance.makeThumbnail(image);
 
-    QTime timestamp;
-    QString nomImage = dossier.path()+"/"+QString::number(timestamp.msecsSinceStartOfDay())+".png";
+    QDateTime timestamp;
+    QCryptographicHash hash(QCryptographicHash::Sha256);
+    hash.addData(imageData);
+    QString nomImage = dossier.path()+"/"+QString::number(timestamp.toTime_t())+"_"+QString(hash.result().toHex())+".png";
     image.save(nomImage);
 
     return nomImage;
@@ -47,6 +50,7 @@ QPixmap ToolsManager::getPixmapFromString(QString adresse){
 QByteArray ToolsManager::downloadLink(QString url){
     QNetworkAccessManager nw_manager;
     QNetworkRequest request(url);
+    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
     QNetworkReply *reponse = nw_manager.get(request);
     QEventLoop eventLoop;
     QObject::connect(reponse, SIGNAL(finished()), &eventLoop, SLOT(quit()));

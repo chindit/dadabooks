@@ -2,6 +2,7 @@
 #define TOOLSMANAGER_H
 
 #include <cmath>
+#include <QCryptographicHash>
 #include <QDir>
 #include <QEventLoop>
 #include <QFileDialog>
