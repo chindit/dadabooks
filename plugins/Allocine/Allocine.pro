@@ -4,13 +4,13 @@
 #
 #-------------------------------------------------
 
-QT       += core network
+QT       += core network xml
 
 TARGET = Allocine
 TEMPLATE = lib
 CONFIG += plugin
 
-DESTDIR = /home/david/Linux/david/Documents/Programmation/Compilations/dadabooks/Debug/plugins/
+DESTDIR = plugins/
 
 SOURCES += allocine.cpp
 

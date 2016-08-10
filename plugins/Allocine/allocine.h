@@ -29,6 +29,7 @@ public:
 private:
     QString download(QString url);
     QString convertTime(QString duree);
+    QString convertUnicode(QString input);
 };
 
 #endif // ALLOCINE_H

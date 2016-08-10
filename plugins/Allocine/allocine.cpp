@@ -75,87 +75,118 @@ QMultiMap<QString,QString> Allocine::getBook(QString id){
     QString contenu_page = this->download(id);
 
     //Image
-    QString image = contenu_page.right(contenu_page.size()-contenu_page.indexOf("poster\""));
-    image = image.right(image.size()-image.indexOf("src='")-5);
-    image = image.left(image.indexOf("'"));
+    QString image = contenu_page.right(contenu_page.size()-contenu_page.indexOf("og:image\"")-9);
+    image = image.right(image.size()-image.indexOf("\"")-1);
+    image = image.left(image.indexOf("\""));
 
     //Titre
-    QString titre = contenu_page.right(contenu_page.size()-contenu_page.indexOf("alt='")-5);
-    titre = titre.left(titre.indexOf("'"));
-    QTextDocument txtTitre;
-    txtTitre.setHtml(titre);
-    titre = txtTitre.toPlainText();
+    QString titre = contenu_page.right(contenu_page.size()-contenu_page.indexOf("twitter:title\"")-14);
+    titre = titre.right(titre.size()-titre.indexOf("\"")-1);
+    titre = titre.left(titre.indexOf("\""));
+    titre = this->convertUnicode(titre);
+
 
     //Titre original
     QString titreOriginal = ""; //Pas de titre original pour Allocine :(
 
     //Année
-    QString annee = contenu_page.right(contenu_page.size()-contenu_page.indexOf("datePublished")-13);
-    annee = annee.right(annee.size()-annee.indexOf(">")-1);
+    QString annee = contenu_page.right(contenu_page.size()-contenu_page.indexOf("Date de sortie")-14);
+    annee = annee.right(annee.size()-annee.indexOf("\">")-2);
     annee = annee.left(annee.indexOf("<"));
     QRegExp regAnnee("(\\d{4})");
     regAnnee.indexIn(annee);
     annee = regAnnee.cap();
 
     //Durée
-    QString duree = contenu_page.right(contenu_page.size()-contenu_page.indexOf("duration")-8);
-    duree = duree.right(duree.size()-duree.indexOf(">")-1);
-    duree = duree.left(duree.indexOf("<"));
+    QString duree = contenu_page.right(contenu_page.size()-contenu_page.indexOf("Date de sortie")-14);
+    duree = duree.right(duree.size()-duree.indexOf("(")-1);
+    duree = duree.left(duree.indexOf(")"));
     if(duree.contains("h") || duree.contains("min"))
         duree = this->convertTime(duree);
 
     //Directeur
-    QString directeur = contenu_page.right(contenu_page.size()-contenu_page.indexOf("director"));
-    directeur = directeur.right(directeur.size()-directeur.indexOf("name\">")-6);
-    directeur = directeur.left(directeur.indexOf("<"));
+    QString directeur = contenu_page.right(contenu_page.size()-contenu_page.indexOf("video:director\"")-16);
+    directeur = directeur.right(directeur.size()-directeur.indexOf("\"")-1);
+    directeur = directeur.left(directeur.indexOf("\""));
 
     //Acteurs
-    QString acteursTemp = contenu_page.right(contenu_page.size()-contenu_page.indexOf("actors"));
-    acteursTemp = acteursTemp.right(acteursTemp.size()-acteursTemp.indexOf("name\">")-6);
-    acteursTemp = acteursTemp.left(acteursTemp.indexOf("</td"));
-    QString acteurs = acteursTemp.remove(QRegExp("<[^>]*>"));
-    if(acteurs.trimmed().endsWith("plus"))
-            acteurs = acteurs.trimmed().left(acteurs.size()-5).trimmed();
+    QString acteursTemp = contenu_page.right(contenu_page.size()-contenu_page.indexOf("Avec</span>")-11);
+    acteursTemp = acteursTemp.left(acteursTemp.indexOf("</div>"));
+    QStringList acteursList;
+    while(acteursTemp.indexOf("<span") > 0){
+        acteursTemp = acteursTemp.right(acteursTemp.size()-acteursTemp.indexOf("<span")-4);
+        acteursTemp = acteursTemp.right(acteursTemp.size()-acteursTemp.indexOf('>')-1);
+        QString actorName = (acteursTemp.left(acteursTemp.indexOf("<")));
+        //Not selecting «plus» option
+        if(actorName.trimmed() == "plus")
+            continue;
+        //Adding to main list
+        acteursList.append(actorName.trimmed());
+    }
+    QString acteurs;
+    for(QString actor : acteursList){
+        acteurs.append(actor);
+        acteurs.append(",");
+    }
+    //Removing trailing coma
+    acteurs.remove(acteurs.size()-1, 1);
+
 
     //Genre
-    QString genreTemp = contenu_page.right(contenu_page.size()-contenu_page.indexOf("Genre", contenu_page.indexOf("actors"))-5);
-    genreTemp = genreTemp.left(genreTemp.indexOf("</td>"));
-    QRegExp exp("\">(.*)</span>");
-    exp.setMinimal(true);
-    int position = genreTemp.indexOf(exp);
-    QStringList genreList;
-    while(position > -1){
-        genreList.append(exp.cap(1));
-        position = genreTemp.indexOf(exp, position+exp.cap(1).count());
+    QString genresTemp = contenu_page.right(contenu_page.size()-contenu_page.indexOf("Genres</span>")-13);
+    genresTemp = genresTemp.left(genresTemp.indexOf("</div>"));
+    QStringList genresList;
+    while(genresTemp.indexOf("<span") > 0){
+        genresTemp = genresTemp.right(genresTemp.size()-genresTemp.indexOf("itemprop")-4);
+        genresTemp = genresTemp.right(genresTemp.size()-genresTemp.indexOf('>')-1);
+        QString genreName = (genresTemp.left(genresTemp.indexOf("<")));
+        //Not selecting «plus» option
+        if(genreName.trimmed() == "plus")
+            continue;
+        //Adding to main list
+        genresList.append(genreName.trimmed());
     }
     QString genres;
-    foreach(QString item, genreList){
-        if(item.contains(">"))
-            genres.append(item.right(item.size()-item.indexOf(">")-1));
-        else
-            genres.append(item);
+    for(QString type : genresList){
+        genres.append(type);
         genres.append(",");
     }
-    if(genres.endsWith(",")){
-        genres.resize(genres.size()-1);
-    }
+    //Removing trailing coma
+    genres.remove(genres.size()-1, 1);
 
     //Pays
-    QString pays = contenu_page.right(contenu_page.size()-contenu_page.indexOf("Nationalité"));
-    pays = pays.right(pays.size()-pays.indexOf("</span>")-7);
-    pays = pays.right(pays.size()-pays.indexOf("\">")-2);
-    pays = pays.left(pays.indexOf("<")).trimmed();
+    QString paysTemp = contenu_page.right(contenu_page.size()-contenu_page.indexOf("Nationalité</span>")-18);
+    paysTemp = paysTemp.left(paysTemp.indexOf("</div>"));
+    QStringList paysList;
+    while(paysTemp.indexOf("<span") > 0){
+        paysTemp = paysTemp.right(paysTemp.size()-paysTemp.indexOf("<span")-4);
+        paysTemp = paysTemp.right(paysTemp.size()-paysTemp.indexOf('>')-1);
+        QString paysName = (paysTemp.left(paysTemp.indexOf("<")));
+        //Not selecting «plus» option
+        if(paysName.trimmed() == "plus")
+            continue;
+        //Adding to main list
+        paysList.append(paysName.trimmed());
+    }
+    QString pays;
+    for(QString country : paysList){
+        pays.append(country);
+        pays.append(",");
+    }
+    //Removing trailing coma
+    pays.remove(pays.size()-1, 1);
 
     //Synopsis
-    QString synopsis = contenu_page.right(contenu_page.size()-contenu_page.indexOf("itemprop=\"description"));
-    synopsis = synopsis.right(synopsis.size()-synopsis.indexOf(">")-1);
-    synopsis = synopsis.left(synopsis.indexOf("</p>"));
+    QString synopsis = contenu_page.right(contenu_page.size()-contenu_page.indexOf("twitter:description\"")-20);
+    synopsis = synopsis.right(synopsis.size()-synopsis.indexOf("\"")-1);
+    synopsis = synopsis.left(synopsis.indexOf("\""));
+    synopsis = this->convertUnicode(synopsis);
 
     film.insert("titre", titre.trimmed());
     film.insert("titreOriginal", titreOriginal.trimmed());
     film.insert("annee", annee);
     film.insert("duree", duree);
-    film.insert("pays", pays.trimmed());
+    film.insert("pays", pays);
     film.insert("directeur", directeur.trimmed());
     film.insert("acteurs", acteurs.trimmed());
     film.insert("genre", genres);
@@ -192,7 +223,7 @@ QString Allocine::download(QString url){
     if(!possibleRedirectUrl.toUrl().isEmpty()){
         QString newUrl = possibleRedirectUrl.toUrl().toString();
         if(!newUrl.startsWith("http")){
-            newUrl.prepend("http://www.filmaffinity.com");
+            newUrl.prepend("http://www.allocine.com");
         }
         contenu_page = this->download(newUrl);
     }
@@ -209,11 +240,28 @@ QString Allocine::convertTime(QString duree){
     }
     if(duree.contains("min")){
         copie = duree.right(duree.size()-duree.indexOf("h")-1);
-        copie = copie.trimmed().left(copie.indexOf("m"));
+        copie = copie.trimmed().left(copie.indexOf("m")-1);
         int minute = copie.toInt();
         minutes += minute;
     }
     return QString::number(minutes);
+}
+
+QString Allocine::convertUnicode(QString input){
+    QTextDocument doc; doc.setHtml(input);
+    input = doc.toPlainText();
+    QRegExp regExp("(&#\\d+;)");
+    QRegExp numbers("(\\d+)");
+    regExp.indexIn(input);
+    QStringList matches = regExp.capturedTexts();
+    for(QString stringChar : matches){
+        //Getting numbers
+        numbers.indexIn(stringChar);
+        QString capturedNumber = numbers.cap(); //Capturing numbers (ex: 039)
+        QChar convertedUnicode(capturedNumber.toShort()); //Converting number into char
+        input = input.replace(stringChar, QString(convertedUnicode)); //Replacing data
+    }
+    return input;
 }
 
 #if QT_VERSION < 0x050000
