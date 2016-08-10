@@ -286,7 +286,14 @@ void EditBook::accept(){
             //On vérifie que le dossier existe
             //QString chemin = insSettingsManager->getSettings(Fichier).toString();
             //chemin = chemin.left(chemin.lastIndexOf("/")+1);
-            QDir dossierImage; dossierImage.setPath("Images");
+            QFileInfo xmlPath(insSettingsManager->getSettings(Fichier).toString());
+            QDir dossierImage; dossierImage.setPath(xmlPath.absolutePath()+"/Images");
+            if(!dossierImage.exists()){
+                if(!dossierImage.mkdir(dossierImage.path())){
+                    QMessageBox::critical(this, "Impossible de télécharger les images", "Impossible de créer le dossier «"+dossierImage.absolutePath()+"».  Veuillez le créer manuellement.");
+                    return;
+                }
+            }
             nomImage = ToolsManager::downloadFile(ui->labelImageFilm->text(), dossierImage);
         }
 

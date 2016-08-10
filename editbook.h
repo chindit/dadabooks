@@ -2,6 +2,7 @@
 #define BOOK_EDIT_H
 
 #include <QDialog>
+#include <QFileInfo>
 #include <QListWidget>
 #include <QMessageBox>
 #include <QtNetwork/QNetworkAccessManager>

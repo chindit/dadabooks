@@ -9,7 +9,11 @@ QT       += core gui sql xml network widgets printsupport
 TARGET = dadabooks
 TEMPLATE = app
 
-LIBS += -lmysqld
+#For Linux
+#LIBS += -lmysqld
+#For Windows
+LIBS += "C:\Program Files\MariaDB 10.1\lib\libmysql.lib"
+
 QTPLUGIN += qsqlmysql
 
 SOURCES += main.cpp\
