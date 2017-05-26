@@ -25,4 +25,12 @@ const boost::unordered_map<Setting, const char*> settingsNames = boost::assign::
     (Type, "typeCollection")
     (Empruntable, "isEmpruntable");
 
+// Collection type handled by DadaBooks
+enum Collection { Book, Movie };
+
+// Collection variables
+const boost::unordered_map<Collection, const char*> collectionNames = boost::assign::map_list_of
+    (Book, "livres")
+    (Movie, "films");
+
 #endif // CONFIG_H

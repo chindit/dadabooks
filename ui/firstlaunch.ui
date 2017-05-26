@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>584</width>
-    <height>373</height>
+    <width>606</width>
+    <height>429</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Premier lancement de DadaBooks</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="images.qrc">
+   <iconset resource="../images.qrc">
     <normaloff>:/programme/images/icone.png</normaloff>:/programme/images/icone.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
@@ -51,9 +51,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="buttonSQL">
+      <widget class="QPushButton" name="buttonCloud">
        <property name="text">
-        <string>MySQL</string>
+        <string>Cloud</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -153,7 +153,7 @@
      <item>
       <widget class="QLabel" name="label_7">
        <property name="text">
-        <string>3)MySQL/MariaDB : Convient pour les énormes bibliothèques.  Ce type de format permet l'utilisation d'une base de données locale ou en ligne.</string>
+        <string>3)Cloud : pratique pour tout type de base.  Nécessite la création d'un compte sur www.dadabooks.com</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -175,12 +175,12 @@
       <widget class="QComboBox" name="comboBox_Type">
        <item>
         <property name="text">
-         <string>Livres</string>
+         <string>Films</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Films</string>
+         <string>Livres</string>
         </property>
        </item>
       </widget>
@@ -201,7 +201,24 @@
   </layout>
  </widget>
  <resources>
-  <include location="images.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>buttonSkip</sender>
+   <signal>clicked()</signal>
+   <receiver>FirstLaunch</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>498</x>
+     <y>314</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>603</x>
+     <y>271</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

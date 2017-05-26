@@ -4,12 +4,13 @@
 #include <QDialog>
 #include <QFileDialog>
 #include <QFileInfo>
-#include <QLineEdit>
+#include <QMessageBox>
 
-#include "settingsmanager.h"
+#include "tools/settings.h"
+#include "config/config.h"
 
 namespace Ui {
-class FirstLaunch;
+    class FirstLaunch;
 }
 
 class FirstLaunch : public QDialog
@@ -17,27 +18,22 @@ class FirstLaunch : public QDialog
     Q_OBJECT
 
 public:
-    explicit FirstLaunch(QWidget *parent = 0);
+    explicit FirstLaunch(QWidget *parent, Settings *settings);
     ~FirstLaunch();
 
 private slots:
     void setXML();
     void setSQLite();
-    void setSQL();
-    void setSkip();
-    void saveSQLParams();
+    void setCloud();
     void accept();
 
 private:
     QString getDirName(bool isXML=false);
+    void setConnectors();
 
     Ui::FirstLaunch *ui;
-    QDialog *dialogParams;
-    QLineEdit *lineEditHost;
-    QLineEdit *lineEditUser;
-    QLineEdit *lineEditPass;
-    QLineEdit *lineEditTable;
-    SettingsManager *insSettingsManager;
+
+    Settings *settings;
 };
 
 #endif // FIRSTLAUNCH_H

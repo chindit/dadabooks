@@ -43,10 +43,11 @@ void Settings::setSetting(Setting s, QVariant v){
  * @brief Settings::loadSettings
  */
 void Settings::loadSettings() {
-    QSettings options("DadaBooks", "dadabooks");
+    QSettings options(QSettings::UserScope, "DadaBooks", "dadabooks");
 
     // With «find» we get an iterator.  With «second» we take its value
-    savedSettings[Setting::AutoAuteur] = options.value(settingsNames.find(AutoAuteur)->second, true);
+    QStringList test = options.allKeys();
+    savedSettings[Setting::AutoAuteur] = options.value("test", true);
     savedSettings[Setting::AutoEditeur] = options.value(settingsNames.find(AutoEditeur)->second, true);
     savedSettings[Setting::Sqlite] = options.value(settingsNames.find(Sqlite)->second, false);
     savedSettings[Setting::MariaDB] = options.value(settingsNames.find(MariaDB)->second, false);
@@ -62,4 +63,15 @@ void Settings::loadSettings() {
     savedSettings[Setting::Type] = options.value(settingsNames.find(Type)->second, "livres");
     savedSettings[Setting::Empruntable] = options.value(settingsNames.find(Empruntable)->second, true);
     return;
+}
+
+/**
+ * Force settings to be reloaded from config file
+ * @brief Settings::reload
+ * @return
+ */
+bool Settings::reload()
+{
+    this->loadSettings();
+    return true;
 }

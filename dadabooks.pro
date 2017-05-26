@@ -28,7 +28,7 @@ SOURCES += main.cpp\
     sqlmanager.cpp \
     previewbook.cpp \
     settingsdialog.cpp \
-    firstlaunch.cpp \
+    ui/firstlaunch.cpp \
     toolsmanager.cpp \
     imageuploaddialog.cpp \
     lenddialog.cpp \
@@ -48,7 +48,7 @@ HEADERS  += dadabooks.h \
     sqlmanager.h \
     previewbook.h \
     settingsdialog.h \
-    firstlaunch.h \
+    ui/firstlaunch.h \
     toolsmanager.h \
     imageuploaddialog.h \
     lenddialog.h \
@@ -64,7 +64,7 @@ FORMS    += dadabooks.ui \
     addediteur.ui \
     previewbook.ui \
     settingsdialog.ui \
-    firstlaunch.ui \
+    ui/firstlaunch.ui \
     imageuploaddialog.ui \
     lenddialog.ui \
     searchdialog.ui

@@ -14,7 +14,7 @@
 
 #include "addbook.h"
 #include "editbook.h"
-#include "firstlaunch.h"
+#include "ui/firstlaunch.h"
 #include "lenddialog.h"
 #include "previewbook.h"
 #include "searchdialog.h"

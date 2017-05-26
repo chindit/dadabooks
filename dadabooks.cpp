@@ -11,15 +11,13 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     settings = new Settings();
     // Check if first start
     if (settings->getSetting(Setting::Initialized).toBool()) {
-        FirstLaunch *firstLaunchDialog = new FirstLaunch(this);
+        FirstLaunch *firstLaunchDialog = new FirstLaunch(this, settings);
         // This is a modal (blocking) window.  We don't want main thread to continue when this modal is ON
         int result = firstLaunchDialog->exec();
         delete firstLaunchDialog;
         if (result != QDialog::Accepted) {
             // TODO Add log
         }
-        // Reload parameters to get updated values
-        settings->reload();
     }
     ui->setupUi(this);
 
@@ -36,8 +34,8 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     isCalling = false;
 
     //On vérifie si le programme est initialisé ou non
-    if(!insSettingsManager->getSettings(Initialized).toBool()){
-        class::FirstLaunch *insFirstLaunch = new class::FirstLaunch(this);
+    /*if(!insSettingsManager->getSettings(Initialized).toBool()){
+        FirstLaunch *insFirstLaunch = new FirstLaunch(this,);
         insFirstLaunch->exec();
         delete insFirstLaunch;
 
@@ -47,7 +45,7 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
         if(insSettingsManager->getSettings(Fichier).toString().isEmpty() && !insSettingsManager->getSettings(MariaDB).toBool()){
             this->openFile();
         }
-    }
+    }*/
 
     if(insSettingsManager->getSettings(Xml).toBool()){
         insXmlManager = new XmlManager();
