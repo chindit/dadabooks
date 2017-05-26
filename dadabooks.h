@@ -89,6 +89,7 @@ private:
     Updater *insUpdater;
     XmlManager *insXmlManager;
     QMovie *movieLoading;
+    Settings *settings;
 
     int idOngletEdit;
     bool isCalling;

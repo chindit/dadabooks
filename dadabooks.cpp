@@ -8,10 +8,18 @@
  */
 DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBooks){
 
-    Settings *test = new Settings();
+    settings = new Settings();
     // Check if first start
-    if (test->getSetting(Setting::FirstLaunch).toBool()) {
-        QString launch = QString("ok");
+    if (settings->getSetting(Setting::Initialized).toBool()) {
+        FirstLaunch *firstLaunchDialog = new FirstLaunch(this);
+        // This is a modal (blocking) window.  We don't want main thread to continue when this modal is ON
+        int result = firstLaunchDialog->exec();
+        delete firstLaunchDialog;
+        if (result != QDialog::Accepted) {
+            // TODO Add log
+        }
+        // Reload parameters to get updated values
+        settings->reload();
     }
     ui->setupUi(this);
 
@@ -119,6 +127,7 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
 
 //Destructeur
 DadaBooks::~DadaBooks(){
+    delete settings;
     delete ui;
     delete insAddBook;
     delete insLendDialog;
