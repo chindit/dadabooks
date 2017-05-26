@@ -12,9 +12,9 @@ TEMPLATE = app
 #For Linux
 #LIBS += -lmysqld
 #For Windows
-LIBS += "C:\Program Files\MariaDB 10.1\lib\libmysql.lib"
+#LIBS += "C:\Program Files\MariaDB 10.1\lib\libmysql.lib"
 
-QTPLUGIN += qsqlmysql
+#QTPLUGIN += qsqlmysql
 
 SOURCES += main.cpp\
         dadabooks.cpp \
@@ -33,7 +33,8 @@ SOURCES += main.cpp\
     imageuploaddialog.cpp \
     lenddialog.cpp \
     updater.cpp \
-    searchdialog.cpp
+    searchdialog.cpp \
+    tools/settings.cpp
 
 HEADERS  += dadabooks.h \
     settingsmanager.h \
@@ -52,7 +53,9 @@ HEADERS  += dadabooks.h \
     imageuploaddialog.h \
     lenddialog.h \
     updater.h \
-    searchdialog.h
+    searchdialog.h \
+    tools/settings.h \
+    config/config.h
 
 FORMS    += dadabooks.ui \
     addbook.ui \
@@ -68,3 +71,5 @@ FORMS    += dadabooks.ui \
 
 RESOURCES += \
     images.qrc
+
+INCLUDEPATH += '/opt/local/include/'

@@ -1,12 +1,12 @@
 #ifndef SETTINGSMANAGER_H
 #define SETTINGSMANAGER_H
 
-enum Setting { AutoAuteur, AutoEditeur, Sqlite, MariaDB, DBHost, DBUser, DBPass, DBBase, Xml, Fichier, Initialized, OpenInTab, DownPics, Type, Empruntable };
-
 #include <QObject>
 #include <QMessageBox>
 #include <QVariant>
 #include <QSettings>
+
+#include "config/config.h"
 
 class SettingsManager : public QObject
 {

@@ -1,10 +1,18 @@
 #include "dadabooks.h"
 #include "ui_dadabooks.h"
 
-//Constructeur
+/**
+ * Main method for program
+ * @brief DadaBooks::DadaBooks
+ * @param parent
+ */
 DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBooks){
 
-    //Création de l'UI
+    Settings *test = new Settings();
+    // Check if first start
+    if (test->getSetting(Setting::FirstLaunch).toBool()) {
+        QString launch = QString("ok");
+    }
     ui->setupUi(this);
 
     //Initialisations des classes
@@ -21,7 +29,7 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
 
     //On vérifie si le programme est initialisé ou non
     if(!insSettingsManager->getSettings(Initialized).toBool()){
-        FirstLaunch *insFirstLaunch = new FirstLaunch(this);
+        class::FirstLaunch *insFirstLaunch = new class::FirstLaunch(this);
         insFirstLaunch->exec();
         delete insFirstLaunch;
 

@@ -19,6 +19,7 @@
 #include "previewbook.h"
 #include "searchdialog.h"
 #include "settingsdialog.h"
+#include "tools/settings.h"
 #include "settingsmanager.h"
 #include "sitemanager.h"
 #include "sqlmanager.h"
