@@ -71,5 +71,3 @@ FORMS    += dadabooks.ui \
 
 RESOURCES += \
     images.qrc
-
-INCLUDEPATH += '/opt/local/include/'

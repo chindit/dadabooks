@@ -1,10 +1,12 @@
 #include "settings.h"
 
 Settings::Settings()
-{
-    this->loadSettings();
+{  
     // TODO try this
+    int test = settingsNames.size();
     this->savedSettings = new QVariant[settingsNames.size()];
+
+    this->loadSettings();
 }
 
 Settings::~Settings()
@@ -43,11 +45,21 @@ void Settings::setSetting(Setting s, QVariant v){
  * @brief Settings::loadSettings
  */
 void Settings::loadSettings() {
-    QSettings options(QSettings::UserScope, "DadaBooks", "dadabooks");
+    /**
+     * MacOS needs a special handling as it will crash if settings
+     * are loaded the normal way.  So, we need to use a custom
+     * location for settings file.
+     */
+//#ifdef TARGET_OS_MAC
+//    QSettings options(QApplication::applicationDirPath().left(1) + ":/dadabooks_settings.ini", QSettings::defaultFormat());
+//#else
+    QSettings options(QSettings::IniFormat, QSettings::UserScope, "DadaBooks", "dadabooks");
+//#endif
 
     // With «find» we get an iterator.  With «second» we take its value
-    QStringList test = options.allKeys();
-    savedSettings[Setting::AutoAuteur] = options.value("test", true);
+    QString test = settingsNames.find(AutoAuteur)->second;
+    QVariant testV = options.value("missing", false);
+    savedSettings[Setting::AutoAuteur] = options.value(settingsNames.find(AutoAuteur)->second, true);
     savedSettings[Setting::AutoEditeur] = options.value(settingsNames.find(AutoEditeur)->second, true);
     savedSettings[Setting::Sqlite] = options.value(settingsNames.find(Sqlite)->second, false);
     savedSettings[Setting::MariaDB] = options.value(settingsNames.find(MariaDB)->second, false);
