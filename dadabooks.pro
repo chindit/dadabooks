@@ -35,7 +35,8 @@ SOURCES += main.cpp\
     updater.cpp \
     searchdialog.cpp \
     tools/settings.cpp \
-    ui/apidialog.cpp
+    ui/apidialog.cpp \
+    tools/logger.cpp
 
 HEADERS  += dadabooks.h \
     settingsmanager.h \
@@ -57,7 +58,8 @@ HEADERS  += dadabooks.h \
     searchdialog.h \
     tools/settings.h \
     config/config.h \
-    ui/apidialog.h
+    ui/apidialog.h \
+    tools/logger.h
 
 FORMS    += dadabooks.ui \
     addbook.ui \
