@@ -101,7 +101,9 @@ void FirstLaunch::accept(){
 
     // Cloud
     if(ui->buttonCloud->isChecked()){
-        // TODO
+        ApiDialog *apiDialogWindow = new ApiDialog(this);
+        apiDialogWindow->exec();
+        delete apiDialogWindow;
     }
     // File-based storage
     else {
@@ -113,20 +115,19 @@ void FirstLaunch::accept(){
 
     // Handling collection type
     bool collectionFound = false;
+    Collection detectedCollection;
     for ( auto it = collectionNames.begin(); it != collectionNames.end(); ++it ) {
         if (it->second == ui->comboBox_Type->currentText().toLower()) {
-            Collection detectedCollection = it->first;
+            detectedCollection = it->first;
             collectionFound = true;
             break;
         }
     }
-
-    if(ui->comboBox_Type->currentText().toLower() == "livres" || ui->comboBox_Type->currentText().toLower() == "films"){
-        settings->setSetting(Type, ui->comboBox_Type->currentText().toLower());
-    }
-    else{
-        QMessageBox::critical(this, "Aucun type de collection choisi", "Aucun type de collection n'a été choisi.  Il est donc impossible de continuer");
-        return;
+    if (collectionFound) {
+        settings->setSetting(Type, detectedCollection);
+    } else {
+        // Logic exception.  This code shouldn't be reached
+        QMessageBox::critical(this, tr("Aucun type de collection choisi"), tr("Aucun type de collection n'a été choisi.  Il est donc impossible de continuer"));
     }
 }
 

@@ -13,5 +13,9 @@ int main(int argc, char *argv[])
     instance.show();
 
     screen.finish(&instance);
+
+    // Initiate new session if not set
+    instance.init();
+
     return app.exec();
 }

@@ -34,7 +34,8 @@ SOURCES += main.cpp\
     lenddialog.cpp \
     updater.cpp \
     searchdialog.cpp \
-    tools/settings.cpp
+    tools/settings.cpp \
+    ui/apidialog.cpp
 
 HEADERS  += dadabooks.h \
     settingsmanager.h \
@@ -55,7 +56,8 @@ HEADERS  += dadabooks.h \
     updater.h \
     searchdialog.h \
     tools/settings.h \
-    config/config.h
+    config/config.h \
+    ui/apidialog.h
 
 FORMS    += dadabooks.ui \
     addbook.ui \
@@ -67,7 +69,8 @@ FORMS    += dadabooks.ui \
     ui/firstlaunch.ui \
     imageuploaddialog.ui \
     lenddialog.ui \
-    searchdialog.ui
+    searchdialog.ui \
+    ui/apidialog.ui
 
 RESOURCES += \
     images.qrc

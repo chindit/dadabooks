@@ -6,21 +6,15 @@
  * @brief DadaBooks::DadaBooks
  * @param parent
  */
-DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBooks){
+DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBooks)
+{
 
-    settings = new Settings();
-    // Check if first start
-    if (settings->getSetting(Setting::Initialized).toBool()) {
-        FirstLaunch *firstLaunchDialog = new FirstLaunch(this, settings);
-        // This is a modal (blocking) window.  We don't want main thread to continue when this modal is ON
-        int result = firstLaunchDialog->exec();
-        delete firstLaunchDialog;
-        if (result != QDialog::Accepted) {
-            // TODO Add log
-        }
-    }
     ui->setupUi(this);
 
+    settings = new Settings();
+
+
+    // To Remove
     //Initialisations des classes
     insPreviewBook = new PreviewBook(this);
     insSettingsManager = new SettingsManager(this);
@@ -33,20 +27,6 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     idOngletEdit = -1;
     isCalling = false;
 
-    //On vérifie si le programme est initialisé ou non
-    /*if(!insSettingsManager->getSettings(Initialized).toBool()){
-        FirstLaunch *insFirstLaunch = new FirstLaunch(this,);
-        insFirstLaunch->exec();
-        delete insFirstLaunch;
-
-        //On recharge les paramètres
-        insSettingsManager->loadSettings();
-        insSettingsManager->setSettings(Initialized, true);
-        if(insSettingsManager->getSettings(Fichier).toString().isEmpty() && !insSettingsManager->getSettings(MariaDB).toBool()){
-            this->openFile();
-        }
-    }*/
-
     if(insSettingsManager->getSettings(Xml).toBool()){
         insXmlManager = new XmlManager();
         ui->pushButton_recherche->setHidden(true);
@@ -56,63 +36,6 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
 
     insEditBook = new EditBook;
     insSettingsDialog = new SettingsDialog;
-
-    QMenu *menuFichier = this->menuBar()->addMenu(tr("&Fichier"));
-    QAction *actionNouveau = menuFichier->addAction(tr("Nouvelle collection"));
-    actionNouveau->setShortcut(QKeySequence("Ctrl+Maj+N"));
-    actionNouveau->setIcon(QIcon(":/menus/images/nouveau.png"));
-    QMenu *menuFichierExport = menuFichier->addMenu("&Exporter");
-    QAction *actionExportHTML = menuFichierExport->addAction("HTML");
-    actionExportHTML->setIcon(QIcon(":/menus/images/html.png"));
-    QAction *actionExportPDF = menuFichierExport->addAction("PDF");
-    actionExportPDF->setIcon(QIcon(":/menus/images/pdf.png"));
-    QAction *actionQuitter = menuFichier->addAction(tr("Quitter"));
-    actionQuitter->setShortcut(QKeySequence("Ctrl+Q"));
-    actionQuitter->setIcon(QIcon(":/menus/images/quitter.png"));
-
-    QMenu *menuAide = this->menuBar()->addMenu((tr("&Aide")));
-#ifdef Q_WS_WIN
-    QAction *actionUpdate = menuAide->addAction(tr("Rechercher une mise à jour"));
-    actionUpdate->setIcon(QIcon(":/menus/images/maj.png"));
-#endif
-    QAction *actionAbout = menuAide->addAction(tr("À propos de DadaBooks"));
-    actionAbout->setIcon(QIcon(":/menus/images/a_propos.png"));
-    QAction *actionAboutQt = menuAide->addAction(tr("À propos de Qt"));
-    actionAboutQt->setIcon(QIcon(":/menus/images/logo_qt.jpg"));
-
-    //Connexion des signaux et des slots
-    connect(ui->pushButton_add, SIGNAL(clicked()), this, SLOT(showAddBook()));
-    connect(insAddBook, SIGNAL(canceled()), this, SLOT(showInitStacked()));
-    connect(insPreviewBook, SIGNAL(canceled()), this, SLOT(showInitStacked()));
-    connect(insAddBook, SIGNAL(searchInternet(QString,QString,QString)), this, SLOT(rechercheInternet(QString,QString,QString)));
-    connect(ui->pushButton_random, SIGNAL(clicked()), this, SLOT(selectRandom()));
-    connect(insPreviewBook, SIGNAL(bookSelected(QString, QString)), this, SLOT(getBook(QString, QString)));
-    connect(ui->tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
-    connect(insEditBook, SIGNAL(editDone(int)), this, SLOT(updateOnglet(int)));
-    connect(insEditBook, SIGNAL(bookAdded()), this, SLOT(setListeLivres()));
-    connect(insEditBook, SIGNAL(bookAdded()), this, SLOT(showInitStacked()));
-    connect(insEditBook, SIGNAL(editCanceled()), this, SLOT(setEditCanceled()));
-    connect(ui->pushButton_options, SIGNAL(clicked()), insSettingsDialog, SLOT(show()));
-    connect(ui->pushButton_recherche, SIGNAL(clicked()), insSearchDialog, SLOT(show()));
-    connect(actionQuitter, SIGNAL(triggered()), this, SLOT(close()));
-    connect(actionAbout, SIGNAL(triggered()), this, SLOT(about()));
-    connect(actionAboutQt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
-    connect(actionNouveau, SIGNAL(triggered()), this, SLOT(openNewColl()));
-    connect(actionExportHTML, SIGNAL(triggered()), this, SLOT(exportAsHTML()));
-    connect(actionExportPDF, SIGNAL(triggered()), this, SLOT(exportAsPDF()));
-#ifdef Q_WS_WIN
-    connect(actionUpdate, SIGNAL(triggered()), insUpdater, SLOT(showUpdateDialog()));
-#endif
-
-    //Slots de visualisation intabPreview
-    connect(ui->pushButtonDelete, SIGNAL(clicked()), this, SLOT(deleteLivre()));
-    connect(ui->pushButtonDeleteLivre, SIGNAL(clicked()), this, SLOT(deleteLivre()));
-    connect(ui->pushButtonEdit, SIGNAL(clicked()), this, SLOT(editLivre()));
-    connect(ui->pushButtonEditLivre, SIGNAL(clicked()), this, SLOT(editLivre()));
-    connect(ui->pushButtonPret, SIGNAL(clicked()), this, SLOT(prepareLendDialog()));
-    connect(ui->pushButtonPretLivre, SIGNAL(clicked()), this, SLOT(prepareLendDialog()));
-    connect(insLendDialog, SIGNAL(lendCurrent(QString, QString)), this, SLOT(lendItem(QString, QString)));
-    connect(insLendDialog, SIGNAL(returnCurrent(int,int)), this, SLOT(returnItem(int, int)));
 
     //Chargement du GIF de… chargement
     movieLoading = new QMovie(":/programme/images/loader.gif");
@@ -127,6 +50,7 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
 DadaBooks::~DadaBooks(){
     delete settings;
     delete ui;
+    // TODO Remove
     delete insAddBook;
     delete insLendDialog;
     delete insSiteManager;
@@ -141,6 +65,64 @@ DadaBooks::~DadaBooks(){
     delete insSettingsManager;
     delete movieLoading;
     delete insUpdater;
+}
+
+/**
+ * Run startup script if program is not initiated yet.
+ * @brief DadaBooks::init
+ */
+void DadaBooks::init()
+{
+    // Check if first start
+    //if (settings->getSetting(Setting::Initialized).toBool()) {
+        FirstLaunch *firstLaunchDialog = new FirstLaunch(this, settings);
+        // This is a modal (blocking) window.  We don't want main thread to continue when this modal is ON
+        int result = firstLaunchDialog->exec();
+        delete firstLaunchDialog;
+        if (result != QDialog::Accepted) {
+            // TODO Add log
+        }
+    //}
+}
+
+/**
+ * Connect signals and slots for the main window
+ * @brief DadaBooks::setConnectors
+ */
+void DadaBooks::setConnectors()
+{
+    connect(ui->pushButton_add, SIGNAL(clicked()), this, SLOT(showAddBook()));
+    connect(insAddBook, SIGNAL(canceled()), this, SLOT(showInitStacked()));
+    connect(insPreviewBook, SIGNAL(canceled()), this, SLOT(showInitStacked()));
+    connect(insAddBook, SIGNAL(searchInternet(QString,QString,QString)), this, SLOT(rechercheInternet(QString,QString,QString)));
+    connect(ui->pushButton_random, SIGNAL(clicked()), this, SLOT(selectRandom()));
+    connect(insPreviewBook, SIGNAL(bookSelected(QString, QString)), this, SLOT(getBook(QString, QString)));
+    connect(ui->tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
+    connect(insEditBook, SIGNAL(editDone(int)), this, SLOT(updateOnglet(int)));
+    connect(insEditBook, SIGNAL(bookAdded()), this, SLOT(setListeLivres()));
+    connect(insEditBook, SIGNAL(bookAdded()), this, SLOT(showInitStacked()));
+    connect(insEditBook, SIGNAL(editCanceled()), this, SLOT(setEditCanceled()));
+    connect(ui->pushButton_options, SIGNAL(clicked()), insSettingsDialog, SLOT(show()));
+    connect(ui->pushButton_recherche, SIGNAL(clicked()), insSearchDialog, SLOT(show()));
+    connect(ui->exitAction, SIGNAL(triggered()), this, SLOT(close()));
+    connect(ui->aboutAction, SIGNAL(triggered()), this, SLOT(about()));
+    connect(ui->aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+    connect(ui->newCollectionAction, SIGNAL(triggered()), this, SLOT(openNewColl()));
+    connect(ui->HTMLAction, SIGNAL(triggered()), this, SLOT(exportAsHTML()));
+    connect(ui->PDFAction, SIGNAL(triggered()), this, SLOT(exportAsPDF()));
+#ifdef Q_WS_WIN
+    connect(actionUpdate, SIGNAL(triggered()), insUpdater, SLOT(showUpdateDialog()));
+#endif
+
+    //Slots de visualisation intabPreview
+    connect(ui->pushButtonDelete, SIGNAL(clicked()), this, SLOT(deleteLivre()));
+    connect(ui->pushButtonDeleteLivre, SIGNAL(clicked()), this, SLOT(deleteLivre()));
+    connect(ui->pushButtonEdit, SIGNAL(clicked()), this, SLOT(editLivre()));
+    connect(ui->pushButtonEditLivre, SIGNAL(clicked()), this, SLOT(editLivre()));
+    connect(ui->pushButtonPret, SIGNAL(clicked()), this, SLOT(prepareLendDialog()));
+    connect(ui->pushButtonPretLivre, SIGNAL(clicked()), this, SLOT(prepareLendDialog()));
+    connect(insLendDialog, SIGNAL(lendCurrent(QString, QString)), this, SLOT(lendItem(QString, QString)));
+    connect(insLendDialog, SIGNAL(returnCurrent(int,int)), this, SLOT(returnItem(int, int)));
 }
 
 //Transfère les données de AddBook à PreviewBook

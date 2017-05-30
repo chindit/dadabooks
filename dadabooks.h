@@ -19,7 +19,7 @@
 #include "previewbook.h"
 #include "searchdialog.h"
 #include "settingsdialog.h"
-#include "settings.h"
+#include "tools/settings.h"
 #include "settingsmanager.h"
 #include "sitemanager.h"
 #include "sqlmanager.h"
@@ -38,6 +38,7 @@ class DadaBooks : public QMainWindow
 
 public:
     explicit DadaBooks(QWidget *parent = 0);
+    void init();
     ~DadaBooks();
 
 private slots:
@@ -73,6 +74,7 @@ private slots:
 
 
 private:
+    void setConnectors();
     void intabPreview(int id);
     int getCurrentItemID();
 

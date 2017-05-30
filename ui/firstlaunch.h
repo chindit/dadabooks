@@ -6,7 +6,8 @@
 #include <QFileInfo>
 #include <QMessageBox>
 
-#include "settings.h"
+#include "tools/settings.h"
+#include "ui/apidialog.h"
 #include "config/config.h"
 
 namespace Ui {

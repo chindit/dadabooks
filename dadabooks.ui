@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>852</width>
-    <height>765</height>
+    <height>812</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1376,7 +1376,71 @@
    </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionQuitter">
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>852</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFichier">
+    <property name="title">
+     <string>Fichier</string>
+    </property>
+    <widget class="QMenu" name="menuExporter">
+     <property name="title">
+      <string>Exporter</string>
+     </property>
+     <addaction name="PDFAction"/>
+     <addaction name="HTMLAction"/>
+    </widget>
+    <addaction name="newCollectionAction"/>
+    <addaction name="menuExporter"/>
+    <addaction name="exitAction"/>
+   </widget>
+   <widget class="QMenu" name="menuAide">
+    <property name="title">
+     <string>Aide</string>
+    </property>
+    <addaction name="aboutQtAction"/>
+    <addaction name="aboutAction"/>
+   </widget>
+   <addaction name="menuFichier"/>
+   <addaction name="menuAide"/>
+  </widget>
+  <action name="newCollectionAction">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/menus/images/nouveau.png</normaloff>:/menus/images/nouveau.png</iconset>
+   </property>
+   <property name="text">
+    <string>Nouvelle collection</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="PDFAction">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/menus/images/pdf.png</normaloff>:/menus/images/pdf.png</iconset>
+   </property>
+   <property name="text">
+    <string>PDF</string>
+   </property>
+  </action>
+  <action name="HTMLAction">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/menus/images/html.png</normaloff>:/menus/images/html.png</iconset>
+   </property>
+   <property name="text">
+    <string>HTML</string>
+   </property>
+  </action>
+  <action name="exitAction">
    <property name="icon">
     <iconset resource="images.qrc">
      <normaloff>:/menus/images/quitter.png</normaloff>:/menus/images/quitter.png</iconset>
@@ -1384,8 +1448,23 @@
    <property name="text">
     <string>Quitter</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+Q</string>
+  </action>
+  <action name="aboutQtAction">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/menus/images/logo_qt.jpg</normaloff>:/menus/images/logo_qt.jpg</iconset>
+   </property>
+   <property name="text">
+    <string>À propos de Qt</string>
+   </property>
+  </action>
+  <action name="aboutAction">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/menus/images/a_propos.png</normaloff>:/menus/images/a_propos.png</iconset>
+   </property>
+   <property name="text">
+    <string>À propos</string>
    </property>
   </action>
  </widget>
