@@ -1,6 +1,10 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include <map>
+
+#include <QString>
+
 // Settings enumeration
 enum Setting { AutoAuteur, AutoEditeur, Sqlite, MariaDB, DBHost, DBUser, DBPass, DBBase, Xml, Fichier, Initialized, OpenInTab, DownPics, Type, Empruntable };
 
@@ -31,5 +35,22 @@ const std::map<Collection, const char*> collectionNames {
     {Book, "livres"},
     {Movie, "films"}
 };
+
+// Log level
+enum LogLevel { DEBUG, INFO, NOTICE, WARNING, ERROR, CRITICAL, ALERT, EMERGENCY };
+
+// Log level names
+const std::map<LogLevel, const char*> logLevelNames {
+    {DEBUG, "DEBUG"},
+    {INFO, "INFO"},
+    {NOTICE, "NOTICE"},
+    {WARNING, "WARNING"},
+    {ERROR, "ERROR"},
+    {CRITICAL, "CRITICAL"},
+    {ALERT, "ALERT"},
+    {EMERGENCY, "EMERGENCY"}
+};
+
+const QString LogFilename = QString("dadabooks.log");
 
 #endif // CONFIG_H

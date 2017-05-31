@@ -59,7 +59,8 @@ HEADERS  += dadabooks.h \
     tools/settings.h \
     config/config.h \
     ui/apidialog.h \
-    tools/logger.h
+    tools/logger.h \
+    tools/exceptioninterface.h
 
 FORMS    += dadabooks.ui \
     addbook.ui \
