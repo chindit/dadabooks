@@ -61,6 +61,7 @@ void Settings::loadSettings() {
     savedSettings[Setting::DownPics] = options.value(settingsNames.find(DownPics)->second, true);
     savedSettings[Setting::Type] = options.value(settingsNames.find(Type)->second, "livres");
     savedSettings[Setting::Empruntable] = options.value(settingsNames.find(Empruntable)->second, true);
+    savedSettings[Setting::Verbosity] = options.value(settingsNames.find(Verbosity)->second, LogLevel::WARNING);
     return;
 }
 

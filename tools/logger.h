@@ -5,6 +5,7 @@
 #include <QException>
 #include <QFile>
 #include <QMap>
+#include <QMessageBox>
 #include <QStandardPaths>
 
 #include "config/config.h"

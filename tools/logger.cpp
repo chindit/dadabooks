@@ -54,6 +54,17 @@ void Logger::log(LogLevel level, QString message, QMap<QString, QString> context
     }
 
     this->write(output);
+
+    // Show an alert message
+    if (this->settings->getSetting(Verbosity) >= level) {
+        if (level <= LogLevel::INFO) {
+            QMessageBox::information(this->parent, QObject::tr("Information"), message);
+        } else if (level <= LogLevel::WARNING) {
+            QMessageBox::warning(this->parent, QObject::tr("Alerte"), message);
+        } else {
+            QMessageBox::critical(this->parent, QObject::tr("Erreur"), message);
+        }
+    }
 }
 
 /**
