@@ -10,8 +10,10 @@
  */
 FirstLaunch::FirstLaunch(QWidget *parent, Settings *settings) : QDialog(parent), ui(new Ui::FirstLaunch){
     this->settings = settings;
+    this->currentDir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 
     ui->setupUi(this);
+    this->setupUi();
 
     this->setConnectors();
 }
@@ -24,42 +26,6 @@ FirstLaunch::FirstLaunch(QWidget *parent, Settings *settings) : QDialog(parent),
 FirstLaunch::~FirstLaunch(){
     delete ui;
     // We don't need to delete *settings as the pointer is handled by sender.
-}
-
-/**
- * Activate XML button
- * @brief FirstLaunch::setXML
- */
-void FirstLaunch::setXML(){
-    if(ui->buttonXML->isChecked()){
-        ui->buttonCloud->setChecked(false);
-        ui->buttonSQLite->setChecked(false);
-    }
-    return;
-}
-
-/**
- * Activate Cloud button
- * @brief FirstLaunch::setCloud
- */
-void FirstLaunch::setCloud(){
-    if(ui->buttonCloud->isChecked()){
-        ui->buttonSQLite->setChecked(false);
-        ui->buttonXML->setChecked(false);
-    }
-    return;
-}
-
-/**
- * Activate SQLite button
- * @brief FirstLaunch::setSQLite
- */
-void FirstLaunch::setSQLite(){
-    if(ui->buttonSQLite->isChecked()){
-        ui->buttonCloud->setChecked(false);
-        ui->buttonXML->setChecked(false);
-    }
-    return;
 }
 
 /**
@@ -137,8 +103,88 @@ void FirstLaunch::accept(){
  */
 void FirstLaunch::setConnectors()
 {
-    connect(ui->buttonXML, SIGNAL(clicked()), this, SLOT(setXML()));
+    connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(updateBreadcrumb(int)));
+
+    connect(ui->startButton, SIGNAL(clicked()), this, SLOT(next()));
+    connect(ui->nextButton, SIGNAL(clicked()), this, SLOT(next()));
+    connect(ui->nextButton2, SIGNAL(clicked()), this, SLOT(checkStorageType()));
+    /*connect(ui->buttonXML, SIGNAL(clicked()), this, SLOT(setXML()));
     connect(ui->buttonSQLite, SIGNAL(clicked()), this, SLOT(setSQLite()));
     connect(ui->buttonCloud, SIGNAL(clicked()), this, SLOT(setCloud()));
-    connect(ui->buttonGo, SIGNAL(clicked()), this, SLOT(accept()));
+    connect(ui->buttonGo, SIGNAL(clicked()), this, SLOT(accept()));*/
+}
+
+/**
+ * Initialize some custom UI settings
+ * @brief FirstLaunch::setupUi
+ */
+void FirstLaunch::setupUi()
+{
+    // TODO labelStorageInfo
+}
+
+/**
+ * Check if storage type is correctly enabled
+ * @brief FirstLaunch::checkStorageType
+ */
+void FirstLaunch::checkStorageType()
+{
+    long formatChecked = 0;
+    if (ui->pushButtonXML->isChecked()) {
+        formatChecked++;
+    }
+    if (ui->pushButtonSQLite->isChecked()) {
+        formatChecked++;
+    }
+    if (ui->pushButtonCloud->isChecked()) {
+        formatChecked++;
+    }
+
+    if (formatChecked == 1) {
+        this->next();
+        return;
+    }
+    if (formatChecked == 0) {
+        QMessageBox::information(this, tr("Pas de méthode de stockage"), tr("Vous devez choisir une méthode de stockage pour votre collection"));
+    } else {
+        QMessageBox::information(this, tr("Trop de méthodes"), tr("Vous ne pouvez sélectionner qu'une seule méthode de stockage"));
+    }
+}
+
+/**
+ * Update breadcrumb to reflect current position
+ * @brief FirstLaunch::updateBreadcrumb
+ * @param current
+ */
+void FirstLaunch::updateBreadcrumb(int current)
+{
+    ui->labelBreadcrumbIndex->setText(QString::number(current)+"/"+QString::number(ui->stackedWidget->count()));
+}
+
+/**
+ * Change to next page in stackedWidget
+ * @brief FirstLaunch::next
+ */
+void FirstLaunch::next()
+{
+    ui->stackedWidget->setCurrentIndex(ui->stackedWidget->currentIndex()+1);
+}
+
+/**
+ * Alias of getDirName without first argument
+ * @brief FirstLaunch::getStorageDir
+ */
+void FirstLaunch::getStorageDir()
+{
+    this->getDirName(ui->pushButtonXML->isChecked());
+}
+
+void FirstLaunch::finish()
+{
+    // Saving settings
+    // TODO check default return
+    Collection = collectionNames.find(ui->comboBoxCollectionType->currentText().toLower())->first;
+    this->settings->setSetting(Type, ui->comboBoxCollectionType->currentText().toLower());
+    this->settings->setSetting(Fichier, this->currentDir);
+    this->sett
 }

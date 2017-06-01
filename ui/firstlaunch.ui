@@ -52,7 +52,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="labelBreadcrumbIndex">
        <property name="text">
         <string>1/4</string>
        </property>
@@ -189,7 +189,12 @@ border-radius: 5px;</string>
         <widget class="QComboBox" name="comboBoxCollectionType">
          <item>
           <property name="text">
-           <string>Aucun type de collection détecté…</string>
+           <string>Films</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Livres</string>
           </property>
          </item>
         </widget>
@@ -330,6 +335,9 @@ border-radius: 5px;</string>
          <property name="text">
           <string>XML</string>
          </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item row="1" column="1">
@@ -352,6 +360,9 @@ border-radius: 5px;</string>
          </property>
          <property name="text">
           <string>SQLite</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -376,6 +387,9 @@ border-radius: 5px;</string>
          <property name="text">
           <string>Cloud</string>
          </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item row="3" column="1">
@@ -392,6 +406,9 @@ border-radius: 5px;</string>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
           <widget class="QPushButton" name="nextButton2">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -565,5 +582,54 @@ border-radius: 5px;</string>
  <resources>
   <include location="../images.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>skipButton</sender>
+   <signal>clicked()</signal>
+   <receiver>FirstLaunch</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>730</x>
+     <y>384</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>699</x>
+     <y>50</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>skipButton3</sender>
+   <signal>clicked()</signal>
+   <receiver>FirstLaunch</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>741</x>
+     <y>392</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>725</x>
+     <y>57</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>skipButton2</sender>
+   <signal>clicked()</signal>
+   <receiver>FirstLaunch</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>722</x>
+     <y>378</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>650</x>
+     <y>42</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

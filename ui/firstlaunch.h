@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
+#include <QStandardPaths>
 
 #include "tools/settings.h"
 #include "ui/apidialog.h"
@@ -23,18 +24,22 @@ public:
     ~FirstLaunch();
 
 private slots:
-    void setXML();
-    void setSQLite();
-    void setCloud();
+    void updateBreadcrumb(int current);
+    void checkStorageType();
+    void getStorageDir();
+    void next();
+    void finish();
     void accept();
 
 private:
     QString getDirName(bool isXML=false);
     void setConnectors();
+    void setupUi();
 
     Ui::FirstLaunch *ui;
 
     Settings *settings;
+    QString currentDir;
 };
 
 #endif // FIRSTLAUNCH_H

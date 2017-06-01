@@ -6,7 +6,7 @@
 #include <QString>
 
 // Settings enumeration
-enum Setting { AutoAuteur, AutoEditeur, Sqlite, MariaDB, DBHost, DBUser, DBPass, DBBase, Xml, Fichier, Initialized, OpenInTab, DownPics, Type, Empruntable, Verbosity };
+enum Setting { AutoAuteur, AutoEditeur, Sqlite, MariaDB, DBHost, DBUser, DBPass, DBBase, Xml, Fichier, Initialized, OpenInTab, DownPics, Type, Empruntable, Verbosity, StorageProvider };
 
 // Settings variables
 const std::map<Setting, const char*> settingsNames {
@@ -25,7 +25,8 @@ const std::map<Setting, const char*> settingsNames {
     {DownPics, "telechargerImages"},
     {Type, "typeCollection"},
     {Empruntable, "isEmpruntable"},
-    {Verbosity, "verbosity"}
+    {Verbosity, "verbosity"},
+    {StorageProvider, "storageEngin"}
 };
 
 // Collection type handled by DadaBooks

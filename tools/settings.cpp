@@ -62,6 +62,7 @@ void Settings::loadSettings() {
     savedSettings[Setting::Type] = options.value(settingsNames.find(Type)->second, "livres");
     savedSettings[Setting::Empruntable] = options.value(settingsNames.find(Empruntable)->second, true);
     savedSettings[Setting::Verbosity] = options.value(settingsNames.find(Verbosity)->second, LogLevel::WARNING);
+    savedSettings[Setting::StorageProvider] = options.value(settingsNames.find(StorageProvider)->second, 'xml');
     return;
 }
 

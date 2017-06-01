@@ -81,6 +81,7 @@ void DadaBooks::init()
         delete firstLaunchDialog;
         if (result != QDialog::Accepted) {
             // TODO Add log
+            QString a = QString('a');
         }
     //}
 }
