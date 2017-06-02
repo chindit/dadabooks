@@ -36,7 +36,10 @@ SOURCES += main.cpp\
     searchdialog.cpp \
     tools/settings.cpp \
     ui/apidialog.cpp \
-    tools/logger.cpp
+    tools/logger.cpp \
+    tools/pluginloader.cpp \
+    storage/xmlstorage.cpp \
+    entity/movieentity.cpp
 
 HEADERS  += dadabooks.h \
     settingsmanager.h \
@@ -61,8 +64,11 @@ HEADERS  += dadabooks.h \
     ui/apidialog.h \
     tools/logger.h \
     tools/exceptioninterface.h \
-    plugins/storage/storagedefinition.h \
-    plugins/abstractplugin.h
+    plugins/storagedefinition.h \
+    plugins/thirdpartydefinition.h \
+    tools/pluginloader.h \
+    storage/xmlstorage.h \
+    entity/movieentity.h
 
 FORMS    += dadabooks.ui \
     addbook.ui \

@@ -13,7 +13,7 @@ FirstLaunch::FirstLaunch(QWidget *parent, Settings *settings) : QDialog(parent),
     this->currentDir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 
     ui->setupUi(this);
-    this->setupUi();
+    this->updateStorageLabel();
 
     this->setConnectors();
 }
@@ -58,46 +58,6 @@ QString FirstLaunch::getDirName(bool isXML){
 }
 
 /**
- * Handle User choise about DB
- * @brief FirstLaunch::accept
- */
-void FirstLaunch::accept(){
-    // Close modal
-    this->close();
-
-    // Cloud
-    if(ui->buttonCloud->isChecked()){
-        ApiDialog *apiDialogWindow = new ApiDialog(this);
-        apiDialogWindow->exec();
-        delete apiDialogWindow;
-    }
-    // File-based storage
-    else {
-        settings->setSetting(Sqlite, ui->buttonSQLite->isChecked());
-        settings->setSetting(Xml, ui->buttonXML->isChecked());
-        QString fileName = this->getDirName();
-        settings->setSetting(Fichier, fileName);
-    }
-
-    // Handling collection type
-    bool collectionFound = false;
-    Collection detectedCollection;
-    for ( auto it = collectionNames.begin(); it != collectionNames.end(); ++it ) {
-        if (it->second == ui->comboBox_Type->currentText().toLower()) {
-            detectedCollection = it->first;
-            collectionFound = true;
-            break;
-        }
-    }
-    if (collectionFound) {
-        settings->setSetting(Type, detectedCollection);
-    } else {
-        // Logic exception.  This code shouldn't be reached
-        QMessageBox::critical(this, tr("Aucun type de collection choisi"), tr("Aucun type de collection n'a été choisi.  Il est donc impossible de continuer"));
-    }
-}
-
-/**
  * Connect buttons to actions
  * @brief FirstLaunch::setConnectors
  */
@@ -115,12 +75,13 @@ void FirstLaunch::setConnectors()
 }
 
 /**
- * Initialize some custom UI settings
- * @brief FirstLaunch::setupUi
+ * Update storage label
+ * @brief FirstLaunch::updateStorageLabel
  */
-void FirstLaunch::setupUi()
+void FirstLaunch::updateStorageLabel()
 {
-    // TODO labelStorageInfo
+    ui->labelStorageInfo->setText(QString(tr("Votre collection de %s sera stockée dans le répertoire %s"))
+                                  .arg(ui->comboBoxCollectionType->currentText()).arg(this->currentDir));
 }
 
 /**
@@ -129,8 +90,10 @@ void FirstLaunch::setupUi()
  */
 void FirstLaunch::checkStorageType()
 {
+    PluginLoader *loader = new PluginLoader();
     long formatChecked = 0;
     if (ui->pushButtonXML->isChecked()) {
+       loader->getStoragePluginByName("XML");
         formatChecked++;
     }
     if (ui->pushButtonSQLite->isChecked()) {
@@ -182,9 +145,6 @@ void FirstLaunch::getStorageDir()
 void FirstLaunch::finish()
 {
     // Saving settings
-    // TODO check default return
-    Collection = collectionNames.find(ui->comboBoxCollectionType->currentText().toLower())->first;
     this->settings->setSetting(Type, ui->comboBoxCollectionType->currentText().toLower());
     this->settings->setSetting(Fichier, this->currentDir);
-    this->sett
 }

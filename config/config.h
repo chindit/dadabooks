@@ -54,5 +54,6 @@ const std::map<LogLevel, const char*> logLevelNames {
 };
 
 const QString LogFilename = QString("dadabooks.log");
+const QString pluginPath = QString("plugins");
 
 #endif // CONFIG_H

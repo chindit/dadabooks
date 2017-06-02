@@ -7,9 +7,11 @@
 #include <QMessageBox>
 #include <QStandardPaths>
 
+#include "tools/pluginloader.h"
 #include "tools/settings.h"
 #include "ui/apidialog.h"
 #include "config/config.h"
+#include "plugins/storagedefinition.h"
 
 namespace Ui {
     class FirstLaunch;
@@ -29,16 +31,16 @@ private slots:
     void getStorageDir();
     void next();
     void finish();
-    void accept();
 
 private:
     QString getDirName(bool isXML=false);
     void setConnectors();
-    void setupUi();
+    void updateStorageLabel();
 
     Ui::FirstLaunch *ui;
 
     Settings *settings;
+    StoragePlugin *storagePlugin;
     QString currentDir;
 };
 
