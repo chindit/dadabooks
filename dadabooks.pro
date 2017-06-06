@@ -39,7 +39,8 @@ SOURCES += main.cpp\
     tools/logger.cpp \
     tools/pluginloader.cpp \
     storage/xmlstorage.cpp \
-    entity/movieentity.cpp
+    entity/movieconverter.cpp \
+    entity/movie.cpp
 
 HEADERS  += dadabooks.h \
     settingsmanager.h \
@@ -68,7 +69,8 @@ HEADERS  += dadabooks.h \
     plugins/thirdpartydefinition.h \
     tools/pluginloader.h \
     storage/xmlstorage.h \
-    entity/movieentity.h
+    entity/movieconverter.h \
+    entity/movie.h
 
 FORMS    += dadabooks.ui \
     addbook.ui \

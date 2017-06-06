@@ -8,10 +8,10 @@ enum SearchConnectors { OR, AND };
 
 class StoragePlugin : QObject
 {
-public:
 
     Q_OBJECT
 
+public:
     virtual ~StoragePlugin() {}
 
     /**

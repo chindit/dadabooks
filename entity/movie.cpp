@@ -1,83 +1,83 @@
-#include "movieentity.h"
+#include "movie.h"
 
-MovieEntity::MovieEntity()
+Movie::Movie()
 {
 
 }
 
-int MovieEntity::getId()
+int Movie::getId()
 {
     return this->id;
 }
 
-MovieEntity* MovieEntity::setId(int id)
+Movie* Movie::setId(int id)
 {
     this->id = id;
     return this;
 }
 
-QString MovieEntity::getTitle()
+QString Movie::getTitle()
 {
     return this->title;
 }
 
-MovieEntity* MovieEntity::setTitle(QString title)
+Movie* Movie::setTitle(QString title)
 {
     this->title = title;
     return this;
 }
 
-QString MovieEntity::getOriginalTitle()
+QString Movie::getOriginalTitle()
 {
     return this->originalTitle;
 }
 
-MovieEntity* MovieEntity::setOriginalTitle(QString originalTitle)
+Movie* Movie::setOriginalTitle(QString originalTitle)
 {
     this->originalTitle = originalTitle;
     return this;
 }
 
-QDate MovieEntity::getYear()
+QDate Movie::getYear()
 {
     return this->year;
 }
 
-MovieEntity* MovieEntity::setYear(QDate year)
+Movie* Movie::setYear(QDate year)
 {
     this->year = year;
     return this;
 }
 
-QString MovieEntity::getDirector()
+QString Movie::getDirector()
 {
     return this->director;
 }
 
-MovieEntity* MovieEntity::setDirector(QString director)
+Movie* Movie::setDirector(QString director)
 {
     this->director = director;
     return this;
 }
 
-QStringList MovieEntity::getActors()
+QStringList Movie::getActors()
 {
     return this->actors;
 }
 
-MovieEntity* MovieEntity::setActors(QStringList actors)
+Movie* Movie::setActors(QStringList actors)
 {
     this->actors = actors;
     return this;
 }
 
-MovieEntity* MovieEntity::addActor(QString actor)
+Movie* Movie::addActor(QString actor)
 {
     this->actors.append(actor);
     return this;
 }
 
-MovieEntity* MovieEntity::removeActor(QString actor)
+Movie* Movie::removeActor(QString actor)
 {
     for (int i=0; i<this->actors.size(); i++) {
         if (this->actors.at(i) == actor) {
@@ -88,45 +88,45 @@ MovieEntity* MovieEntity::removeActor(QString actor)
     return this;
 }
 
-QString MovieEntity::getSynopsis()
+QString Movie::getSynopsis()
 {
     return this->synopsis;
 }
 
-MovieEntity* MovieEntity::setSynopsis(QString synopsis)
+Movie* Movie::setSynopsis(QString synopsis)
 {
     this->synopsis = synopsis;
     return this;
 }
 
-QTime MovieEntity::getDuration()
+int Movie::getDuration()
 {
     return this->duration;
 }
 
-MovieEntity* MovieEntity::setDuration(QTime duration) {
+Movie* Movie::setDuration(int duration) {
     this->duration = duration;
     return this;
 }
 
-QStringList MovieEntity::getGenders()
+QStringList Movie::getGenders()
 {
     return this->genders;
 }
 
-MovieEntity* MovieEntity::setGenders(QStringList genders)
+Movie* Movie::setGenders(QStringList genders)
 {
     this->genders = genders;
     return this;
 }
 
-MovieEntity* MovieEntity::addGender(QString gender)
+Movie* Movie::addGender(QString gender)
 {
     this->genders.append(gender);
     return this;
 }
 
-MovieEntity* MovieEntity::removeGender(QString gender)
+Movie* Movie::removeGender(QString gender)
 {
     for (int i=0; i<this->genders.size(); i++) {
         if (this->genders.at(i) == gender) {
@@ -137,24 +137,24 @@ MovieEntity* MovieEntity::removeGender(QString gender)
     return this;
 }
 
-QStringList MovieEntity::getCountries()
+QStringList Movie::getCountries()
 {
     return this->countries;
 }
 
-MovieEntity* MovieEntity::setCountries(QStringList countries)
+Movie* Movie::setCountries(QStringList countries)
 {
     this->countries = countries;
     return this;
 }
 
-MovieEntity* MovieEntity::addCountry(QString country)
+Movie* Movie::addCountry(QString country)
 {
     this->countries.append(country);
     return this;
 }
 
-MovieEntity* MovieEntity::removeCountry(QString country)
+Movie* Movie::removeCountry(QString country)
 {
     for (int i=0; i<this->countries.size(); i++) {
         if (this->countries.at(i) == country) {
@@ -165,24 +165,24 @@ MovieEntity* MovieEntity::removeCountry(QString country)
     return this;
 }
 
-QStringList MovieEntity::getLanguages()
+QStringList Movie::getLanguages()
 {
     return this->languages;
 }
 
-MovieEntity* MovieEntity::setLanguages(QStringList languages)
+Movie* Movie::setLanguages(QStringList languages)
 {
     this->languages = languages;
     return this;
 }
 
-MovieEntity* MovieEntity::addLanguage(QString language)
+Movie* Movie::addLanguage(QString language)
 {
     this->languages.append(language);
     return this;
 }
 
-MovieEntity* MovieEntity::removeLanguage(QString language)
+Movie* Movie::removeLanguage(QString language)
 {
     for (int i=0; i<this->languages.size(); i++) {
         if (this->languages.at(i) == language) {
@@ -193,24 +193,24 @@ MovieEntity* MovieEntity::removeLanguage(QString language)
     return this;
 }
 
-QStringList MovieEntity::getSubtitles()
+QStringList Movie::getSubtitles()
 {
     return this->subtitles;
 }
 
-MovieEntity* MovieEntity::setSubtitles(QStringList subtitles)
+Movie* Movie::setSubtitles(QStringList subtitles)
 {
     this->subtitles = subtitles;
     return this;
 }
 
-MovieEntity* MovieEntity::addSubtitle(QString subtitle)
+Movie* Movie::addSubtitle(QString subtitle)
 {
     this->subtitles.append(subtitle);
     return this;
 }
 
-MovieEntity* MovieEntity::removeSubtitle(QString subtitle)
+Movie* Movie::removeSubtitle(QString subtitle)
 {
     for (int i=0; i<this->subtitles.size(); i++) {
         if (this->subtitles.at(i) == subtitle) {
@@ -221,46 +221,46 @@ MovieEntity* MovieEntity::removeSubtitle(QString subtitle)
     return this;
 }
 
-QString MovieEntity::getClassification()
+QString Movie::getClassification()
 {
     return this->classification;
 }
 
-MovieEntity* MovieEntity::setClassification(QString classification)
+Movie* Movie::setClassification(QString classification)
 {
     this->classification = classification;
     return this;
 }
 
-QString MovieEntity::getComment()
+QString Movie::getComment()
 {
     return this->comment;
 }
 
-MovieEntity* MovieEntity::setComment(QString comment)
+Movie* Movie::setComment(QString comment)
 {
     this->comment = comment;
     return this;
 }
 
-QStringList MovieEntity::getLabels()
+QStringList Movie::getLabels()
 {
     return this->labels;
 }
 
-MovieEntity* MovieEntity::setLabels(QStringList labels)
+Movie* Movie::setLabels(QStringList labels)
 {
     this->labels = labels;
     return this;
 }
 
-MovieEntity* MovieEntity::addLabel(QString label)
+Movie* Movie::addLabel(QString label)
 {
     this->labels.append(label);
     return this;
 }
 
-MovieEntity* MovieEntity::removeLabel(QString label)
+Movie* Movie::removeLabel(QString label)
 {
     for (int i=0; i<this->labels.size(); i++) {
         if (this->labels.at(i) == label) {
@@ -271,72 +271,79 @@ MovieEntity* MovieEntity::removeLabel(QString label)
     return this;
 }
 
-int MovieEntity::getNotation()
+int Movie::getNotation()
 {
     return this->notation;
 }
 
-MovieEntity* MovieEntity::setNotation(int notation)
+Movie* Movie::setNotation(int notation)
 {
     this->notation = notation;
     return this;
 }
 
-QString MovieEntity::getCover()
+QString Movie::getCover()
 {
     return this->cover;
 }
 
-MovieEntity* MovieEntity::setCover(QString cover)
+Movie* Movie::setCover(QString cover)
 {
     this->cover = cover;
     return this;
 }
 
-bool MovieEntity::isBorrowable()
+bool Movie::isBorrowable()
 {
     return this->borrowable;
 }
 
-MovieEntity* MovieEntity::setBorrowable(bool borrowable)
+Movie* Movie::setBorrowable(bool borrowable)
 {
     this->borrowable = borrowable;
     return this;
 }
 
-bool MovieEntity::isBorrowed()
+bool Movie::isBorrowed()
 {
     return this->borrowed;
 }
 
-MovieEntity* MovieEntity::setBorrowed(bool borrowed)
+Movie* Movie::setBorrowed(bool borrowed)
 {
     this->borrowed = borrowed;
     return this;
 }
 
-bool MovieEntity::isSeen()
+bool Movie::isSeen()
 {
     return this->seen;
 }
 
-MovieEntity* MovieEntity::setSeen(bool seen)
+Movie* Movie::setSeen(bool seen)
 {
     this->seen = seen;
     return this;
 }
 
-bool MovieEntity::hasFile()
+bool Movie::hasFile()
 {
     return this->file;
 }
 
-QString MovieEntity::getFile()
+Movie* Movie::setHasFile(bool hasFile)
+{
+    this->file = hasFile;
+
+    return this;
+}
+
+QString Movie::getFile()
 {
     return this->fileLocation;
 }
 
-MovieEntity* MovieEntity::setFile(QString file)
+Movie* Movie::setFile(QString file)
 {
     this->fileLocation = file;
     this->file = (file.length() > 0);
