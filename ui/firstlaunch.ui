@@ -63,7 +63,7 @@
    <item row="3" column="0">
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="home">
       <layout class="QGridLayout" name="gridLayout_2">
@@ -310,17 +310,39 @@ border-radius: 5px;</string>
      </widget>
      <widget class="QWidget" name="page">
       <layout class="QGridLayout" name="gridLayout_4">
-       <item row="0" column="0">
-        <widget class="QLabel" name="labelTitle3">
-         <property name="font">
-          <font>
-           <pointsize>20</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
+       <item row="3" column="0">
+        <widget class="QPushButton" name="pushButtonCloud">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
          <property name="text">
-          <string>Choisissez un format de collection</string>
+          <string>Cloud</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLabel" name="labelSQLite">
+         <property name="text">
+          <string>Le format SQLite est très semblable au XML, il est toutefois plus rapide pour les collections de taille importante.</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLabel" name="labelCloud">
+         <property name="text">
+          <string>Utiliser le cloud vous permet de ne rien stocker localement.  DadaBooks va aller automatiquement récupérer vos données depuis votre cloud personnel.  Pratique pour tous les tailles de collection, cette méthode a l'avantage de fonctionner sur tous les ordinateurs sans devoir transférer de fichiers.</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -340,13 +362,17 @@ border-radius: 5px;</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QLabel" name="labelXML">
-         <property name="text">
-          <string>Sauvegarde votre collection dans un simple fichier XML.  Les images sont mises dans le même dossier, en vrac.  Ce format est avantageux pour les collections de petite taille.</string>
+       <item row="0" column="0">
+        <widget class="QLabel" name="labelTitle3">
+         <property name="font">
+          <font>
+           <pointsize>20</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
          </property>
-         <property name="wordWrap">
-          <bool>true</bool>
+         <property name="text">
+          <string>Choisissez un format de collection</string>
          </property>
         </widget>
        </item>
@@ -366,43 +392,7 @@ border-radius: 5px;</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
-        <widget class="QLabel" name="labelSQLite">
-         <property name="text">
-          <string>Le format SQLite est très semblable au XML, il est toutefois plus rapide pour les collections de taille importante.</string>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QPushButton" name="pushButtonCloud">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Cloud</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QLabel" name="labelCloud">
-         <property name="text">
-          <string>Utiliser le cloud vous permet de ne rien stocker localement.  DadaBooks va aller automatiquement récupérer vos données depuis votre cloud personnel.  Pratique pour tous les tailles de collection, cette méthode a l'avantage de fonctionner sur tous les ordinateurs sans devoir transférer de fichiers.</string>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0" colspan="2">
+       <item row="5" column="0" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
           <widget class="QPushButton" name="nextButton2">
@@ -451,6 +441,32 @@ border-radius: 5px;</string>
           </widget>
          </item>
         </layout>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLabel" name="labelXML">
+         <property name="text">
+          <string>Sauvegarde votre collection dans un simple fichier XML.  Les images sont mises dans le même dossier, en vrac.  Ce format est avantageux pour les collections de petite taille.</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" colspan="2">
+        <widget class="QPushButton" name="buttonOtherStorage">
+         <property name="styleSheet">
+          <string notr="true">color : white;
+background-color: #5bc0de;
+border: 2px solid #46b8da;
+border-radius: 3px;
+padding: 5px;
+min-width: 80px;
+border-radius: 5px;</string>
+         </property>
+         <property name="text">
+          <string>Utiliser une autre méthode de stockage</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

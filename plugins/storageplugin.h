@@ -6,14 +6,11 @@
 
 enum SearchConnectors { OR, AND };
 
-class StoragePlugin : QObject
+class StoragePlugin
 {
-
-    Q_OBJECT
 
 public:
     virtual ~StoragePlugin() {}
-
     /**
      * Name of the plugin
      * Will be displayed to user

@@ -9,7 +9,7 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
-#include "../../PluginTemplate.h"
+#include "../../../PluginTemplate.h"
 
 
 class Casadellibro : public QObject, public Plugin

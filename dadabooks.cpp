@@ -48,8 +48,9 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
 
 //Destructeur
 DadaBooks::~DadaBooks(){
-    delete settings;
     delete ui;
+    // Settings cannot be deleted (Why ?)
+    //delete settings;
     // TODO Remove
     delete insAddBook;
     delete insLendDialog;

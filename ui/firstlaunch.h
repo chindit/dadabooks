@@ -7,11 +7,13 @@
 #include <QMessageBox>
 #include <QStandardPaths>
 
+#include "tools/logger.h"
 #include "tools/pluginloader.h"
 #include "tools/settings.h"
 #include "ui/apidialog.h"
+#include "ui/storageselectiondialog.h"
 #include "config/config.h"
-#include "plugins/storagedefinition.h"
+#include "plugins/storageplugin.h"
 
 namespace Ui {
     class FirstLaunch;
@@ -31,6 +33,7 @@ private slots:
     void getStorageDir();
     void next();
     void finish();
+    void selectStorageMethod();
 
 private:
     QString getDirName(bool isXML=false);
@@ -41,6 +44,7 @@ private:
 
     Settings *settings;
     StoragePlugin *storagePlugin;
+    Logger *logger;
     QString currentDir;
 };
 

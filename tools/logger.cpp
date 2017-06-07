@@ -17,8 +17,7 @@ Logger::Logger(Settings* settings, QWidget *parent)
  */
 Logger::~Logger()
 {
-    delete settings;
-    delete parent;
+
 }
 
 /**

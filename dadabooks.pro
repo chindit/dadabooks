@@ -40,7 +40,8 @@ SOURCES += main.cpp\
     tools/pluginloader.cpp \
     storage/xmlstorage.cpp \
     entity/movieconverter.cpp \
-    entity/movie.cpp
+    entity/movie.cpp \
+    ui/storageselectiondialog.cpp
 
 HEADERS  += dadabooks.h \
     settingsmanager.h \
@@ -65,12 +66,13 @@ HEADERS  += dadabooks.h \
     ui/apidialog.h \
     tools/logger.h \
     tools/exceptioninterface.h \
-    plugins/storagedefinition.h \
-    plugins/thirdpartydefinition.h \
     tools/pluginloader.h \
     storage/xmlstorage.h \
     entity/movieconverter.h \
-    entity/movie.h
+    entity/movie.h \
+    plugins/storageplugin.h \
+    plugins/thirdpartyplugin.h \
+    ui/storageselectiondialog.h
 
 FORMS    += dadabooks.ui \
     addbook.ui \
@@ -83,7 +85,8 @@ FORMS    += dadabooks.ui \
     imageuploaddialog.ui \
     lenddialog.ui \
     searchdialog.ui \
-    ui/apidialog.ui
+    ui/apidialog.ui \
+    ui/storageselectiondialog.ui
 
 RESOURCES += \
     images.qrc
