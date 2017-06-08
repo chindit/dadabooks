@@ -5,12 +5,54 @@
 #include <QMultiMap>
 
 enum SearchConnectors { OR, AND };
+enum EngineStatus { STARTING, STARTED, RUNNING, STOPPING, STOPPED, FAILURE };
 
 class StoragePlugin
 {
 
 public:
+    /**
+     * Destructor
+     * @brief ~StoragePlugin
+     */
     virtual ~StoragePlugin() {}
+    /**
+     * Give parameters from settings to StorageEngine.
+     * Parameters are a list of key,values
+     * @brief setParameters
+     * @param parameters
+     */
+    virtual void setParameters(QMap<QString, QVariant> parameters) = 0;
+    /**
+     * Get the list of allowed parameters from the StorageEngine
+     * @brief getAllowedParameters
+     * @return
+     */
+    virtual QStringList getAllowedParameters() = 0;
+    /**
+     * Start the StorageEngine
+     * @brief start
+     * @return
+     */
+    virtual bool start() = 0;
+    /**
+     * Stop the storage engine
+     * @brief stop
+     * @return
+     */
+    virtual bool stop() = 0;
+    /**
+     * Get last occurred error (or an empty string)
+     * @brief getLastError
+     * @return
+     */
+    virtual QString getLastError() = 0;
+    /**
+     * Get current storage engine status
+     * @brief getStatus
+     * @return
+     */
+    virtual EngineStatus getStatus() = 0;
     /**
      * Name of the plugin
      * Will be displayed to user

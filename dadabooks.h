@@ -25,6 +25,7 @@
 #include "sqlmanager.h"
 #include "updater.h"
 #include "xmlmanager.h"
+#include "tools/storage.h"
 
 #define VERSION "0.8.3"
 
@@ -75,6 +76,11 @@ private slots:
 
 private:
     void setConnectors();
+    bool isInitialized();
+
+    Settings *settings;
+    Storage *storage;
+
     void intabPreview(int id);
     int getCurrentItemID();
 
@@ -91,7 +97,6 @@ private:
     Updater *insUpdater;
     XmlManager *insXmlManager;
     QMovie *movieLoading;
-    Settings *settings;
 
     int idOngletEdit;
     bool isCalling;

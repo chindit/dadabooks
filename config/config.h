@@ -26,7 +26,7 @@ const std::map<Setting, const char*> settingsNames {
     {Type, "typeCollection"},
     {Empruntable, "isEmpruntable"},
     {Verbosity, "verbosity"},
-    {StorageProvider, "storageEngin"}
+    {StorageProvider, "storageEngine"}
 };
 
 // Collection type handled by DadaBooks

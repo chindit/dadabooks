@@ -72,6 +72,7 @@ void FirstLaunch::setConnectors()
     connect(ui->nextButton2, SIGNAL(clicked()), this, SLOT(checkStorageType()));
 
     connect(ui->buttonOtherStorage, SIGNAL(clicked()), this, SLOT(selectStorageMethod()));
+    connect(ui->buttonChangeDirectory, SIGNAL(clicked()), this, SLOT(getStorageDir()));
 }
 
 /**
@@ -80,7 +81,7 @@ void FirstLaunch::setConnectors()
  */
 void FirstLaunch::updateStorageLabel()
 {
-    ui->labelStorageInfo->setText(tr("Votre collection de %s sera stockée dans le répertoire %s")
+    ui->labelStorageInfo->setText(tr("Votre collection de <b>%1</b> sera stockée dans le répertoire <em>%2</em>")
                                   .arg(ui->comboBoxCollectionType->currentText()).arg(this->currentDir));
 }
 
@@ -138,7 +139,7 @@ void FirstLaunch::checkStorageType()
  */
 void FirstLaunch::updateBreadcrumb(int current)
 {
-    ui->labelBreadcrumbIndex->setText(QString::number(current)+"/"+QString::number(ui->stackedWidget->count()));
+    ui->labelBreadcrumbIndex->setText(QString::number(current+1)+"/"+QString::number(ui->stackedWidget->count()));
 }
 
 /**
@@ -171,8 +172,7 @@ void FirstLaunch::selectStorageMethod()
     // Once it's done, we get selected method
     QString selectedStorageMethod = storageSelectionDialog->getSelectedPlugin();
     if (selectedStorageMethod.length() > 0) {
-        // TODO save setting
-        this->settings;
+        this->settings->setSetting(Setting::StorageProvider, selectedStorageMethod);
         this->next();
     }
     delete storageSelectionDialog;

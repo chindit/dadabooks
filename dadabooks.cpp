@@ -12,6 +12,7 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     ui->setupUi(this);
 
     settings = new Settings();
+    storage = new Storage(this->settings, this);
 
 
     // To Remove
@@ -49,6 +50,7 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
 //Destructeur
 DadaBooks::~DadaBooks(){
     delete ui;
+    delete storage;
     // Settings cannot be deleted (Why ?)
     //delete settings;
     // TODO Remove
@@ -75,16 +77,19 @@ DadaBooks::~DadaBooks(){
 void DadaBooks::init()
 {
     // Check if first start
-    //if (settings->getSetting(Setting::Initialized).toBool()) {
+    if (!this->isInitialized()) {
         FirstLaunch *firstLaunchDialog = new FirstLaunch(this, settings);
         // This is a modal (blocking) window.  We don't want main thread to continue when this modal is ON
-        int result = firstLaunchDialog->exec();
+        firstLaunchDialog->exec();
         delete firstLaunchDialog;
-        if (result != QDialog::Accepted) {
-            // TODO Add log
-            QString a = QString('a');
-        }
-    //}
+    }
+}
+
+bool DadaBooks::isInitialized()
+{
+    // Test main initialization settings
+    return (settings->getSetting(Setting::Initialized).toBool()
+            && this->storage->isStorageEngineLoaded());
 }
 
 /**

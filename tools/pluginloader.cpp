@@ -17,12 +17,7 @@ PluginLoader::PluginLoader(Logger *logger, QObject *parent) : QObject(parent)
  */
 PluginLoader::~PluginLoader()
 {
-    for (StoragePlugin* plugin : this->storagePluginList) {
-        delete plugin;
-    }
-    for (ThirdPartyPlugin* plugin : this->thirdPartyPluginList) {
-        delete plugin;
-    }
+    // No need to delete stored plugins
 }
 
 /**

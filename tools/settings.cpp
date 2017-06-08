@@ -38,6 +38,28 @@ void Settings::setSetting(Setting s, QVariant v){
     }
 }
 
+QMap<QString, QVariant> Settings::getGroupSettings(QString groupName, QStringList settingNames)
+{
+    QSettings options("DadaBooks", "dadabooks");
+    options.beginGroup(groupName);
+    QMap<QString, QVariant> data;
+    for (QString setting : settingNames) {
+        data.insert(setting, options.value(setting, ""));
+    }
+    options.endGroup();
+    return data;
+}
+
+void Settings::setGroupSettings(QString groupName, QMap<QString, QVariant> data)
+{
+    QSettings options("DadaBooks", "dadabooks");
+    options.beginGroup(groupName);
+    for (QMap<QString, QVariant>::iterator it = data.begin(); it != data.end(); ++it) {
+        options.setValue(it.key(), it.value());
+    }
+    options.endGroup();
+}
+
 /**
  * Load current settings
  * @brief Settings::loadSettings
