@@ -66,6 +66,11 @@ void Storage::load()
     }
 
     // Starting storage engine
+    QMap<QString, QVariant> requestedValues = QMap<QString, QVariant>();
+    for (StorageConfig value : this->storageEngine->getDefaultParameters()) {
+        requestedValues.insert(value.id, value.value);
+    }
+    QMap<QString, QVariant> parameters; // = this->settings->getGroupSettings(this->sto)
     /*QList<StorageConfig> parameters = this->settings->getGroupSettings(this->storageEngine->getUID(), this->storageEngine->getDefaultParameters());
     this->storageEngine->setParameters(parameters);*/
     this->storageEngine->start();

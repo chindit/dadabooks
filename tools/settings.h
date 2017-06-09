@@ -12,9 +12,10 @@ public:
     Settings();
     ~Settings();
     QVariant getSetting(Setting);
-    QMap<QString, QVariant> getGroupSettings(QString groupName, QStringList settingNames, bool isArray = false);
-    void setGroupSettings(QString groupName, QMap<QString, QVariant> data, bool isArray = false);
-    void setSetting(Setting, QVariant);
+    void setSetting(Setting s, QVariant v);
+    void storeCollection(CollectionStorageSettings);
+    CollectionStorageSettings getCollection(QString id);
+    QList<CollectionStorageSettings> getCollections();
     bool reload();
 
 private:

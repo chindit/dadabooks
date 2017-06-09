@@ -46,6 +46,7 @@ private:
     Logger *logger;
     QString currentFile;
     QString storageEngineId;
+    QList<StorageConfig> storageEngineConfiguration;
 };
 
 #endif // FIRSTLAUNCH_H

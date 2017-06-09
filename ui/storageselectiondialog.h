@@ -19,9 +19,10 @@ public:
     ~StorageSelectionDialog();
 
     QString getSelectedPlugin();
+    QList<StorageConfig> getPluginConfig();
 
 private slots:
-    void updateParameters(QString plugin);
+    void updateParameters();
 
 private:
     void hydrateComboBox();

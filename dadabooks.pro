@@ -90,3 +90,5 @@ FORMS    += dadabooks.ui \
 
 RESOURCES += \
     images.qrc
+
+TRANSLATIONS = languages/dadabooks_fr.ts

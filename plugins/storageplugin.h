@@ -35,6 +35,25 @@ public:
      */
     virtual QList<StorageConfig> getDefaultParameters() = 0;
     /**
+     * Create a new collection.  Parameters sent are the same as «parameters».
+     * Expected behavior is to parse all parameters to check if they are valid
+     * and to initiate collection storage.
+     * @brief create
+     * @param parameters
+     * @return
+     */
+    virtual bool create(QList<StorageConfig> parameters) = 0;
+    /**
+     * This method is used to get currently loaded parameters.  It will be used
+     * when setting for the first time parameters.  As StoragePlugin will only
+     * receive a QList<StorageConfig> with all values set as QString,
+     * it's expected to be parsed and checked.  So, this method should return
+     * a QList<StorageConfig> with correctly parsed values.
+     * @brief getActiveParameters
+     * @return
+     */
+    virtual QList<StorageConfig> getActiveParameters() = 0;
+    /**
      * Start the StorageEngine
      * @brief start
      * @return

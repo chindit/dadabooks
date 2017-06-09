@@ -13,7 +13,7 @@ StorageSelectionDialog::StorageSelectionDialog(PluginLoader *pluginLoader, QWidg
 {
     this->pluginLoader = pluginLoader;
     ui->setupUi(this);
-    connect(ui->comboBoxStoragePlugins, SIGNAL(currentIndexChanged(QString)), this, SLOT(updateParameters(QString)));
+    connect(ui->comboBoxStoragePlugins, SIGNAL(currentIndexChanged()), this, SLOT(updateParameters()));
     this->hydrateComboBox();
 }
 
@@ -39,6 +39,28 @@ QString StorageSelectionDialog::getSelectedPlugin()
 }
 
 /**
+ * Get custom parameters for storage engine
+ * @brief StorageSelectionDialog::getPluginConfig
+ * @return
+ */
+QList<StorageConfig> StorageSelectionDialog::getPluginConfig()
+{
+    QList<StorageConfig> parameters = this->pluginLoader->getStoragePlugin(this->getSelectedPlugin())->getDefaultParameters();
+    QList<QLineEdit *> allLineEdits = ui->parametersLayout->findChildren<QLineEdit *>();
+    for (int i=0; i<allLineEdits.count(); i++) {
+        QString id = allLineEdits.at(i)->property("id").toString();
+        for (int j=0; j<parameters.count(); j++) {
+            if (parameters.at(j).id == id) {
+                QVariant test = QVariant(allLineEdits.at(i)->text());
+                parameters.at(j).value = test;
+                break;
+            }
+        }
+    }
+    return parameters;
+}
+
+/**
  * Hydrate list of available StoragePlugins
  * @brief StorageSelectionDialog::hydrateComboBox
  */
@@ -49,11 +71,21 @@ void StorageSelectionDialog::hydrateComboBox()
     }
 }
 
-void StorageSelectionDialog::updateParameters(QString plugin)
+/**
+ * Create widgets for current storage method
+ * @brief StorageSelectionDialog::updateParameters
+ * @param plugin
+ */
+void StorageSelectionDialog::updateParameters()
 {
     if (this->getSelectedPlugin().isEmpty()) {
         return;
     }
+    // Clean previous widgets
+    while (ui->parametersLayout->count() > 0) {
+        ui->parametersLayout->removeRow(0);
+    }
+    // Update with new values
     QList<StorageConfig> parameters = this->pluginLoader->getStoragePlugin(this->getSelectedPlugin())->getDefaultParameters();
     for (StorageConfig parameter : parameters) {
         QLabel *label = new QLabel(parameter.description);

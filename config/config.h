@@ -3,7 +3,11 @@
 
 #include <map>
 
+#include <QPair>
 #include <QString>
+#include <QVariant>
+
+#include "plugins/storageplugin.h"
 
 // Settings enumeration
 enum Setting { AutoAuteur, AutoEditeur, Sqlite, MariaDB, DBHost, DBUser, DBPass, DBBase, Type, Xml, Fichier, Initialized, OpenInTab, DownPics, Empruntable, Verbosity, DefaultStorageEngine,
@@ -70,5 +74,13 @@ const std::map<LogLevel, const char*> logLevelNames {
 
 const QString LogFilename = QString("dadabooks.log");
 const QString pluginPath = QString("plugins");
+
+struct CollectionStorageSettings {
+    QString id;
+    QString type;
+    QString storageEngine;
+    bool useDefaultStorageSettings;
+    QList<StorageConfig> storageEngineConfig;
+};
 
 #endif // CONFIG_H

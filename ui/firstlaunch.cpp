@@ -178,6 +178,7 @@ void FirstLaunch::selectStorageMethod()
     QString selectedStorageMethod = storageSelectionDialog->getSelectedPlugin();
     if (selectedStorageMethod.length() > 0) {
         this->storageEngineId = selectedStorageMethod;
+        this->storageEngineConfiguration = storageSelectionDialog->getPluginConfig();
         this->next();
     }
     delete storageSelectionDialog;
@@ -186,11 +187,38 @@ void FirstLaunch::selectStorageMethod()
 
 void FirstLaunch::finish()
 {
+    // Try to create storage
+    PluginLoader *loader = new PluginLoader(this->logger);
+    if (!loader->getStoragePlugin(this->storageEngineId)->create(this->storageEngineConfiguration)) {
+        this->logger->error(tr("Unable to initiate storage.  Error is following: ") +
+                               loader->getStoragePlugin(this->storageEngineId)->getLastError(), QMap<QString, QString>());
+        int response = QMessageBox::question(this, tr("Unable to create storage"), tr("Storage engine was unable"
+                                                                                      "to create it's configuration.  Do"
+                                                                                      "you want to change your parameters ?"),
+                                             QMessageBox::Yes | QMessageBox::No);
+        if (response == QMessageBox::No) {
+            this->close();
+            return;
+        } else {
+            return;
+        }
+    }
     // Saving settings
-    QMap<CollectionSetting, QVariant> collection;
-    collection.insert(TypeC, ui->comboBoxCollectionType->currentText().toLower());
-    collection.insert(StorageEngine, this->storageEngineId);
+    CollectionStorageSettings collection;
+    collection.type = ui->comboBoxCollectionType->currentText().toLower();
+    collection.storageEngine = this->storageEngineId;
+    collection.useDefaultStorageSettings = false;
+    collection.storageEngineConfig = loader->getStoragePlugin(this->storageEngineId)->getActiveParameters();
+    QDateTime *now = new QDateTime();
+    collection.id = collection.type + "_" + now->toSecsSinceEpoch();
+    this->settings->storeCollection(collection);
 
-    this->settings->setSetting(Type, ui->comboBoxCollectionType->currentText().toLower());
-    this->settings->setSetting(Fichier, this->currentFile);
+    // Checking initialization
+    if (!this->settings->getSetting(Initialized).toBool()) {
+        this->settings->setSetting(Initialized, true);
+    }
+    // Default collection
+    if (this->ui->checkBoxDefault->isChecked() || this->settings->getSetting(DefaultCollection).toString().isEmpty()) {
+        this->settings->setSetting(DefaultCollection, collection.id);
+    }
 }
