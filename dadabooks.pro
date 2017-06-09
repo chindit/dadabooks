@@ -38,7 +38,6 @@ SOURCES += main.cpp\
     ui/apidialog.cpp \
     tools/logger.cpp \
     tools/pluginloader.cpp \
-    storage/xmlstorage.cpp \
     entity/movieconverter.cpp \
     entity/movie.cpp \
     ui/storageselectiondialog.cpp \
@@ -68,7 +67,6 @@ HEADERS  += dadabooks.h \
     tools/logger.h \
     tools/exceptioninterface.h \
     tools/pluginloader.h \
-    storage/xmlstorage.h \
     entity/movieconverter.h \
     entity/movie.h \
     plugins/storageplugin.h \

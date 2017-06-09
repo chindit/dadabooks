@@ -13,6 +13,7 @@ StorageSelectionDialog::StorageSelectionDialog(PluginLoader *pluginLoader, QWidg
 {
     this->pluginLoader = pluginLoader;
     ui->setupUi(this);
+    connect(ui->comboBoxStoragePlugins, SIGNAL(currentIndexChanged(QString)), this, SLOT(updateParameters(QString)));
     this->hydrateComboBox();
 }
 
@@ -45,5 +46,20 @@ void StorageSelectionDialog::hydrateComboBox()
 {
     for (StoragePlugin* plugin : this->pluginLoader->getStoragePluginList()) {
         ui->comboBoxStoragePlugins->addItem(plugin->getName());
+    }
+}
+
+void StorageSelectionDialog::updateParameters(QString plugin)
+{
+    if (this->getSelectedPlugin().isEmpty()) {
+        return;
+    }
+    QList<StorageConfig> parameters = this->pluginLoader->getStoragePlugin(this->getSelectedPlugin())->getDefaultParameters();
+    for (StorageConfig parameter : parameters) {
+        QLabel *label = new QLabel(parameter.description);
+        QLineEdit *lineEdit = new QLineEdit(parameter.value.toString());
+        lineEdit->setProperty("id", parameter.id);
+        // Adding to layout
+        ui->parametersLayout->addRow(label, lineEdit);
     }
 }

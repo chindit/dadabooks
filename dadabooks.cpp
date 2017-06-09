@@ -77,19 +77,14 @@ DadaBooks::~DadaBooks(){
 void DadaBooks::init()
 {
     // Check if first start
-    if (!this->isInitialized()) {
+    if (!this->settings->getSetting(Setting::Initialized).toBool()) {
         FirstLaunch *firstLaunchDialog = new FirstLaunch(this, settings);
         // This is a modal (blocking) window.  We don't want main thread to continue when this modal is ON
         firstLaunchDialog->exec();
         delete firstLaunchDialog;
+        // Reload storage engine with new values
+        this->storage->reload();
     }
-}
-
-bool DadaBooks::isInitialized()
-{
-    // Test main initialization settings
-    return (settings->getSetting(Setting::Initialized).toBool()
-            && this->storage->isStorageEngineLoaded());
 }
 
 /**

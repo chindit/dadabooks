@@ -38,7 +38,7 @@ void Settings::setSetting(Setting s, QVariant v){
     }
 }
 
-QMap<QString, QVariant> Settings::getGroupSettings(QString groupName, QStringList settingNames)
+QMap<QString, QVariant> Settings::getGroupSettings(QString groupName, QStringList settingNames, bool isArray)
 {
     QSettings options("DadaBooks", "dadabooks");
     options.beginGroup(groupName);
@@ -50,7 +50,7 @@ QMap<QString, QVariant> Settings::getGroupSettings(QString groupName, QStringLis
     return data;
 }
 
-void Settings::setGroupSettings(QString groupName, QMap<QString, QVariant> data)
+void Settings::setGroupSettings(QString groupName, QMap<QString, QVariant> data, bool isArray)
 {
     QSettings options("DadaBooks", "dadabooks");
     options.beginGroup(groupName);
@@ -84,7 +84,9 @@ void Settings::loadSettings() {
     savedSettings[Setting::Type] = options.value(settingsNames.find(Type)->second, "livres");
     savedSettings[Setting::Empruntable] = options.value(settingsNames.find(Empruntable)->second, true);
     savedSettings[Setting::Verbosity] = options.value(settingsNames.find(Verbosity)->second, LogLevel::WARNING);
-    savedSettings[Setting::StorageProvider] = options.value(settingsNames.find(StorageProvider)->second, "xml");
+    savedSettings[Setting::DefaultStorageEngine] = options.value(settingsNames.find(DefaultStorageEngine)->second, "xml");
+    savedSettings[Setting::DefaultCollection] = options.value(settingsNames.find(DefaultCollection)->second, "");
+
     return;
 }
 

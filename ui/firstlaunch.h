@@ -43,9 +43,9 @@ private:
     Ui::FirstLaunch *ui;
 
     Settings *settings;
-    StoragePlugin *storagePlugin;
     Logger *logger;
-    QString currentDir;
+    QString currentFile;
+    QString storageEngineId;
 };
 
 #endif // FIRSTLAUNCH_H

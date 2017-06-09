@@ -76,7 +76,6 @@ private slots:
 
 private:
     void setConnectors();
-    bool isInitialized();
 
     Settings *settings;
     Storage *storage;

@@ -6,6 +6,11 @@
 
 enum SearchConnectors { OR, AND };
 enum EngineStatus { STARTING, STARTED, RUNNING, STOPPING, STOPPED, FAILURE };
+struct StorageConfig {
+    QString id;
+    QString description;
+    QVariant value;
+};
 
 class StoragePlugin
 {
@@ -22,13 +27,13 @@ public:
      * @brief setParameters
      * @param parameters
      */
-    virtual void setParameters(QMap<QString, QVariant> parameters) = 0;
+    virtual void setParameters(QList<StorageConfig> parameters) = 0;
     /**
      * Get the list of allowed parameters from the StorageEngine
      * @brief getAllowedParameters
      * @return
      */
-    virtual QStringList getAllowedParameters() = 0;
+    virtual QList<StorageConfig> getDefaultParameters() = 0;
     /**
      * Start the StorageEngine
      * @brief start

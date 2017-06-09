@@ -6,7 +6,13 @@
 #include <QString>
 
 // Settings enumeration
-enum Setting { AutoAuteur, AutoEditeur, Sqlite, MariaDB, DBHost, DBUser, DBPass, DBBase, Xml, Fichier, Initialized, OpenInTab, DownPics, Type, Empruntable, Verbosity, StorageProvider };
+enum Setting { AutoAuteur, AutoEditeur, Sqlite, MariaDB, DBHost, DBUser, DBPass, DBBase, Type, Xml, Fichier, Initialized, OpenInTab, DownPics, Empruntable, Verbosity, DefaultStorageEngine,
+             DefaultCollection, Collections};
+// NOTE
+// «Type» is left in «Settings» for compatibility build.  It will be removed as soon as possible in favor of CollectionSetting::Type
+// «TypeC» will then be renamed to «Type»
+
+enum CollectionSetting { TypeC, StorageEngine, File, UseDefaultStorageSettings };
 
 // Settings variables
 const std::map<Setting, const char*> settingsNames {
@@ -23,10 +29,19 @@ const std::map<Setting, const char*> settingsNames {
     {Initialized, "isInitialized"},
     {OpenInTab, "ouvrirOngletPrincipal"},
     {DownPics, "telechargerImages"},
-    {Type, "typeCollection"},
     {Empruntable, "isEmpruntable"},
     {Verbosity, "verbosity"},
-    {StorageProvider, "storageEngine"}
+    {DefaultStorageEngine, "defaultStorageEngine"},
+    {DefaultCollection, "defaultCollection"},
+    {Collections, "collectionList"}
+};
+
+// Settings variables for collections
+const std::map<CollectionSetting, const char*> collectionSettingsNames {
+    {TypeC, "typeCollection"},
+    {StorageEngine, "storageEngine"},
+    {File, "file"},
+    {UseDefaultStorageSettings, "defaultSettings"}
 };
 
 // Collection type handled by DadaBooks

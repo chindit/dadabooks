@@ -2,6 +2,7 @@
 #define STORAGESELECTIONDIALOG_H
 
 #include <QDialog>
+#include <QLineEdit>
 
 #include "tools/pluginloader.h"
 
@@ -18,6 +19,9 @@ public:
     ~StorageSelectionDialog();
 
     QString getSelectedPlugin();
+
+private slots:
+    void updateParameters(QString plugin);
 
 private:
     void hydrateComboBox();

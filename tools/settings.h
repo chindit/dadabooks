@@ -12,8 +12,8 @@ public:
     Settings();
     ~Settings();
     QVariant getSetting(Setting);
-    QMap<QString, QVariant> getGroupSettings(QString groupName, QStringList settingNames);
-    void setGroupSettings(QString groupName, QMap<QString, QVariant> data);
+    QMap<QString, QVariant> getGroupSettings(QString groupName, QStringList settingNames, bool isArray = false);
+    void setGroupSettings(QString groupName, QMap<QString, QVariant> data, bool isArray = false);
     void setSetting(Setting, QVariant);
     bool reload();
 

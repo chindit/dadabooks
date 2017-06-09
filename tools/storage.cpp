@@ -14,7 +14,10 @@ Storage::Storage(Settings *settings, QWidget *parent)
     this->logger = new Logger(this->settings, this->parent);
     this->loader = new PluginLoader(this->logger, this->parent);
 
-    this->load();
+    // Do not load storage engine in app is not initialized
+    if (this->settings->getSetting(Setting::Initialized).toBool()) {
+        this->load();
+    }
 }
 
 /**
@@ -44,14 +47,14 @@ bool Storage::isStorageEngineLoaded()
 void Storage::load()
 {
     // Loading storage engine
-    QString storageEngineIdentifier = settings->getSetting(Setting::StorageProvider).toString();
+    QString storageEngineIdentifier = settings->getSetting(Setting::DefaultStorageEngine).toString();
     if (this->loader->hasStoragePluginUid(storageEngineIdentifier)) {
         this->storageEngine = this->loader->getStoragePlugin(storageEngineIdentifier);
         this->loaded = true;
         return;
     } else if (this->loader->hasStoragePluginName(storageEngineIdentifier)) {
         this->storageEngine = this->loader->getStoragePluginByName(storageEngineIdentifier);
-        this->settings->setSetting(Setting::StorageProvider, this->storageEngine->getUID());
+        this->settings->setSetting(Setting::DefaultStorageEngine, this->storageEngine->getUID());
         this->loaded = true;
         return;
     } else {
@@ -63,8 +66,8 @@ void Storage::load()
     }
 
     // Starting storage engine
-    QMap<QString, QVariant> parameters = this->settings->getGroupSettings(this->storageEngine->getUID(), this->storageEngine->getAllowedParameters());
-    this->storageEngine->setParameters(parameters);
+    /*QList<StorageConfig> parameters = this->settings->getGroupSettings(this->storageEngine->getUID(), this->storageEngine->getDefaultParameters());
+    this->storageEngine->setParameters(parameters);*/
     this->storageEngine->start();
     if (this->storageEngine->getStatus() != EngineStatus::STARTED) {
         this->logger->error(QObject::tr("Impossible de faire démarrer le moteur de stockage.  L'erreur retournée"
@@ -72,4 +75,16 @@ void Storage::load()
                             QMap<QString, QString>());
         return;
     }
+}
+
+/**
+ * Reload storage engine
+ * @brief Storage::reload
+ * @return
+ */
+bool Storage::reload()
+{
+    this->loaded = false;
+    this->load();
+    return this->loaded;
 }

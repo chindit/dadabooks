@@ -472,6 +472,60 @@ border-radius: 5px;</string>
      </widget>
      <widget class="QWidget" name="directory">
       <layout class="QGridLayout" name="gridLayout_5">
+       <item row="5" column="0">
+        <widget class="QCheckBox" name="checkBoxSubdir">
+         <property name="text">
+          <string>Créer un sous-dossier «dadabooks» dans ce répertoire</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QPushButton" name="buttonFinish">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>15</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color : white;
+background-color: #5cb85c;
+border: 2px solid #4cae4c;
+border-radius: 3px;
+padding: 5px;
+min-width: 80px;
+border-radius: 5px;</string>
+         </property>
+         <property name="text">
+          <string>Terminer</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="labelStorage1">
+         <property name="text">
+          <string>Merci de choisir un dossier dans lequel la collection sera stockée.</string>
+         </property>
+        </widget>
+       </item>
        <item row="1" column="0">
         <spacer name="verticalSpacer_4">
          <property name="orientation">
@@ -484,6 +538,20 @@ border-radius: 5px;</string>
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="0" column="0" colspan="4">
+        <widget class="QLabel" name="labelTitle4">
+         <property name="font">
+          <font>
+           <pointsize>20</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Emplacement du stockage</string>
+         </property>
+        </widget>
        </item>
        <item row="4" column="0" colspan="3">
         <widget class="QPushButton" name="buttonChangeDirectory">
@@ -514,19 +582,6 @@ border-radius: 5px;</string>
          </property>
         </widget>
        </item>
-       <item row="6" column="0">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
        <item row="3" column="0">
         <widget class="QLabel" name="labelStorageInfo">
          <property name="text">
@@ -534,58 +589,10 @@ border-radius: 5px;</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="0" colspan="4">
-        <widget class="QLabel" name="labelTitle4">
-         <property name="font">
-          <font>
-           <pointsize>20</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
+       <item row="6" column="0">
+        <widget class="QCheckBox" name="checkBoxDefault">
          <property name="text">
-          <string>Emplacement du stockage</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QCheckBox" name="checkBoxSubdir">
-         <property name="text">
-          <string>Créer un sous-dossier «dadabooks» dans ce répertoire</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="labelStorage1">
-         <property name="text">
-          <string>Merci de choisir un dossier dans lequel la collection sera stockée.</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
-        <widget class="QPushButton" name="buttonFinish">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>15</pointsize>
-          </font>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">color : white;
-background-color: #5cb85c;
-border: 2px solid #4cae4c;
-border-radius: 3px;
-padding: 5px;
-min-width: 80px;
-border-radius: 5px;</string>
-         </property>
-         <property name="text">
-          <string>Terminer</string>
+          <string>Ouvrir cette collection par défaut</string>
          </property>
         </widget>
        </item>

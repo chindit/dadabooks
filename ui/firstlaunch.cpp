@@ -10,7 +10,7 @@
  */
 FirstLaunch::FirstLaunch(QWidget *parent, Settings *settings) : QDialog(parent), ui(new Ui::FirstLaunch){
     this->settings = settings;
-    this->currentDir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    this->currentFile = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
     this->logger = new Logger(this->settings, parent);
 
     ui->setupUi(this);
@@ -70,6 +70,7 @@ void FirstLaunch::setConnectors()
     connect(ui->startButton, SIGNAL(clicked()), this, SLOT(next()));
     connect(ui->nextButton, SIGNAL(clicked()), this, SLOT(next()));
     connect(ui->nextButton2, SIGNAL(clicked()), this, SLOT(checkStorageType()));
+    connect(ui->buttonFinish, SIGNAL(clicked()), this, SLOT(finish()));
 
     connect(ui->buttonOtherStorage, SIGNAL(clicked()), this, SLOT(selectStorageMethod()));
     connect(ui->buttonChangeDirectory, SIGNAL(clicked()), this, SLOT(getStorageDir()));
@@ -81,8 +82,9 @@ void FirstLaunch::setConnectors()
  */
 void FirstLaunch::updateStorageLabel()
 {
+    QFileInfo storagePath = QFileInfo(this->currentFile);
     ui->labelStorageInfo->setText(tr("Votre collection de <b>%1</b> sera stockée dans le répertoire <em>%2</em>")
-                                  .arg(ui->comboBoxCollectionType->currentText()).arg(this->currentDir));
+                                  .arg(ui->comboBoxCollectionType->currentText()).arg(storagePath.absoluteDir().absolutePath()));
 }
 
 /**
@@ -100,6 +102,7 @@ void FirstLaunch::checkStorageType()
         }
         else {
             formatChecked++;
+            this->storageEngineId = loader->getStoragePluginByName("XML")->getUID();
         }
     }
     if (ui->pushButtonSQLite->isChecked()) {
@@ -109,6 +112,7 @@ void FirstLaunch::checkStorageType()
         }
         else {
             formatChecked++;
+            this->storageEngineId = loader->getStoragePluginByName("SQLite")->getUID();
         }
     }
     if (ui->pushButtonCloud->isChecked()) {
@@ -118,6 +122,7 @@ void FirstLaunch::checkStorageType()
         }
         else {
             formatChecked++;
+            this->storageEngineId = loader->getStoragePluginByName("Cloud")->getUID();
         }
     }
 
@@ -157,7 +162,7 @@ void FirstLaunch::next()
  */
 void FirstLaunch::getStorageDir()
 {
-    this->getDirName(ui->pushButtonXML->isChecked());
+    this->currentFile = this->getDirName(ui->pushButtonXML->isChecked());
 }
 
 /**
@@ -172,7 +177,7 @@ void FirstLaunch::selectStorageMethod()
     // Once it's done, we get selected method
     QString selectedStorageMethod = storageSelectionDialog->getSelectedPlugin();
     if (selectedStorageMethod.length() > 0) {
-        this->settings->setSetting(Setting::StorageProvider, selectedStorageMethod);
+        this->storageEngineId = selectedStorageMethod;
         this->next();
     }
     delete storageSelectionDialog;
@@ -182,6 +187,10 @@ void FirstLaunch::selectStorageMethod()
 void FirstLaunch::finish()
 {
     // Saving settings
+    QMap<CollectionSetting, QVariant> collection;
+    collection.insert(TypeC, ui->comboBoxCollectionType->currentText().toLower());
+    collection.insert(StorageEngine, this->storageEngineId);
+
     this->settings->setSetting(Type, ui->comboBoxCollectionType->currentText().toLower());
-    this->settings->setSetting(Fichier, this->currentDir);
+    this->settings->setSetting(Fichier, this->currentFile);
 }
