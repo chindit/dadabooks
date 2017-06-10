@@ -51,8 +51,7 @@ QList<StorageConfig> StorageSelectionDialog::getPluginConfig()
         QString id = allLineEdits.at(i)->property("id").toString();
         for (int j=0; j<parameters.count(); j++) {
             if (parameters.at(j).id == id) {
-                QVariant test = QVariant(allLineEdits.at(i)->text());
-                parameters.at(j).value = test;
+                parameters[j].value = QVariant(allLineEdits.at(i)->text());
                 break;
             }
         }
