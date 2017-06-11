@@ -2,6 +2,7 @@
 #define MOVIECONVERTER_H
 
 #include <QList>
+#include <QMultiMap>
 #include "entity/movie.h"
 
 class MovieConverter

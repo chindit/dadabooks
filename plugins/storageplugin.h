@@ -3,6 +3,7 @@
 
 #include <QList>
 #include <QMultiMap>
+#include <QPicture>
 
 enum SearchConnectors { OR, AND };
 enum EngineStatus { STARTING, STARTED, RUNNING, STOPPING, STOPPED, FAILURE };
