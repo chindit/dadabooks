@@ -7,19 +7,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 
-set(QT_UIC_EXECUTABLE "C:/Qt/5.9/mingw53_32/bin/uic.exe")
-set(QT_MOC_EXECUTABLE "C:/Qt/5.9/mingw53_32/bin/moc.exe")
-
-
-set(Qt5_DIR "C:/Qt/5.9/mingw53_32/lib/cmake/Qt5")
-set (CMAKE_PREFIX_PATH "C:\\Qt\\5.9\\mingw53_32\\")
-# The Qt5Widgets_INCLUDES also includes the include directories for
-# dependencies QtCore and QtGui
-include_directories("C:/Qt/5.9/mingw53_32/include/QtWidgets")
-include_directories("C:/Qt/5.9/mingw53_32/include/QtCore")
-include_directories("C:/Qt/5.9/mingw53_32/include/QtGui")
-include_directories("C:/Qt/5.9/mingw53_32/include/QtNetwork")
-include_directories("C:/Qt/5.9/mingw53_32/include")
+include_directories( ${CMAKE_BINARY_DIR} )
 
 # We need add -DQT_WIDGETS_LIB when using QtWidgets in Qt 5.
 add_definitions(${Qt5Widgets_DEFINITIONS})
