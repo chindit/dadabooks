@@ -29,3 +29,6 @@ Makefile*
 
 # Mac
 .DS_Store
+
+# Clion
+.idea
