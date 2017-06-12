@@ -11,16 +11,19 @@ class Settings
 public:
     Settings();
     ~Settings();
-    QVariant getSetting(Setting);
+    QVariant getSetting(Setting s);
     void setSetting(Setting s, QVariant v);
-    void storeCollection(CollectionStorageSettings);
+    void storeCollection(CollectionStorageSettings collection);
     CollectionStorageSettings getCollection(QString id);
     QList<CollectionStorageSettings> getCollections();
     bool reload();
 
 private:
+    CollectionStorageSettings readCollectionLine(QSettings *pointer);
+    void writeCollectionLine(CollectionStorageSettings data, QSettings *pointer);
     void loadSettings();
     QVariant *savedSettings;
+    QSettings *reader;
 };
 
 #endif // SETTINGS_H

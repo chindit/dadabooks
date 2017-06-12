@@ -77,7 +77,7 @@ const QString pluginPath = QString("plugins");
 
 struct CollectionStorageSettings {
     QString id;
-    QString type;
+    Collection type;
     QString storageEngine;
     bool useDefaultStorageSettings;
     QList<StorageConfig> storageEngineConfig;

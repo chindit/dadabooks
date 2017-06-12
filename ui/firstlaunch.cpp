@@ -205,12 +205,26 @@ void FirstLaunch::finish()
     }
     // Saving settings
     CollectionStorageSettings collection;
-    collection.type = ui->comboBoxCollectionType->currentText().toLower();
+    QString typeColl = ui->comboBoxCollectionType->currentText().toLower();
+    bool found = false;
+    for (auto &type : collectionNames) {
+        if (type.second == typeColl) {
+            collection.type = type.first;
+            found = true;
+            break;
+        }
+    }
+    if (!found) {
+        this->logger->error(tr("Unable to save settings: collection type of %1 is not recognized").arg(typeColl), QMap<QString, QString>());
+        return;
+    }
     collection.storageEngine = this->storageEngineId;
     collection.useDefaultStorageSettings = false;
-    collection.storageEngineConfig = loader->getStoragePlugin(this->storageEngineId)->getActiveParameters();
+    collection.storageEngineConfig = (this->storageEngineConfiguration.count() > 0) ?
+                this->storageEngineConfiguration
+              : loader->getStoragePlugin(this->storageEngineId)->getActiveParameters();
     QDateTime *now = new QDateTime();
-    collection.id = collection.type + "_" + now->toSecsSinceEpoch();
+    collection.id = QString(collectionNames.find(collection.type)->second) + QString("_") + now->toSecsSinceEpoch();
     this->settings->storeCollection(collection);
 
     // Checking initialization
