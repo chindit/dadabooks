@@ -27,6 +27,15 @@ Storage::Storage(Settings *settings, CollectionStorageSettings collection, QWidg
  */
 Storage::~Storage()
 {
+    // Stop storage engine if started
+    if (this->isStorageEngineLoaded()) {
+        this->storageEngine->stop();
+        if (!this->storageEngine->getStatus() == EngineStatus::STOPPED) {
+            QMap<QString, QString> context;
+            context.insert("error", this->storageEngine->getLastError());
+            this->logger->error("Unable to stop storage engine.", context);
+        }
+    }
     delete logger;
     delete loader;
 }
@@ -128,6 +137,12 @@ bool Storage::reload(CollectionStorageSettings collection)
     // Clear stored data
     if (this->isStorageEngineLoaded()) {
         this->storageEngine->stop();
+        if (!this->storageEngine->getStatus() == EngineStatus::STOPPED) {
+            QMap<QString, QString> context;
+            context.insert("error", this->storageEngine->getLastError());
+            this->logger->error("Unable to stop storage engine.", context);
+            return false;
+        }
         delete this->storageEngine;
     }
     this->baseCollectionData.clear();
