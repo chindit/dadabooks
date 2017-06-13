@@ -5,28 +5,6 @@ Movie::Movie()
 
 }
 
-int Movie::getId()
-{
-    return this->id;
-}
-
-Movie* Movie::setId(int id)
-{
-    this->id = id;
-    return this;
-}
-
-QString Movie::getTitle()
-{
-    return this->title;
-}
-
-Movie* Movie::setTitle(QString title)
-{
-    this->title = title;
-    return this;
-}
-
 QString Movie::getOriginalTitle()
 {
     return this->originalTitle;

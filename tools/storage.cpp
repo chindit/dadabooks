@@ -5,7 +5,7 @@
  * @brief Storage::Storage
  * @param settings
  */
-Storage::Storage(Settings *settings, QWidget *parent)
+Storage::Storage(Settings *settings, CollectionStorageSettings collection, QWidget *parent)
 {
     this->settings = settings;
     this->parent = parent;
@@ -16,8 +16,9 @@ Storage::Storage(Settings *settings, QWidget *parent)
 
     // Do not load storage engine in app is not initialized
     if (this->settings->getSetting(Setting::Initialized).toBool()) {
-        this->load();
+        this->load(collection);
     }
+    this->baseCollectionData = QList<BaseEntity*>();
 }
 
 /**
@@ -44,42 +45,77 @@ bool Storage::isStorageEngineLoaded()
  * Load required storage plugin
  * @brief Storage::load
  */
-void Storage::load()
+void Storage::load(CollectionStorageSettings collection)
 {
     // Loading storage engine
-    QString storageEngineIdentifier = settings->getSetting(Setting::DefaultStorageEngine).toString();
-    if (this->loader->hasStoragePluginUid(storageEngineIdentifier)) {
-        this->storageEngine = this->loader->getStoragePlugin(storageEngineIdentifier);
-        this->loaded = true;
-        return;
-    } else if (this->loader->hasStoragePluginName(storageEngineIdentifier)) {
-        this->storageEngine = this->loader->getStoragePluginByName(storageEngineIdentifier);
-        this->settings->setSetting(Setting::DefaultStorageEngine, this->storageEngine->getUID());
-        this->loaded = true;
-        return;
-    } else {
-        QMap<QString, QString> context;
-        context.insert("storageEngine", storageEngineIdentifier);
-        this->logger->alert(QObject::tr("Le moteur de stockage n'a pas pu être chargé"), context);
-        this->settings->setSetting(Setting::Initialized, false);
+    QString storageEngineIdentifier = (collection.storageEngine.isEmpty()) ? settings->getSetting(Setting::DefaultStorageEngine).toString()
+                                                                    : collection.storageEngine;
+    QList<StorageConfig> storageEngineConfig = (collection.storageEngineConfig.count() == 0) ? settings->getDefaultStorageSettings(storageEngineIdentifier)
+                                                                                             : collection.storageEngineConfig;
+    if (!this->loadStorageEngine(storageEngineIdentifier, storageEngineConfig)) {
         return;
     }
 
-    // Starting storage engine
-    QMap<QString, QVariant> requestedValues = QMap<QString, QVariant>();
-    for (StorageConfig value : this->storageEngine->getDefaultParameters()) {
-        requestedValues.insert(value.id, value.value);
+    // Loading collection
+    if (!this->loadCollection()) {
+        return;
     }
-    QMap<QString, QVariant> parameters; // = this->settings->getGroupSettings(this->sto)
-    /*QList<StorageConfig> parameters = this->settings->getGroupSettings(this->storageEngine->getUID(), this->storageEngine->getDefaultParameters());
-    this->storageEngine->setParameters(parameters);*/
+}
+
+/**
+ * Load requested storage engine
+ * @brief Storage::loadStorageEngine
+ * @param uid
+ * @internal
+ * @return
+ */
+bool Storage::loadStorageEngine(QString uid, QList<StorageConfig> config)
+{
+    // Loading engine
+    if (this->loader->hasStoragePluginUid(uid)) {
+        this->storageEngine = this->loader->getStoragePlugin(uid);
+        this->loaded = true;
+    } else if (this->loader->hasStoragePluginName(uid)) {
+        this->storageEngine = this->loader->getStoragePluginByName(uid);
+        this->settings->setSetting(Setting::DefaultStorageEngine, this->storageEngine->getUID());
+        this->loaded = true;
+    } else {
+        QMap<QString, QString> context;
+        context.insert("storageEngine", uid);
+        this->logger->alert(QObject::tr("Le moteur de stockage n'a pas pu être chargé"), context);
+        this->settings->setSetting(Setting::Initialized, false);
+        return false;
+    }
+
+    // Setting parameters
+    this->storageEngine->setParameters(config);
+
+    // Starting
     this->storageEngine->start();
     if (this->storageEngine->getStatus() != EngineStatus::STARTED) {
         this->logger->error(QObject::tr("Impossible de faire démarrer le moteur de stockage.  L'erreur retournée"
                                "est la suivante: " + this->storageEngine->getLastError().toLocal8Bit()),
                             QMap<QString, QString>());
-        return;
+        return false;
     }
+    return true;
+}
+
+/**
+ * Load basic elements from the collection
+ * @brief Storage::loadCollection
+ * @param uid
+ * @return
+ */
+bool Storage::loadCollection()
+{
+    this->baseCollectionData = this->storageEngine->getItemsList();
+    return true;
+}
+
+QList<BaseEntity*> Storage::getBaseEntities()
+{
+    return (this->isStorageEngineLoaded()) ? this->baseCollectionData : QList<BaseEntity*>();
 }
 
 /**
@@ -87,9 +123,17 @@ void Storage::load()
  * @brief Storage::reload
  * @return
  */
-bool Storage::reload()
+bool Storage::reload(CollectionStorageSettings collection)
 {
+    // Clear stored data
+    if (this->isStorageEngineLoaded()) {
+        this->storageEngine->stop();
+        delete this->storageEngine;
+    }
+    this->baseCollectionData.clear();
     this->loaded = false;
-    this->load();
+
+    // Re-load engine
+    this->load(collection);
     return this->loaded;
 }

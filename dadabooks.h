@@ -26,6 +26,7 @@
 #include "updater.h"
 #include "xmlmanager.h"
 #include "tools/storage.h"
+#include "tools/stringtools.h"
 
 #define VERSION "0.8.3"
 
@@ -43,6 +44,8 @@ public:
     ~DadaBooks();
 
 private slots:
+    void updateItemListView();
+
     void rechercheInternet(QString requete, QString site, QString langue);
     void getBook(QString id, QString site);
     void updateOnglet(int id);
@@ -76,7 +79,9 @@ private slots:
 
 private:
     void setConnectors();
+    void loadCollection(QString id = QString());
 
+    CollectionStorageSettings activeCollection;
     Settings *settings;
     Storage *storage;
 

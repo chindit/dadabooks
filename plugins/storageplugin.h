@@ -5,6 +5,8 @@
 #include <QMultiMap>
 #include <QPicture>
 
+#include "entity/baseentity.h"
+
 enum SearchConnectors { OR, AND };
 enum EngineStatus { STARTING, STARTED, RUNNING, STOPPING, STOPPED, FAILURE };
 struct StorageConfig {
@@ -104,7 +106,12 @@ public:
      * @return
      */
     virtual QString getUID() = 0;
-
+    /**
+     * Return a list of BaseEntity present in collection
+     * @brief getItemsList
+     * @return
+     */
+    virtual QList<BaseEntity*> getItemsList() = 0;
     /**
      * Find a list of entities by list of criteria
      * @brief findBy

@@ -12,7 +12,7 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     ui->setupUi(this);
 
     settings = new Settings();
-    storage = new Storage(this->settings, this);
+    this->loadCollection(settings->getSetting(DefaultCollection).toString());
 
 
     // To Remove
@@ -50,7 +50,9 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
 //Destructeur
 DadaBooks::~DadaBooks(){
     delete ui;
-    delete storage;
+    if (!this->activeCollection.id.isEmpty()) {
+        delete storage;
+    }
     // Settings cannot be deleted (Why ?)
     //delete settings;
     // TODO Remove
@@ -81,14 +83,15 @@ void DadaBooks::init()
         FirstLaunch *firstLaunchDialog = new FirstLaunch(this, settings);
         // This is a modal (blocking) window.  We don't want main thread to continue when this modal is ON
         firstLaunchDialog->exec();
-        delete firstLaunchDialog;
         // Reload storage engine with new values
-        this->storage->reload();
+        this->storage->reload(firstLaunchDialog->getCollection());
+        delete firstLaunchDialog;
     }
 }
 
 /**
  * Connect signals and slots for the main window
+ * @internal
  * @brief DadaBooks::setConnectors
  */
 void DadaBooks::setConnectors()
@@ -125,6 +128,35 @@ void DadaBooks::setConnectors()
     connect(ui->pushButtonPretLivre, SIGNAL(clicked()), this, SLOT(prepareLendDialog()));
     connect(insLendDialog, SIGNAL(lendCurrent(QString, QString)), this, SLOT(lendItem(QString, QString)));
     connect(insLendDialog, SIGNAL(returnCurrent(int,int)), this, SLOT(returnItem(int, int)));
+}
+
+/**
+ * Load collection from storage engine and display it
+ * @brief DadaBooks::loadCollection
+ * @param id
+ */
+void DadaBooks::loadCollection(QString id)
+{
+    CollectionStorageSettings collection = this->settings->getCollection(id);
+    if (collection.id.isEmpty()) {
+        return;
+    }
+    storage = new Storage(this->settings, collection, this);
+}
+
+/**
+ * Update collection items list on left ListWidget in HomePage
+ * @brief DadaBooks::updateItemListView
+ */
+void DadaBooks::updateItemListView()
+{
+    ui->listWidgetHomeList->clear();
+    QList<BaseEntity*> data = this->storage->getBaseEntities();
+    for (BaseEntity* datum : data) {
+        QListWidgetItem *newItem = new QListWidgetItem(StringTools::stripDeterminants(datum->getTitle()));
+        newItem->setData(Qt::UserRole, datum->getId());
+        ui->listWidgetHomeList->addItem(newItem);
+    }
 }
 
 //Transfère les données de AddBook à PreviewBook
@@ -224,7 +256,7 @@ void DadaBooks::setListeLivres(){
         ui->tableWidget->setItem(0, 4, item4);
     }
     //On remplit l'accueil
-    ui->listWidget_accueil->clear();
+    ui->listWidgetHomeList->clear();
     if(!insSettingsManager->getSettings(Xml).toBool()){
         QString req1;
         if(insSettingsManager->getSettings(Type).toString() == "livres")
@@ -235,24 +267,24 @@ void DadaBooks::setListeLivres(){
         while(res1.next()){
             QListWidgetItem *newItem = new QListWidgetItem(ToolsManager::stripDeterminants(res1.record().value("titre").toString()));
             newItem->setData(Qt::UserRole, res1.record().value("id").toInt());
-            ui->listWidget_accueil->addItem(newItem);
+            ui->listWidgetHomeList->addItem(newItem);
         }
     }
     else{
         for(int i=0; i<resultat.size(); i++){
             QListWidgetItem *newItem = new QListWidgetItem(ToolsManager::stripDeterminants(resultat.at(i).value("titre")));
             newItem->setData(Qt::UserRole, resultat.at(i).value("id"));
-            ui->listWidget_accueil->addItem(newItem);
+            ui->listWidgetHomeList->addItem(newItem);
         }
     }
-    ui->listWidget_accueil->sortItems();
-    ui->labelNombre->setText(QString::number(ui->listWidget_accueil->count())+((insSettingsManager->getSettings(Type).toString() == "livres") ? " livres" : " films"));
+    ui->listWidgetHomeList->sortItems();
+    ui->labelNombre->setText(QString::number(ui->listWidgetHomeList->count())+((insSettingsManager->getSettings(Type).toString() == "livres") ? " livres" : " films"));
     ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
 
     //Connexion des signaux/slots
     connect(ui->tableWidget, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(activatePreview()));
-    connect(ui->listWidget_accueil, SIGNAL(itemSelectionChanged()), this, SLOT(preparePreview()));
+    connect(ui->listWidgetHomeList, SIGNAL(itemSelectionChanged()), this, SLOT(preparePreview()));
     ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
     return;
 }
@@ -261,8 +293,8 @@ void DadaBooks::setListeLivres(){
 void DadaBooks::preparePreview(){
     //Le but de cette fonction est simplement de convertir l'ID d'index du QTableView en un ID de livre pour appeler ensuite activatePreview()
     int id = 0;
-    if(!ui->listWidget_accueil->selectedItems().isEmpty())
-        id = ui->listWidget_accueil->currentItem()->data(Qt::UserRole).toInt();
+    if(!ui->listWidgetHomeList->selectedItems().isEmpty())
+        id = ui->listWidgetHomeList->currentItem()->data(Qt::UserRole).toInt();
     if(id > 0){
         this->activatePreview(id, false, true);
     }
@@ -311,7 +343,7 @@ void DadaBooks::activatePreview(int id, bool search, bool idOk){
         real_id = QString::number(id)+";";
     }
     //Si ce n'est pas de la recherche, on suppose que l'utilisateur a voulu ouvrir un livre récent (ui->tableWidget).
-    //Seulement, s'il a cliqué depuis ui->listWidget_accueil, on se retrouve avec une SIGSEGV vu qu'aucune ligne n'est sélectionnée
+    //Seulement, s'il a cliqué depuis ui->listWidgetHomeList, on se retrouve avec une SIGSEGV vu qu'aucune ligne n'est sélectionnée
     //dans ui->tableWidget.  On vérifie donc si la propriété idOk est à TRUE.  Si c'est le cas, on a pas besoin de chercher le real_id,
     //il est déjà bon.
     else{
@@ -1028,7 +1060,7 @@ void DadaBooks::selectRandom(){
     if(sql){
         QSqlQuery res1;
         QString req1;
-        if(ui->listWidget_accueil->count() == 0){
+        if(ui->listWidgetHomeList->count() == 0){
             return;
         }
         if(films){
@@ -1111,8 +1143,8 @@ void DadaBooks::exportAsPDF(){
         }
         else{
             QList <int> ordre;
-            for(int i=0; i<ui->listWidget_accueil->count(); ++i){
-                ordre.append(ui->listWidget_accueil->item(i)->data(Qt::UserRole).toInt());
+            for(int i=0; i<ui->listWidgetHomeList->count(); ++i){
+                ordre.append(ui->listWidgetHomeList->item(i)->data(Qt::UserRole).toInt());
             }
             ToolsManager::exportMovieList(insXmlManager->readBase(), output, true, true, ordre);
         }
@@ -1124,8 +1156,8 @@ void DadaBooks::exportAsPDF(){
         }
         else{
             QList <int> ordre;
-            for(int i=0; i<ui->listWidget_accueil->count(); ++i){
-                ordre.append(ui->listWidget_accueil->item(i)->data(Qt::UserRole).toInt());
+            for(int i=0; i<ui->listWidgetHomeList->count(); ++i){
+                ordre.append(ui->listWidgetHomeList->item(i)->data(Qt::UserRole).toInt());
             }
             QString requete = "SELECT `id`,`titre`,`directeur`,`acteurs`,`synopsis`,`annee`,`duree`,`genre`,`classement`,`jaquette` FROM `films`";
             ToolsManager::exportMovieList(insSqlManager->convertToXML(insSqlManager->query(requete)), output, true, true, ordre);

@@ -41,7 +41,9 @@ SOURCES += main.cpp\
     entity/movieconverter.cpp \
     entity/movie.cpp \
     ui/storageselectiondialog.cpp \
-    tools/storage.cpp
+    tools/storage.cpp \
+    entity/baseentity.cpp \
+    tools/stringtools.cpp
 
 HEADERS  += dadabooks.h \
     settingsmanager.h \
@@ -72,7 +74,9 @@ HEADERS  += dadabooks.h \
     plugins/storageplugin.h \
     plugins/thirdpartyplugin.h \
     ui/storageselectiondialog.h \
-    tools/storage.h
+    tools/storage.h \
+    entity/baseentity.h \
+    tools/stringtools.h
 
 FORMS    += dadabooks.ui \
     addbook.ui \

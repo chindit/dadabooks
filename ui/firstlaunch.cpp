@@ -62,6 +62,7 @@ QString FirstLaunch::getDirName(bool isXML){
 /**
  * Connect buttons to actions
  * @brief FirstLaunch::setConnectors
+ * @internal
  */
 void FirstLaunch::setConnectors()
 {
@@ -79,6 +80,7 @@ void FirstLaunch::setConnectors()
 /**
  * Update storage label
  * @brief FirstLaunch::updateStorageLabel
+ * @internal
  */
 void FirstLaunch::updateStorageLabel()
 {
@@ -90,6 +92,7 @@ void FirstLaunch::updateStorageLabel()
 /**
  * Check if storage type is correctly enabled
  * @brief FirstLaunch::checkStorageType
+ * @internal
  */
 void FirstLaunch::checkStorageType()
 {
@@ -141,6 +144,7 @@ void FirstLaunch::checkStorageType()
  * Update breadcrumb to reflect current position
  * @brief FirstLaunch::updateBreadcrumb
  * @param current
+ * @internal
  */
 void FirstLaunch::updateBreadcrumb(int current)
 {
@@ -150,6 +154,7 @@ void FirstLaunch::updateBreadcrumb(int current)
 /**
  * Change to next page in stackedWidget
  * @brief FirstLaunch::next
+ * @internal
  */
 void FirstLaunch::next()
 {
@@ -168,6 +173,7 @@ void FirstLaunch::getStorageDir()
 /**
  * Allow user to select an alternate storage method
  * @brief FirstLaunch::selectStorageMethod
+ * @internal
  */
 void FirstLaunch::selectStorageMethod()
 {
@@ -185,6 +191,11 @@ void FirstLaunch::selectStorageMethod()
     delete loader;
 }
 
+/**
+ * Intecept the end of process and save data
+ * @brief FirstLaunch::finish
+ * @internal
+ */
 void FirstLaunch::finish()
 {
     // Try to create storage
@@ -204,7 +215,6 @@ void FirstLaunch::finish()
         }
     }
     // Saving settings
-    CollectionStorageSettings collection;
     QString typeColl = ui->comboBoxCollectionType->currentText().toLower();
     bool found = false;
     for (auto &type : collectionNames) {
@@ -235,4 +245,14 @@ void FirstLaunch::finish()
     if (this->ui->checkBoxDefault->isChecked() || this->settings->getSetting(DefaultCollection).toString().isEmpty()) {
         this->settings->setSetting(DefaultCollection, collection.id);
     }
+}
+
+/**
+ * Return newly created collection
+ * @brief FirstLaunch::getCollection
+ * @return
+ */
+CollectionStorageSettings FirstLaunch::getCollection()
+{
+    return this->collection;
 }

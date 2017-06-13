@@ -14,6 +14,8 @@ public:
     QVariant getSetting(Setting s);
     void setSetting(Setting s, QVariant v);
     void storeCollection(CollectionStorageSettings collection);
+    QList<StorageConfig> getDefaultStorageSettings(QString storageEngineUID);
+    void setDefaultStorageSettings(QList<StorageConfig> config, QString storageEngineUID);
     CollectionStorageSettings getCollection(QString id);
     QList<CollectionStorageSettings> getCollections();
     bool reload();

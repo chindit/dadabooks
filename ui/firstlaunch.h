@@ -26,6 +26,7 @@ class FirstLaunch : public QDialog
 public:
     explicit FirstLaunch(QWidget *parent, Settings *settings);
     ~FirstLaunch();
+    CollectionStorageSettings getCollection();
 
 private slots:
     void updateBreadcrumb(int current);
@@ -47,6 +48,7 @@ private:
     QString currentFile;
     QString storageEngineId;
     QList<StorageConfig> storageEngineConfiguration;
+    CollectionStorageSettings collection;
 };
 
 #endif // FIRSTLAUNCH_H

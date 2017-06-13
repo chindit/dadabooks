@@ -5,15 +5,13 @@
 #include <QString>
 #include <QTime>
 
-class Movie
+#include "baseentity.h"
+
+class Movie : public BaseEntity
 {
 public:
     Movie();
 
-    int getId();
-    Movie *setId(int id);
-    QString getTitle();
-    Movie *setTitle(QString title);
     QString getOriginalTitle();
     Movie *setOriginalTitle(QString title);
     QDate getYear();
@@ -68,8 +66,6 @@ public:
     Movie *setFile(QString file);
 
 private:
-    int id;
-    QString title;
     QString originalTitle;
     QDate year;
     QString director;

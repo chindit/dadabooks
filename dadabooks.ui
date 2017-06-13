@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>852</width>
-    <height>812</height>
+    <height>834</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -264,7 +264,7 @@
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="0" rowspan="2">
-         <widget class="QListWidget" name="listWidget_accueil">
+         <widget class="QListWidget" name="listWidgetHomeList">
           <property name="minimumSize">
            <size>
             <width>250</width>

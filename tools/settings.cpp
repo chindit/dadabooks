@@ -111,6 +111,44 @@ QList<CollectionStorageSettings> Settings::getCollections()
 }
 
 /**
+ * Save default storage engine config
+ * @brief Settings::setDefaultStorageSettings
+ * @param config
+ * @param storageEngineUID
+ */
+void Settings::setDefaultStorageSettings(QList<StorageConfig> config, QString storageEngineUID)
+{
+    this->reader->beginGroup(storageEngineUID);
+    for (StorageConfig datum : config) {
+        this->reader->setValue(datum.id, datum.value);
+    }
+    this->reader->endGroup();
+    return;
+}
+
+/**
+ * Get default config for given storage provider
+ * @brief Settings::getDefaultStorageSettings
+ * @param storageEngineUID
+ * @return
+ */
+QList<StorageConfig> Settings::getDefaultStorageSettings(QString storageEngineUID)
+{
+    QList<StorageConfig> config = QList<StorageConfig>();
+    this->reader->beginGroup(storageEngineUID);
+    if (this->reader->childKeys().count() > 0) {
+        for (QString key : this->reader->childKeys()) {
+            StorageConfig datum;
+            datum.id = key;
+            datum.value = this->reader->value(key);
+            config.append(datum);
+        }
+    }
+    this->reader->endGroup();
+    return config;
+}
+
+/**
  * Load current settings
  * @brief Settings::loadSettings
  */
