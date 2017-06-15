@@ -188,6 +188,7 @@ void FirstLaunch::next()
 void FirstLaunch::getStorageDir()
 {
     this->currentFile = this->getDirName(ui->pushButtonXML->isChecked());
+    this->ui->labelStorageInfo->setText(this->currentFile);
 }
 
 /**
@@ -199,7 +200,10 @@ void FirstLaunch::selectStorageMethod()
 {
     PluginLoader *loader = new PluginLoader(this->logger);
     StorageSelectionDialog *storageSelectionDialog = new StorageSelectionDialog(loader, this);
-    storageSelectionDialog->exec();
+    int result = storageSelectionDialog->exec();
+    if (result == QDialog::Rejected) {
+        return;
+    }
     // Once it's done, we get selected method
     QString selectedStorageMethod = storageSelectionDialog->getSelectedPlugin();
     if (selectedStorageMethod.length() > 0) {
@@ -212,12 +216,80 @@ void FirstLaunch::selectStorageMethod()
 }
 
 /**
+ * Get current parameters from the UI
+ * @brief FirstLaunch::getStorageConfigFromUI
+ * @return
+ */
+QList<StorageConfig> FirstLaunch::getStorageConfigFromUI()
+{
+    PluginLoader *loader = new PluginLoader(this->logger);
+    QList<StorageConfig> defaultConfig = loader->getStoragePlugin(this->storageEngineId)->getActiveParameters();
+
+    if (this->ui->pushButtonCloud->isChecked()) {
+        // TODO Get cloud parameters
+    } else {
+        defaultConfig.clear();
+        // Get file
+        StorageConfig file;
+        file.id = "file";
+        file.value = QVariant((this->currentFile.isEmpty()) ? this->getDirName(this->storageEngineId.contains("XML", Qt::CaseSensitive)) : this->currentFile);
+        // Get type
+        StorageConfig type;
+        type.id = "type";
+        type.value = QVariant(this->getSelectedCollectionType());
+
+        this->storageEngineConfiguration.append(file);
+        this->storageEngineConfiguration.append(type);
+    }
+
+    return this->storageEngineConfiguration;
+}
+
+/**
+ * Get selected collection type in Checkbox
+ * @brief FirstLaunch::getSelectedCollectionType
+ * @return
+ */
+Collection FirstLaunch::getSelectedCollectionType()
+{
+    QString typeColl = ui->comboBoxCollectionType->currentText().toLower();
+
+    for (auto &type : collectionNames) {
+        if (type.second == typeColl) {
+            return type.first;
+        }
+    }
+    this->logger->error(tr("Unable to save settings: collection type of %1 is not recognized").arg(typeColl), QMap<QString, QString>());
+    return None;
+}
+
+/**
  * Intecept the end of process and save data
  * @brief FirstLaunch::finish
  * @internal
  */
 void FirstLaunch::finish()
 {
+    // Get storage engine configuration if not set
+    if (this->storageEngineConfiguration.empty()) {
+        this->storageEngineConfiguration = this->getStorageConfigFromUI();
+    }
+
+    // Reading last config options
+    if (ui->checkBoxSubdir->isChecked()) {
+        QFileInfo attemptedDir = QFileInfo(this->currentFile);
+        QString basedir = attemptedDir.dir().path() + QDir::separator() + "dadabooks";
+        QDir requestedDir = QDir(basedir);
+        if (!requestedDir.exists()) {
+            bool result = requestedDir.mkdir(basedir);
+            if (!result) {
+                this->logger->error(tr("Unable to create «dadabooks» dir in %1").arg(basedir));
+                return;
+            }
+        }
+        this->currentFile = basedir + QDir::separator() + attemptedDir.fileName();
+    }
+
     // Try to create storage
     PluginLoader *loader = new PluginLoader(this->logger);
     if (!loader->getStoragePlugin(this->storageEngineId)->create(this->storageEngineConfiguration)) {
@@ -235,19 +307,7 @@ void FirstLaunch::finish()
         }
     }
     // Saving settings
-    QString typeColl = ui->comboBoxCollectionType->currentText().toLower();
-    bool found = false;
-    for (auto &type : collectionNames) {
-        if (type.second == typeColl) {
-            collection.type = type.first;
-            found = true;
-            break;
-        }
-    }
-    if (!found) {
-        this->logger->error(tr("Unable to save settings: collection type of %1 is not recognized").arg(typeColl), QMap<QString, QString>());
-        return;
-    }
+    collection.type = this->getSelectedCollectionType();
     collection.storageEngine = this->storageEngineId;
     collection.useDefaultStorageSettings = false;
     collection.storageEngineConfig = (this->storageEngineConfiguration.count() > 0) ?

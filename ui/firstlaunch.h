@@ -35,11 +35,13 @@ private slots:
     void next();
     void finish();
     void selectStorageMethod();
+    QList<StorageConfig> getStorageConfigFromUI();
 
 private:
     QString getDirName(bool isXML=false);
     void setConnectors();
     void updateStorageLabel();
+    Collection getSelectedCollectionType();
 
     Ui::FirstLaunch *ui;
 

@@ -24,7 +24,7 @@ public:
     void info(QString message, QMap<QString, QString> context);
     void notice(QString message, QMap<QString, QString> context);
     void warning(QString message, QMap<QString, QString> context);
-    void error(QString message, QMap<QString, QString> context);
+    void error(QString message, QMap<QString, QString> context = QMap<QString, QString>());
     void critical(QString message, QMap<QString, QString> context);
     void alert(QString message, QMap<QString, QString> context);
     void emergency(QString message, QMap<QString, QString> context);

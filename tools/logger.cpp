@@ -141,7 +141,7 @@ void Logger::warning(QString message, QMap<QString, QString> context = QMap<QStr
  * @param message
  * @param context
  */
-void Logger::error(QString message, QMap<QString, QString> context = QMap<QString, QString>())
+void Logger::error(QString message, QMap<QString, QString> context)
 {
     return this->log(LogLevel::ERROR, message, context);
 }

@@ -143,6 +143,7 @@ void DadaBooks::loadCollection(QString id)
         return;
     }
     this->storage->setCollection(collection);
+    this->updateItemListView();
 }
 
 /**
