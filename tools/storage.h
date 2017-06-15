@@ -12,20 +12,22 @@
 class Storage
 {
 public:
-    Storage(Settings *settings, CollectionStorageSettings collection, QWidget *parent);
+    Storage(Settings *settings, QWidget *parent);
+    Storage(Settings *settings, QWidget *parent, CollectionStorageSettings collection);
     ~Storage();
+    bool setCollection(CollectionStorageSettings collection);
     bool isStorageEngineLoaded();
     bool reload(CollectionStorageSettings collection);
     QList<BaseEntity*> getBaseEntities();
 
 private:
-    void load(CollectionStorageSettings collection);
+    bool load(CollectionStorageSettings collection);
     bool loadStorageEngine(QString uid, QList<StorageConfig> config);
     bool loadCollection();
 
     QList<BaseEntity*> baseCollectionData;
     Settings* settings;
-    bool loaded;
+    bool loaded = false;
     StoragePlugin* storageEngine;
     QWidget *parent;
     Logger *logger;

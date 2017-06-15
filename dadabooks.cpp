@@ -12,6 +12,7 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     ui->setupUi(this);
 
     settings = new Settings();
+    storage = new Storage(this->settings, this);
     this->loadCollection(settings->getSetting(DefaultCollection).toString());
 
 
@@ -141,7 +142,7 @@ void DadaBooks::loadCollection(QString id)
     if (collection.id.isEmpty()) {
         return;
     }
-    storage = new Storage(this->settings, collection, this);
+    this->storage->setCollection(collection);
 }
 
 /**

@@ -1,11 +1,13 @@
 #include "storage.h"
 
+
 /**
- * Constructor
+ * Base constructor
  * @brief Storage::Storage
  * @param settings
+ * @param parent
  */
-Storage::Storage(Settings *settings, CollectionStorageSettings collection, QWidget *parent)
+Storage::Storage(Settings *settings, QWidget *parent)
 {
     this->settings = settings;
     this->parent = parent;
@@ -13,12 +15,18 @@ Storage::Storage(Settings *settings, CollectionStorageSettings collection, QWidg
 
     this->logger = new Logger(this->settings, this->parent);
     this->loader = new PluginLoader(this->logger, this->parent);
+}
 
-    // Do not load storage engine in app is not initialized
-    if (this->settings->getSetting(Setting::Initialized).toBool()) {
-        this->load(collection);
-    }
-    this->baseCollectionData = QList<BaseEntity*>();
+/**
+ * Overloaded constructor
+ * @brief Storage::Storage
+ * @param settings
+ */
+Storage::Storage(Settings *settings, QWidget *parent, CollectionStorageSettings collection)
+{
+    Storage(settings, parent);
+
+    this->setCollection(collection);
 }
 
 /**
@@ -30,7 +38,7 @@ Storage::~Storage()
     // Stop storage engine if started
     if (this->isStorageEngineLoaded()) {
         this->storageEngine->stop();
-        if (!this->storageEngine->getStatus() == EngineStatus::STOPPED) {
+        if (this->storageEngine->getStatus() != EngineStatus::STOPPED) {
             QMap<QString, QString> context;
             context.insert("error", this->storageEngine->getLastError());
             this->logger->error("Unable to stop storage engine.", context);
@@ -41,20 +49,32 @@ Storage::~Storage()
 }
 
 /**
+ * Load given collection
+ * @brief Storage::setCollection
+ * @param collection
+ * @return
+ */
+bool Storage::setCollection(CollectionStorageSettings collection)
+{
+    this->baseCollectionData = QList<BaseEntity*>();
+    return this->load(collection);
+}
+
+/**
  * Check if a storage engine is loaded
  * @brief Storage::isStorageEngineLoaded
  * @return
  */
 bool Storage::isStorageEngineLoaded()
 {
-    return this->loaded && this->storageEngine->getStatus() == EngineStatus::STARTED;
+    return (this->loaded) ? this->storageEngine->getStatus() == EngineStatus::STARTED : false;
 }
 
 /**
  * Load required storage plugin
  * @brief Storage::load
  */
-void Storage::load(CollectionStorageSettings collection)
+bool Storage::load(CollectionStorageSettings collection)
 {
     // Loading storage engine
     QString storageEngineIdentifier = (collection.storageEngine.isEmpty()) ? settings->getSetting(Setting::DefaultStorageEngine).toString()
@@ -62,13 +82,11 @@ void Storage::load(CollectionStorageSettings collection)
     QList<StorageConfig> storageEngineConfig = (collection.storageEngineConfig.count() == 0) ? settings->getDefaultStorageSettings(storageEngineIdentifier)
                                                                                              : collection.storageEngineConfig;
     if (!this->loadStorageEngine(storageEngineIdentifier, storageEngineConfig)) {
-        return;
+        return false;
     }
 
     // Loading collection
-    if (!this->loadCollection()) {
-        return;
-    }
+    return this->loadCollection();
 }
 
 /**
@@ -137,7 +155,7 @@ bool Storage::reload(CollectionStorageSettings collection)
     // Clear stored data
     if (this->isStorageEngineLoaded()) {
         this->storageEngine->stop();
-        if (!this->storageEngine->getStatus() == EngineStatus::STOPPED) {
+        if (this->storageEngine->getStatus() != EngineStatus::STOPPED) {
             QMap<QString, QString> context;
             context.insert("error", this->storageEngine->getLastError());
             this->logger->error("Unable to stop storage engine.", context);

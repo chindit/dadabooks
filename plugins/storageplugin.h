@@ -14,6 +14,7 @@ struct StorageConfig {
     QString description;
     QVariant value;
 };
+enum Collection { Book, Movie, None };
 
 class StoragePlugin
 {

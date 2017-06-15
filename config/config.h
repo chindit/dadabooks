@@ -48,13 +48,10 @@ const std::map<CollectionSetting, const char*> collectionSettingsNames {
     {UseDefaultStorageSettings, "defaultSettings"}
 };
 
-// Collection type handled by DadaBooks
-enum Collection { Book, Movie };
-
 // Collection variables
 const std::map<Collection, const char*> collectionNames {
-    {Book, "livres"},
-    {Movie, "films"}
+    {Book, "book"},
+    {Movie, "movie"}
 };
 
 // Log level

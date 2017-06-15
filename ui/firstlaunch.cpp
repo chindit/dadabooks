@@ -38,14 +38,23 @@ FirstLaunch::~FirstLaunch(){
  * @return
  */
 QString FirstLaunch::getDirName(bool isXML){
-    QMessageBox::information(this, tr("Choisissez un dossier"), tr("Merci de choisir l'emplacement du fichier de base de données"));
     QString dirName;
-    QString extensionChoice = (isXML) ? tr("Bases de données (*.db *.sqlite)") : tr("Fichiers XML (*.xml)");
+    QString extensionChoice = (isXML) ? tr("Fichiers XML (*.xml)") : tr("Bases de données (*.db *.sqlite)");
     dirName = QFileDialog::getSaveFileName(this, tr("Emplacement de la base de données"), QDir::homePath(), extensionChoice);
 
     // Handling «no choice» (not allowed)
     QFileInfo location = QFileInfo(dirName);
     if (location.isDir()) {
+
+        if (!dirName.endsWith(QDir::separator())) {
+            dirName.append(QDir::separator());
+        }
+        dirName.append("dadabooks.");
+        dirName.append((isXML) ? "xml" : "db");
+    } else if (!location.isFile()) {
+        // Should be OK, it will be created
+    } else {
+        QMessageBox::information(this, tr("Choisissez un dossier"), tr("Merci de choisir l'emplacement du fichier de base de données"));
         return this->getDirName(isXML);
     }
 
@@ -54,6 +63,17 @@ QString FirstLaunch::getDirName(bool isXML){
         dirName.append(".db");
     } else if (isXML && !dirName.endsWith(".xml")) {
         dirName.append(".xml");
+    }
+
+    if (!location.exists()) {
+        QString dirPath = location.absoluteDir().path();
+        location = QFileInfo(dirPath);
+    }
+
+    if (!location.isWritable()) {
+        QMessageBox::information(this, tr("Emplacement invalide"), tr("Impossible d'écrire dans ce répertoire.  Veuillez changer les droits"
+                                                                      " d'accès ou choisir un autre répertoire"));
+        return this->getDirName(isXML);
     }
 
     return dirName;
@@ -204,8 +224,8 @@ void FirstLaunch::finish()
         this->logger->error(tr("Unable to initiate storage.  Error is following: ") +
                                loader->getStoragePlugin(this->storageEngineId)->getLastError(), QMap<QString, QString>());
         int response = QMessageBox::question(this, tr("Unable to create storage"), tr("Storage engine was unable"
-                                                                                      "to create it's configuration.  Do"
-                                                                                      "you want to change your parameters ?"),
+                                                                                      " to create it's configuration.  Do"
+                                                                                      " you want to change your parameters ?"),
                                              QMessageBox::Yes | QMessageBox::No);
         if (response == QMessageBox::No) {
             this->close();
