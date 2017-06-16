@@ -167,7 +167,6 @@ void Settings::loadSettings() {
     savedSettings[Setting::Initialized] = this->reader->value(settingsNames.find(Initialized)->second, false);
     savedSettings[Setting::OpenInTab] = this->reader->value(settingsNames.find(OpenInTab)->second, true);
     savedSettings[Setting::DownPics] = this->reader->value(settingsNames.find(DownPics)->second, true);
-    savedSettings[Setting::Type] = this->reader->value(settingsNames.find(Type)->second, "livres");
     savedSettings[Setting::Empruntable] = this->reader->value(settingsNames.find(Empruntable)->second, true);
     savedSettings[Setting::Verbosity] = this->reader->value(settingsNames.find(Verbosity)->second, LogLevel::WARNING);
     savedSettings[Setting::DefaultStorageEngine] = this->reader->value(settingsNames.find(DefaultStorageEngine)->second, "xml");

@@ -45,7 +45,7 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     movieLoading->start();
 
     //Et on liste les livres
-    this->setListeLivres();
+    //this->setListeLivres();
 }
 
 //Destructeur
