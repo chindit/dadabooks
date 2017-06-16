@@ -10,6 +10,13 @@ Logger::Logger(Settings* settings, QWidget *parent)
     this->loggerFilePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     this->settings = settings;
     this->parent = parent;
+    QDir logDirectory = QDir(this->loggerFilePath);
+    if (!logDirectory.exists() && !logDirectory.mkpath(this->loggerFilePath)) {
+        QMessageBox::critical(this->parent, QObject::tr("Unable to write log"),
+                              QObject::tr("Unable to create log file"));
+        // Critical scenario.  Exit requested
+        exit(EXIT_FAILURE);
+    }
 }
 
 /**
@@ -76,6 +83,7 @@ void Logger::write(QString log)
 {
     QFile *logFile = new QFile(this->loggerFilePath+'/'+LogFilename);
     logFile->open(QIODevice::Append);
+    QString test = logFile->errorString();
     logFile->write(log.toLocal8Bit());
     logFile->close();
     delete logFile;

@@ -14,6 +14,10 @@ FirstLaunch::FirstLaunch(QWidget *parent, Settings *settings) : QDialog(parent),
     this->logger = new Logger(this->settings, parent);
 
     ui->setupUi(this);
+    // Hydrate comboBox
+    ui->comboBoxCollectionType->insertItem(0, tr("Films"), QVariant(Collection::Movie));
+    ui->comboBoxCollectionType->insertItem(1, tr("Livres"), QVariant(Collection::Book));
+
     this->updateStorageLabel();
 
     this->setConnectors();
@@ -236,7 +240,7 @@ QList<StorageConfig> FirstLaunch::getStorageConfigFromUI()
         // Get type
         StorageConfig type;
         type.id = "type";
-        type.value = QVariant(this->getSelectedCollectionType());
+        type.value = QVariant(collectionNames.find(this->getSelectedCollectionType())->second);
 
         this->storageEngineConfiguration.append(file);
         this->storageEngineConfiguration.append(type);
@@ -252,15 +256,14 @@ QList<StorageConfig> FirstLaunch::getStorageConfigFromUI()
  */
 Collection FirstLaunch::getSelectedCollectionType()
 {
-    QString typeColl = ui->comboBoxCollectionType->currentText().toLower();
+    QVariant data = ui->comboBoxCollectionType->currentData();
 
-    for (auto &type : collectionNames) {
-        if (type.second == typeColl) {
-            return type.first;
-        }
+    if (!data.isValid() || data.isNull()) {
+        this->logger->error(tr("Unable to save settings: collection type of %1 is not recognized").arg(data.toString()), QMap<QString, QString>());
+        return None;
     }
-    this->logger->error(tr("Unable to save settings: collection type of %1 is not recognized").arg(typeColl), QMap<QString, QString>());
-    return None;
+
+    return data.value<Collection>();
 }
 
 /**
@@ -270,11 +273,6 @@ Collection FirstLaunch::getSelectedCollectionType()
  */
 void FirstLaunch::finish()
 {
-    // Get storage engine configuration if not set
-    if (this->storageEngineConfiguration.empty()) {
-        this->storageEngineConfiguration = this->getStorageConfigFromUI();
-    }
-
     // Reading last config options
     if (ui->checkBoxSubdir->isChecked()) {
         QFileInfo attemptedDir = QFileInfo(this->currentFile);
@@ -290,9 +288,15 @@ void FirstLaunch::finish()
         this->currentFile = basedir + QDir::separator() + attemptedDir.fileName();
     }
 
+    // Get storage engine configuration if not set
+    if (this->storageEngineConfiguration.empty()) {
+        this->storageEngineConfiguration = this->getStorageConfigFromUI();
+    }
+
     // Try to create storage
     PluginLoader *loader = new PluginLoader(this->logger);
     if (!loader->getStoragePlugin(this->storageEngineId)->create(this->storageEngineConfiguration)) {
+        QString t = loader->getStoragePlugin(this->storageEngineId)->getLastError();
         this->logger->error(tr("Unable to initiate storage.  Error is following: ") +
                                loader->getStoragePlugin(this->storageEngineId)->getLastError(), QMap<QString, QString>());
         int response = QMessageBox::question(this, tr("Unable to create storage"), tr("Storage engine was unable"
@@ -325,6 +329,9 @@ void FirstLaunch::finish()
     if (this->ui->checkBoxDefault->isChecked() || this->settings->getSetting(DefaultCollection).toString().isEmpty()) {
         this->settings->setSetting(DefaultCollection, collection.id);
     }
+
+    // Close window
+    this->close();
 }
 
 /**

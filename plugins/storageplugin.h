@@ -14,7 +14,14 @@ struct StorageConfig {
     QString description;
     QVariant value;
 };
+
 enum Collection { Book, Movie, None };
+// Collection variables
+const std::map<Collection, const char*> collectionNames {
+    {Book, "book"},
+    {Movie, "movie"}
+};
+Q_DECLARE_METATYPE(Collection)
 
 class StoragePlugin
 {

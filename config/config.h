@@ -48,12 +48,6 @@ const std::map<CollectionSetting, const char*> collectionSettingsNames {
     {UseDefaultStorageSettings, "defaultSettings"}
 };
 
-// Collection variables
-const std::map<Collection, const char*> collectionNames {
-    {Book, "book"},
-    {Movie, "movie"}
-};
-
 // Log level
 enum LogLevel { DEBUG, INFO, NOTICE, WARNING, ERROR, CRITICAL, ALERT, EMERGENCY };
 

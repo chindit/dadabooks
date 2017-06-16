@@ -2,6 +2,7 @@
 #define LOGGER_H
 
 #include <QDateTime>
+#include <QDir>
 #include <QException>
 #include <QFile>
 #include <QMap>
