@@ -1,5 +1,4 @@
 #include "dadabooks.h"
-#include "ui_dadabooks.h"
 
 /**
  * Main method for program
@@ -13,6 +12,7 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
 
     settings = new Settings();
     storage = new Storage(this->settings, this);
+    logger = new Logger(this->settings, this);
     this->loadCollection(settings->getSetting(DefaultCollection).toString());
 
 
@@ -47,12 +47,18 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     //this->setListeLivres();
 }
 
-//Destructeur
+/**
+ * Destructor
+ * @brief DadaBooks::~DadaBooks
+ */
 DadaBooks::~DadaBooks(){
     delete ui;
     if (!this->activeCollection.id.isEmpty()) {
         delete storage;
     }
+    delete logger;
+
+    // BELOW : LEGACY DELETE
     // Settings cannot be deleted (Why ?)
     //delete settings;
     // TODO Remove
@@ -161,23 +167,48 @@ void DadaBooks::updateItemListView()
 }
 
 /**
- * Add a new item to active collection
+ * Pre-modal to add a new item to active collection
+ * This dialog allows user to make a choice between a third-party
+ * app or a manual insert.
  * @brief DadaBooks::addItem
  */
 void DadaBooks::addItem(){
+    PluginLoader *loader = new PluginLoader(this->logger, this);
+    AddItemDialog *addItemDialog = new AddItemDialog(loader);
 
+    addItemDialog->exec();
+    delete loader;
+    delete addItemDialog;
     return;
 }
 
-//Transfère les données de AddBook à PreviewBook
-void DadaBooks::rechercheInternet(QString requete, QString site, QString langue){
+/**
+ * Call requested third party plugins to perform a search based on the user query
+ * @brief DadaBooks::addItemFromThirdParty
+ * @param query
+ * @param uid
+ * @param language
+ */
+void DadaBooks::addItemFromThirdParty(QString query, QString uid, QString language)
+{
     ui->stackedWidget->setCurrentIndex(3);
     QList< QMultiMap<QString,QString> > resultats;
-    resultats = insSiteManager->makeSearch(requete, site, langue, insSettingsManager->getSettings(Type).toString());
+    //resultats = insSiteManager->makeSearch(requete, site, langue, insSettingsManager->getSettings(Type).toString());
     //On envoie à la fenêtre d'aperçu
     insPreviewBook->setTable(resultats);
     insPreviewBook->show();
     return;
+}
+
+/**
+ * Allow user to add an item manually
+ * This method is also called when adding via a ThirdParty plugin
+ * to allow user to check retrieved data.
+ * @brief DadaBooks::addItemManually
+ */
+void DadaBooks::addItemManually()
+{
+
 }
 
 //Sélectionne le livre fourni en paramètre

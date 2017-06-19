@@ -23,13 +23,11 @@ public:
 signals:
     void searchInternet(QString title, QString uid, QString language);
     void addManual();
-    void canceled();
 
 private slots:
     void initPluginList();
     void searchThirdParty();
     void addManualItem();
-    void emitClose();
 
 private:
     Ui::AddItemDialog *ui;

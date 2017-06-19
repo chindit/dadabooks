@@ -64,12 +64,3 @@ void AddItemDialog::addManualItem(){
     this->close();
     return;
 }
-
-/**
- * @brief AddItemDialog::emitClose
- */
-void AddItemDialog::emitClose(){
-    emit canceled();
-    this->close();
-    return;
-}

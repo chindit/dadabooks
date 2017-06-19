@@ -12,21 +12,27 @@
 
 #include <time.h>
 
+#include "tools/storage.h"
+#include "tools/stringtools.h"
+#include "tools/settings.h"
+
+#include "ui_dadabooks.h"
 #include "ui/additemdialog.h"
-#include "editbook.h"
 #include "ui/firstlaunch.h"
+
+
+// START LEGACY INCLUDES
+#include "editbook.h"
 #include "lenddialog.h"
 #include "previewbook.h"
 #include "searchdialog.h"
 #include "settingsdialog.h"
-#include "tools/settings.h"
 #include "settingsmanager.h"
 #include "sitemanager.h"
 #include "sqlmanager.h"
 #include "updater.h"
 #include "xmlmanager.h"
-#include "tools/storage.h"
-#include "tools/stringtools.h"
+// END LEGACY INCLUDES
 
 #define VERSION "0.8.3"
 
@@ -46,9 +52,11 @@ public:
 private slots:
     void updateItemListView();
     void addItem();
+    // Sub-methods for addItem
+    void addItemFromThirdParty(QString query, QString uid, QString language);
+    void addItemManually();
 
     // Legacy methods
-    void rechercheInternet(QString requete, QString site, QString langue);
     void getBook(QString id, QString site);
     void updateOnglet(int id);
     void setListeLivres();
@@ -85,6 +93,7 @@ private:
     CollectionStorageSettings activeCollection;
     Settings *settings;
     Storage *storage;
+    Logger *logger;
 
     // Legacy methods
     void intabPreview(int id);

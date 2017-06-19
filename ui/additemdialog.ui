@@ -225,7 +225,7 @@
    <sender>pushButton_cancel</sender>
    <signal>clicked()</signal>
    <receiver>AddItemDialog</receiver>
-   <slot>emitClose()</slot>
+   <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>331</x>
