@@ -19,10 +19,9 @@ TEMPLATE = app
 SOURCES += main.cpp\
         dadabooks.cpp \
     settingsmanager.cpp \
-    addbook.cpp \
+    addauteur.cpp \
     sitemanager.cpp \
     editbook.cpp \
-    addauteur.cpp \
     addediteur.cpp \
     xmlmanager.cpp \
     sqlmanager.cpp \
@@ -43,11 +42,11 @@ SOURCES += main.cpp\
     ui/storageselectiondialog.cpp \
     tools/storage.cpp \
     entity/baseentity.cpp \
-    tools/stringtools.cpp
+    tools/stringtools.cpp \
+    ui/additemdialog.cpp
 
 HEADERS  += dadabooks.h \
     settingsmanager.h \
-    addbook.h \
     sitemanager.h \
     PluginTemplate.h \
     editbook.h \
@@ -76,10 +75,10 @@ HEADERS  += dadabooks.h \
     ui/storageselectiondialog.h \
     tools/storage.h \
     entity/baseentity.h \
-    tools/stringtools.h
+    tools/stringtools.h \
+    ui/additemdialog.h
 
 FORMS    += dadabooks.ui \
-    addbook.ui \
     editbook.ui \
     addauteur.ui \
     addediteur.ui \
@@ -90,7 +89,8 @@ FORMS    += dadabooks.ui \
     lenddialog.ui \
     searchdialog.ui \
     ui/apidialog.ui \
-    ui/storageselectiondialog.ui
+    ui/storageselectiondialog.ui \
+    ui/additemdialog.ui
 
 RESOURCES += \
     images.qrc

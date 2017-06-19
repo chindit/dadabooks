@@ -12,7 +12,7 @@
 
 #include <time.h>
 
-#include "addbook.h"
+#include "ui/additemdialog.h"
 #include "editbook.h"
 #include "ui/firstlaunch.h"
 #include "lenddialog.h"
@@ -45,7 +45,9 @@ public:
 
 private slots:
     void updateItemListView();
+    void addItem();
 
+    // Legacy methods
     void rechercheInternet(QString requete, QString site, QString langue);
     void getBook(QString id, QString site);
     void updateOnglet(int id);
@@ -70,7 +72,6 @@ private slots:
     void exportAsHTML();
     void exportAsPDF();
     void setEditCanceled();
-    void showAddBook();
     void showInitStacked();
     void prepareLendDialog();
     void lendItem(QString nom, QString email);
@@ -85,10 +86,10 @@ private:
     Settings *settings;
     Storage *storage;
 
+    // Legacy methods
     void intabPreview(int id);
     int getCurrentItemID();
 
-    AddBook *insAddBook;
     Ui::DadaBooks *ui;
     EditBook *insEditBook;
     LendDialog *insLendDialog;

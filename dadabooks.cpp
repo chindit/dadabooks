@@ -20,7 +20,6 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     //Initialisations des classes
     insPreviewBook = new PreviewBook(this);
     insSettingsManager = new SettingsManager(this);
-    insAddBook = new AddBook(this);
     insSiteManager = new SiteManager(this);
     insLendDialog = new LendDialog(this);
     insSearchDialog = new SearchDialog(this);
@@ -57,7 +56,6 @@ DadaBooks::~DadaBooks(){
     // Settings cannot be deleted (Why ?)
     //delete settings;
     // TODO Remove
-    delete insAddBook;
     delete insLendDialog;
     delete insSiteManager;
     delete insPreviewBook;
@@ -97,10 +95,11 @@ void DadaBooks::init()
  */
 void DadaBooks::setConnectors()
 {
-    connect(ui->pushButton_add, SIGNAL(clicked()), this, SLOT(showAddBook()));
-    connect(insAddBook, SIGNAL(canceled()), this, SLOT(showInitStacked()));
+    // New connectors
+    connect(ui->pushButton_add, SIGNAL(clicked()), this, SLOT(addItem()));
+
+    // Legacy connectors
     connect(insPreviewBook, SIGNAL(canceled()), this, SLOT(showInitStacked()));
-    connect(insAddBook, SIGNAL(searchInternet(QString,QString,QString)), this, SLOT(rechercheInternet(QString,QString,QString)));
     connect(ui->pushButton_random, SIGNAL(clicked()), this, SLOT(selectRandom()));
     connect(insPreviewBook, SIGNAL(bookSelected(QString, QString)), this, SLOT(getBook(QString, QString)));
     connect(ui->tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
@@ -161,9 +160,17 @@ void DadaBooks::updateItemListView()
     }
 }
 
+/**
+ * Add a new item to active collection
+ * @brief DadaBooks::addItem
+ */
+void DadaBooks::addItem(){
+
+    return;
+}
+
 //Transfère les données de AddBook à PreviewBook
 void DadaBooks::rechercheInternet(QString requete, QString site, QString langue){
-    insAddBook->close();
     ui->stackedWidget->setCurrentIndex(3);
     QList< QMultiMap<QString,QString> > resultats;
     resultats = insSiteManager->makeSearch(requete, site, langue, insSettingsManager->getSettings(Type).toString());
@@ -1172,13 +1179,6 @@ void DadaBooks::exportAsPDF(){
 //Annule l'édition d'un livre/film
 void DadaBooks::setEditCanceled(){
     isCalling = false;
-    return;
-}
-
-//Appelle l'ajout de livre et affiche le chargement
-void DadaBooks::showAddBook(){
-    ui->stackedWidget->setCurrentIndex(3);
-    insAddBook->show();
     return;
 }
 
