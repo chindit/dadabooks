@@ -40,6 +40,9 @@ public slots:
     void updateEditeurs(int id, QString nom);
 
 private slots:
+    void pictureHydratorCallback();
+    void showPicture();
+
     // LEGACY
     void accept();
     void reject();
@@ -47,7 +50,6 @@ private slots:
     void setEditeur();
     void uploadImage();
     void uploadEbook();
-    void showImage();
     void addEtiquette();
     void etiquetteDispoToElem();
     void etiquetteElemToDispo();
@@ -55,7 +57,7 @@ private slots:
     void addGenre();
 
 signals:
-    // LEGACY
+    // TODO IMPLEMENT
     void editDone(int);
     void bookAdded();
     void editCanceled();
@@ -63,13 +65,19 @@ signals:
 private:
     void setCollectionType(Collection type);
     void hydrateMovie(class Movie *movie);
+    void hydratePicture(QString picture);
     void clearUI();
+    void setConnectors();
 
     Logger *logger;
     Storage *storage;
     QWidget *parent;
+    Ui::EditBook *ui;
+    NetworkManager *networkManager;
 
     CollectionStorageSettings collection;
+    BaseEntity *entity;
+    QPixmap coverPicture;
     int idEdit;
 
     // LEGACY
@@ -77,8 +85,6 @@ private:
     void getEditeur(QString nom);
     void clearAll();
     int getId(bool editeur=false);
-
-    Ui::EditBook *ui;
 
     QDialog *dialogUploadImage;
     QLabel *labelResultatLocal;

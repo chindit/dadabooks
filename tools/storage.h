@@ -20,6 +20,7 @@ public:
     bool reload(CollectionStorageSettings collection);
     QList<BaseEntity*> getBaseEntities();
     bool addLabel(QString label);
+    QStringList getAvailableLabels();
 
 private:
     bool load(CollectionStorageSettings collection);

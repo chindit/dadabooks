@@ -13,6 +13,9 @@ EditBook::EditBook(Storage *storage, Logger *logger, QWidget *parent, Collection
     this->logger = logger;
     this->parent = parent;
     this->collection = collection;
+    this->entity = new class Movie(); // Movie by default, but it shouldn't be accessed as it.
+    this->coverPicture = QPixmap();
+    this->networkManager = new NetworkManager(this->logger, this);
 
     this->idEdit = 0;
 
@@ -42,6 +45,18 @@ EditBook::EditBook(Storage *storage, Logger *logger, QWidget *parent, Collection
  */
 EditBook::~EditBook(){
     delete ui;
+    delete networkManager;
+}
+
+/**
+ * Connect elements for the UI and network
+ * @brief EditBook::setConnectors
+ */
+void EditBook::setConnectors()
+{
+    connect(this->networkManager, SIGNAL(downloadAborted()), this, SLOT(pictureHydratorCallback()));
+    connect(this->networkManager, SIGNAL(downloadFailed()), this, SLOT(pictureHydratorCallback()));
+    connect(this->networkManager, SIGNAL(downloadFinished()), this, SLOT(pictureHydratorCallback()));
 }
 
 /**
@@ -69,6 +84,7 @@ void EditBook::setCollectionType(Collection type)
  */
 void EditBook::setEntity(BaseEntity *entity)
 {
+    this->entity = entity;
     if (this->collection.type == Movie) {
         try {
             class Movie *movie = dynamic_cast<class Movie*>(entity);
@@ -99,8 +115,8 @@ void EditBook::hydrateMovie(class Movie *movie)
     this->ui->labelImageFilm->setText(movie->getCover());
     this->ui->lineEditClassementFilm->setText(movie->getClassification());
     this->ui->horizontalSliderNoteFilm->setValue(movie->getNotation());
-    this->ui->labelNoteFilm->setText(movie->getNotation());
-    this->ui->plainTextEditCommentaireFilm->setPlainText(movie->comment);
+    this->ui->labelNoteFilm->setText(QString::number(movie->getNotation()));
+    this->ui->plainTextEditCommentaireFilm->setPlainText(movie->getComment());
 
     // Hydrating checkboxes
     ui->checkBoxEmpruntableFilm->setChecked(movie->isBorrowable());
@@ -136,19 +152,26 @@ void EditBook::hydrateMovie(class Movie *movie)
 
     ui->listWidgetEtiquettesDispoFilm->insertItems(0, availableLabels);
     ui->listWidgetEtiquettesFilmFilm->insertItems(0, movie->getLabels());
+}
 
-
+/**
+ * Download a picture in background
+ * @brief EditBook::hydratePicture
+ * @param picture
+ */
+void EditBook::hydratePicture(QString picture)
+{
     // Hydrating cover picture
     QPixmap image;
-    if (!StringTools::isUrl(movie->getCover())) {
-         QFile coverPicture(movie->getCover());
+    if (!StringTools::isUrl(picture)) {
+         QFile coverPicture(picture);
          if (coverPicture.exists()) {
-             image.load(movie->getCover());
-         } else if (movie->getCover() > 0) {
+             image.load(picture);
+         } else if (picture > 0) {
              QMap<QString, QString> context;
-             context.insert("file", movie->getCover());
-             context.insert("movieTitle", movie->getTitle());
-             context.insert("id", movie->getId());
+             context.insert("file", picture);
+             context.insert("movieTitle", this->entity->getTitle());
+             context.insert("id", QString::number(this->entity->getId()));
              this->logger->info("Picture cover not found", context);
              QMessageBox::information(this, "Image introuvable", "Une erreur est survenue, la jaquette de ce livre ne peut être trouvée");
          } else {
@@ -156,24 +179,31 @@ void EditBook::hydrateMovie(class Movie *movie)
              // TODO Load default cover
          }
      } else{
-        NetworkManager downloader = NetworkManager(this->logger, this);
         // Calling thread-blocking download
-        QByteArray downloadedPicture = downloader.downloadFile(movie->getCover());
-        if (downloadedPicture.size() > 0) {
-            bool imageLoaded = image.loadFromData(downloadedPicture);
-            if (!imageLoaded) {
-                // TODO Load default cover
-            } else {
-                int width = image.width();
-                if(width > 150){
-                    float coef = (float)width / 150;
-                    int result = image.width()/coef;
-                    image = image.scaledToWidth(result);
-                }
-            }
-
-        }
+        this->networkManager->download(picture);
      }
+}
+
+/**
+ * In case of a download, we use this callback to not block main thread
+ * @brief EditBook::pictureHydratorCallback
+ */
+void EditBook::pictureHydratorCallback()
+{
+    QByteArray response = this->networkManager->getFile();
+    if (response.size() > 0) {
+        bool imageLoaded = this->coverPicture.loadFromData(response);
+        if (!imageLoaded) {
+            // TODO Load default cover
+        } else {
+            int width = this->coverPicture.width();
+            if(width > 150){
+                float coef = (float)width / 150;
+                int result = this->coverPicture.width()/coef;
+                this->coverPicture = this->coverPicture.scaledToWidth(result);
+            }
+        }
+    }
 }
 
 /**
@@ -191,6 +221,34 @@ void EditBook::clearUI()
     this->ui->listWidgetGenreFilm->clear();
     this->ui->plainTextEditSynopsisFilm->clear();
     this->ui->plainTextEditCommentaireFilm->clear();
+}
+
+/**
+ * Show cover picture in a dedicated dialog
+ * @brief EditBook::showPicture
+ */
+void EditBook::showPicture()
+{
+    if (this->coverPicture.isNull()) {
+        return;
+    }
+    QDialog *preview = new QDialog(this);
+    preview->setWindowTitle(tr("Cover picture"));
+    preview->setWindowModality(Qt::WindowModal);
+    QVBoxLayout *layout = new QVBoxLayout;
+    QPushButton *close = new QPushButton(tr("Close"));
+    QLabel *picture = new QLabel;
+    picture->setPixmap(this->coverPicture);
+    layout->addWidget(picture);
+    layout->addWidget(close);
+    preview->setLayout(layout);
+    connect(close, SIGNAL(clicked()), preview, SLOT(close()));
+    preview->exec();
+
+    delete picture;
+    delete close;
+    delete layout;
+    delete preview;
 }
 
 //Envoie le signal d'édition annulée
@@ -908,31 +966,6 @@ void EditBook::setId(int id){
 void EditBook::uploadEbook(){
     QString ebook = QFileDialog::getOpenFileName(this, "Sélectionnez le fichier", QDir::homePath());
     ui->labelCheminLivre->setText(ebook);
-    return;
-}
-
-//Prévisualisation de l'image
-void EditBook::showImage(){
-    QString url;
-    if(ui->stackedWidget->currentIndex() == 0)
-        url = ui->labelImageLivre->text();
-    else
-        url = ui->labelImageFilm->text();
-    QPixmap jaquette = ToolsManager::getPixmapFromString(url);
-    QLabel *image = new QLabel;
-    image->setPixmap(jaquette);
-    QPushButton *close = new QPushButton("Fermer");
-    QVBoxLayout *layoutVertical = new QVBoxLayout;
-    layoutVertical->addWidget(image);
-    layoutVertical->addWidget(close);
-    QDialog *preview = new QDialog(this);
-    preview->setLayout(layoutVertical);
-    connect(close, SIGNAL(clicked()), preview, SLOT(close()));
-    preview->exec();
-    delete image;
-    delete close;
-    delete layoutVertical;
-    delete preview;
     return;
 }
 

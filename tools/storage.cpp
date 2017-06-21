@@ -184,3 +184,16 @@ bool Storage::addLabel(QString label)
     }
     return false;
 }
+
+/**
+ * Return the list of available labels
+ * @brief Storage::getAvailableLabels
+ * @return
+ */
+QStringList Storage::getAvailableLabels()
+{
+    if (this->isStorageEngineLoaded()) {
+        return this->storageEngine->getLabels();
+    }
+    return QStringList();
+}

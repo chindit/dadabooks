@@ -37,7 +37,7 @@
    <item row="1" column="0">
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="livres">
       <layout class="QGridLayout" name="gridLayout_3">
@@ -938,7 +938,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButtonVoirFilm">
+          <widget class="QPushButton" name="pushButtonSeeCoverMovie">
            <property name="maximumSize">
             <size>
              <width>75</width>
@@ -951,7 +951,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButtonModifImageFilm">
+          <widget class="QPushButton" name="pushButtonModifyCoverMovie">
            <property name="maximumSize">
             <size>
              <width>75</width>
@@ -983,7 +983,7 @@
             <string>Genres</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+            <set>Qt::AlignHCenter|Qt::AlignTop</set>
            </property>
           </widget>
          </item>
