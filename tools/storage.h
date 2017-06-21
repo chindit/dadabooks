@@ -19,6 +19,7 @@ public:
     bool isStorageEngineLoaded();
     bool reload(CollectionStorageSettings collection);
     QList<BaseEntity*> getBaseEntities();
+    bool addLabel(QString label);
 
 private:
     bool load(CollectionStorageSettings collection);

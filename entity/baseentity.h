@@ -10,6 +10,7 @@ public:
     int getId();
     QString getTitle();
     BaseEntity *setTitle(QString title);
+    virtual QString getComment() = 0; // Required for cast
 
 private:
     int id;

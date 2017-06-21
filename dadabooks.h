@@ -18,11 +18,11 @@
 
 #include "ui_dadabooks.h"
 #include "ui/additemdialog.h"
+#include "ui/editbook.h"
 #include "ui/firstlaunch.h"
 
 
 // START LEGACY INCLUDES
-#include "editbook.h"
 #include "lenddialog.h"
 #include "previewbook.h"
 #include "searchdialog.h"

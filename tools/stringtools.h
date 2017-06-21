@@ -8,6 +8,7 @@ class StringTools
 {
 public:
     static QString stripDeterminants(QString string);
+    static bool isUrl(QString string);
 };
 
 #endif // STRINGTOOLS_H

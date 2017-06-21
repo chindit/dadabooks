@@ -18,6 +18,7 @@ class Logger : public QMessageLogger
 public:
     Logger(Settings *settings, QWidget *parent);
     ~Logger();
+    void addContext(QString key, QString value);
     void log(LogLevel level, QString message, QMap<QString, QString> context);
     void logException(ExceptionInterface *exception);
     // Following methods are just an alias of log()
@@ -27,7 +28,7 @@ public:
     void warning(QString message, QMap<QString, QString> context);
     void error(QString message, QMap<QString, QString> context = QMap<QString, QString>());
     void critical(QString message, QMap<QString, QString> context);
-    void alert(QString message, QMap<QString, QString> context);
+    void alert(QString message, QMap<QString, QString> context = QMap<QString, QString>());
     void emergency(QString message, QMap<QString, QString> context);
 
 private:
@@ -35,6 +36,7 @@ private:
     QString loggerFilePath;
     Settings *settings;
     QWidget *parent;
+    QMap<QString, QString> context;
 };
 
 #endif // LOGGER_H

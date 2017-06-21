@@ -180,6 +180,26 @@ public:
      * @param entity
      */
     virtual void remove(QMultiMap<QString, QString> entity) = 0;
+    /**
+     * Return the list of available labels
+     * @brief getLabels
+     * @return
+     */
+    virtual QStringList getLabels() = 0;
+    /**
+     * Add a label to the list
+     * @brief addLabel
+     * @param label
+     * @return
+     */
+    virtual QStringList addLabel(QString label) = 0;
+    /**
+     * Remove specific label from the list
+     * @brief removeLabel
+     * @param label
+     * @return
+     */
+    virtual QStringList removeLabel(QString label) = 0;
 };
 
 Q_DECLARE_INTERFACE(StoragePlugin, "DadaBooks.Storage.Plugin")

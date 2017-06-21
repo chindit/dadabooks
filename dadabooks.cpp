@@ -35,7 +35,7 @@ DadaBooks::DadaBooks(QWidget *parent) : QMainWindow(parent), ui(new Ui::DadaBook
     else
         insSqlManager = new SqlManager();
 
-    insEditBook = new EditBook;
+    //insEditBook = new EditBook;
     insSettingsDialog = new SettingsDialog;
 
     //Chargement du GIF de… chargement

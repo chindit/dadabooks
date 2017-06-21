@@ -21,7 +21,7 @@ SOURCES += main.cpp\
     settingsmanager.cpp \
     addauteur.cpp \
     sitemanager.cpp \
-    editbook.cpp \
+    ui/editbook.cpp \
     addediteur.cpp \
     xmlmanager.cpp \
     sqlmanager.cpp \
@@ -43,13 +43,14 @@ SOURCES += main.cpp\
     tools/storage.cpp \
     entity/baseentity.cpp \
     tools/stringtools.cpp \
-    ui/additemdialog.cpp
+    ui/additemdialog.cpp \
+    tools/networkmanager.cpp
 
 HEADERS  += dadabooks.h \
     settingsmanager.h \
     sitemanager.h \
     PluginTemplate.h \
-    editbook.h \
+    ui/editbook.h \
     addauteur.h \
     addediteur.h \
     xmlmanager.h \
@@ -76,10 +77,11 @@ HEADERS  += dadabooks.h \
     tools/storage.h \
     entity/baseentity.h \
     tools/stringtools.h \
-    ui/additemdialog.h
+    ui/additemdialog.h \
+    tools/networkmanager.h
 
 FORMS    += dadabooks.ui \
-    editbook.ui \
+    ui/editbook.ui \
     addauteur.ui \
     addediteur.ui \
     previewbook.ui \

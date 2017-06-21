@@ -1,81 +1,196 @@
 #include "editbook.h"
-#include "ui_editbook.h"
 
-//Constructeur
-EditBook::EditBook(QWidget *parent) : QDialog(parent), ui(new Ui::EditBook){
-    //Initialisations
-    ui->setupUi(this); //UI
-    idEdit = 0; //(int) Contient d'ID de l'élément dans le cas d'une édition
-    insSettingsManager = new SettingsManager(this); //SettingsManager
-    if(insSettingsManager->getSettings(Xml).toBool()){
-        insXml = new XmlManager; //Si la collection est en SQL, on initialise le lecteur XML
-    }
-    else{
-        //Sinon, la collection est de type basse de données.  On initialise le driver SQL et on active les
-        //plugins AddAuteur et AddEditeurs, réservés aux bases de données
-        insSql = new SqlManager();
-        insAddAuteur = new AddAuteur(this);
-        insAddEditeur = new AddEditeur(this);
-        connect(ui->pushButtonNouvelAuteurLivre, SIGNAL(clicked()), insAddAuteur, SLOT(show()));
-        connect(insAddAuteur, SIGNAL(makeClose(int, QString)), this, SLOT(updateAuteurs(int, QString)));
-        connect(ui->pushButtonNouvelEditeurLivre, SIGNAL(clicked()), insAddEditeur, SLOT(show()));
-        connect(insAddEditeur, SIGNAL(makeClose(int, QString)), this, SLOT(updateEditeurs(int, QString)));
-        connect(ui->pushButtonModifImageFilm, SIGNAL(clicked()), this, SLOT(uploadImage()));
-        connect(ui->pushButtonModifImageLivre, SIGNAL(clicked()), this, SLOT(uploadImage()));
-        //On cache les éléments d'auteur si besoin
-        if(insSettingsManager->getSettings(AutoAuteur).toBool()){
-            ui->comboBoxAuteurLivre->setHidden(true);
-            ui->pushButtonEditAuteurLivre->setHidden(true);
-            ui->pushButtonNouvelAuteurLivre->setHidden(true);
-        }
-        if(insSettingsManager->getSettings(AutoEditeur).toBool()){
-            ui->comboBoxEditeurLivre->setHidden(true);
-            ui->pushButtonEditEditeurLivre->setHidden(true);
-            ui->pushButtonNouvelEditeurLivre->setHidden(true);
-        }
-    }
+/**
+ * Constructor
+ * @brief EditBook::EditBook
+ * @param storage
+ * @param logger
+ * @param parent
+ * @param collection
+ */
+EditBook::EditBook(Storage *storage, Logger *logger, QWidget *parent, CollectionStorageSettings collection) : QDialog(parent), ui(new Ui::EditBook){
+    this->storage = storage;
+    this->logger = logger;
+    this->parent = parent;
+    this->collection = collection;
 
-    //Gestion des films
-    if(insSettingsManager->getSettings(Type).toString() == "films"){
-        ui->stackedWidget->setCurrentIndex(1); //On change l'éditeur de «livres à film» (onglet 2)
-        connect(ui->pushButtonEmplacementFilm, SIGNAL(clicked()), this, SLOT(uploadEbook()));
-    }
-    else{
-        ui->windowTitle->setText("Édition du livre");
-        ui->stackedWidget->setCurrentIndex(0); //Index1 : livres
-        connect(ui->pushButtonEmplacementLivre, SIGNAL(clicked()), this, SLOT(uploadEbook()));
-    }
-    //Boutons de jaquette
-    connect(ui->pushButtonVoirFilm, SIGNAL(clicked()), this, SLOT(showImage()));
-    connect(ui->pushButtonVoirLivre, SIGNAL(clicked()), this, SLOT(showImage()));
-    //Boutons d'Étiquettes
-    connect(ui->pushButtonEtiquettePlusFilm, SIGNAL(clicked()), this, SLOT(addEtiquette()));
-    connect(ui->pushButtonEtiquettesPlusLivre, SIGNAL(clicked()), this, SLOT(addEtiquette()));
-    connect(ui->pushButtonEtiquetteToFilmFilm, SIGNAL(clicked()), this, SLOT(etiquetteDispoToElem()));
-    connect(ui->pushButtonEtiquettesToLivreLivre, SIGNAL(clicked()), this, SLOT(etiquetteDispoToElem()));
-    connect(ui->pushButtonEtiquetteFilmDispoFilm, SIGNAL(clicked()), this, SLOT(etiquetteElemToDispo()));
-    connect(ui->pushButtonEtiquettesLivreDispoLivre, SIGNAL(clicked()), this, SLOT(etiquetteElemToDispo()));
-    //Boutons d'ajout acteurs/genre
-    connect(ui->pushButtonAddActeurFilm, SIGNAL(clicked()), this, SLOT(addActeur()));
-    connect(ui->pushButtonAddGenreFilm, SIGNAL(clicked()), this, SLOT(addGenre()));
-    //Centrage des boutons film
-    ui->verticalLayout_9->setAlignment(Qt::AlignHCenter);
+    this->idEdit = 0;
+
+    ui->setupUi(this);
+
+    this->setCollectionType(collection.type);
 }
 
-//Destructeur
+/**
+ * Constructor overload
+ * @brief EditBook::EditBook
+ * @param storage
+ * @param logger
+ * @param parent
+ * @param collection
+ * @param entity
+ */
+EditBook::EditBook(Storage *storage, Logger *logger, QWidget *parent, CollectionStorageSettings collection, BaseEntity *entity)
+{
+    EditBook(storage, logger, parent, collection);
+    this->setEntity(entity);
+}
+
+/**
+ * Destructor
+ * @brief EditBook::~EditBook
+ */
 EditBook::~EditBook(){
-    //Suppression des plugins XML ou SQL
-    if(insSettingsManager->getSettings(Xml).toBool()){
-        delete insXml;
-    }
-    else{
-        delete insSql;
-        delete insAddAuteur;
-        delete insAddEditeur;
-    }
-    //Suppression des autres pointeurs
     delete ui;
-    delete insSettingsManager;
+}
+
+/**
+ * Set type of collection
+ * @brief EditBook::setCollectionType
+ * @param type
+ */
+void EditBook::setCollectionType(Collection type)
+{
+    if (type == Book) {
+        this->ui->stackedWidget->setCurrentIndex(0);
+    } else if (type == Movie) {
+        this->ui->stackedWidget->setCurrentIndex(1);
+    } else {
+        QMessageBox::warning(this, tr("Unsupported collection type"), tr("Unsupported collection type"));
+        this->logger->error("Unknown collection type cannot be added");
+        this->close();
+    }
+}
+
+/**
+ * Hydrate dialog with entity data
+ * @brief EditBook::setEntity
+ * @param entity
+ */
+void EditBook::setEntity(BaseEntity *entity)
+{
+    if (this->collection.type == Movie) {
+        try {
+            class Movie *movie = dynamic_cast<class Movie*>(entity);
+            this->hydrateMovie(movie);
+        } catch (const std::exception& e) {
+            QMap<QString, QString> context;
+            context.insert("error", QString(e.what()));
+            this->logger->error("Unable to cast Entity to Movie.", context);
+        }
+    }
+}
+
+void EditBook::hydrateMovie(class Movie *movie)
+{
+    this->clearUI();
+    this->idEdit = movie->getId();
+
+    // Hydrating plain-text
+    this->ui->lineEditTitreFilm->setText(movie->getTitle());
+    this->ui->lineEditTitreOriginalFilm->setText(movie->getOriginalTitle());
+    this->ui->lineEditDirecteurFilm->setText(movie->getDirector());
+    this->ui->plainTextEditSynopsisFilm->setPlainText(movie->getSynopsis());
+    this->ui->spinBoxAnneeFilm->setValue(movie->getYear().year());
+    this->ui->spinBoxDureeFilm->setValue(movie->getDuration());
+    this->ui->lineEditNationaliteFilm->setText(movie->getCountries().join(','));
+    this->ui->lineEditLangueFilm->setText(movie->getLanguages().join(','));
+    this->ui->lineEditSousTitresFilm->setText(movie->getSubtitles().join(','));
+    this->ui->labelImageFilm->setText(movie->getCover());
+    this->ui->lineEditClassementFilm->setText(movie->getClassification());
+    this->ui->horizontalSliderNoteFilm->setValue(movie->getNotation());
+    this->ui->labelNoteFilm->setText(movie->getNotation());
+    this->ui->plainTextEditCommentaireFilm->setPlainText(movie->comment);
+
+    // Hydrating checkboxes
+    ui->checkBoxEmpruntableFilm->setChecked(movie->isBorrowable());
+    ui->checkBoxPreteFilm->setChecked(movie->isBorrowed());
+    ui->checkBoxVuFilm->setChecked(movie->isSeen());
+    ui->checkBoxFichierFilm->setChecked(movie->hasFile());
+    if (movie->hasFile()) {
+        ui->labelCheminFilm->setText(movie->getFile());
+        ui->pushButtonEmplacementFilm->setEnabled(true);
+    }
+
+    // Hydrating QListWidget
+    for (QString actor : movie->getActors()) {
+        ui->listWidgetActeursFilm->addItem(actor);
+        ui->listWidgetActeursFilm->setCurrentRow(ui->listWidgetActeursFilm->count()-1);
+        ui->listWidgetActeursFilm->currentItem()->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    }
+    for (QString gender : movie->getGenders()) {
+        ui->listWidgetGenreFilm->addItem(gender);
+        ui->listWidgetGenreFilm->setCurrentRow(ui->listWidgetGenreFilm->count()-1);
+        ui->listWidgetGenreFilm->currentItem()->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    }
+
+    QStringList availableLabels = this->storage->getAvailableLabels();
+    // Removing selected labels from available list
+    for(QString label : movie->getLabels()) {
+        if (availableLabels.contains(label)) {
+            availableLabels.removeOne(label);
+        } else {
+            this->storage->addLabel(label);
+        }
+    }
+
+    ui->listWidgetEtiquettesDispoFilm->insertItems(0, availableLabels);
+    ui->listWidgetEtiquettesFilmFilm->insertItems(0, movie->getLabels());
+
+
+    // Hydrating cover picture
+    QPixmap image;
+    if (!StringTools::isUrl(movie->getCover())) {
+         QFile coverPicture(movie->getCover());
+         if (coverPicture.exists()) {
+             image.load(movie->getCover());
+         } else if (movie->getCover() > 0) {
+             QMap<QString, QString> context;
+             context.insert("file", movie->getCover());
+             context.insert("movieTitle", movie->getTitle());
+             context.insert("id", movie->getId());
+             this->logger->info("Picture cover not found", context);
+             QMessageBox::information(this, "Image introuvable", "Une erreur est survenue, la jaquette de ce livre ne peut être trouvée");
+         } else {
+             // Empty string
+             // TODO Load default cover
+         }
+     } else{
+        NetworkManager downloader = NetworkManager(this->logger, this);
+        // Calling thread-blocking download
+        QByteArray downloadedPicture = downloader.downloadFile(movie->getCover());
+        if (downloadedPicture.size() > 0) {
+            bool imageLoaded = image.loadFromData(downloadedPicture);
+            if (!imageLoaded) {
+                // TODO Load default cover
+            } else {
+                int width = image.width();
+                if(width > 150){
+                    float coef = (float)width / 150;
+                    int result = image.width()/coef;
+                    image = image.scaledToWidth(result);
+                }
+            }
+
+        }
+     }
+}
+
+/**
+ * Remove previous data form UI
+ * @brief EditBook::clearUI
+ */
+void EditBook::clearUI()
+{
+    // Clearing movie
+    this->ui->listWidgetActeursFilm->clear();
+    this->ui->listWidgetEtiquettesDispoFilm->clear();
+    this->ui->listWidgetEtiquettesDispoLivre->clear();
+    this->ui->listWidgetEtiquettesFilmFilm->clear();
+    this->ui->listWidgetEtiquettesLivreLivre->clear();
+    this->ui->listWidgetGenreFilm->clear();
+    this->ui->plainTextEditSynopsisFilm->clear();
+    this->ui->plainTextEditCommentaireFilm->clear();
 }
 
 //Envoie le signal d'édition annulée

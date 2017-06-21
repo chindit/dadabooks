@@ -170,3 +170,17 @@ bool Storage::reload(CollectionStorageSettings collection)
     this->load(collection);
     return this->loaded;
 }
+
+/**
+ * Add a label to the global list
+ * @brief Storage::addLabel
+ * @param label
+ * @return
+ */
+bool Storage::addLabel(QString label)
+{
+    if (this->isStorageEngineLoaded()) {
+        return this->storageEngine->addLabel(label).contains(label);
+    }
+    return false;
+}

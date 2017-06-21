@@ -2,7 +2,7 @@
 
 Movie::Movie()
 {
-
+    this->id = 0;
 }
 
 QString Movie::getOriginalTitle()

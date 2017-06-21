@@ -44,6 +44,10 @@ void Logger::log(LogLevel level, QString message, QMap<QString, QString> context
     output +=" : ";
     output += message;
 
+    // Adding existing context
+    context = context.unite(this->context);
+    this->context.clear();
+
     // Adding context
     if (context.size() > 0) {
         output += " [";
@@ -87,6 +91,17 @@ void Logger::write(QString log)
     logFile->write(log.toLocal8Bit());
     logFile->close();
     delete logFile;
+}
+
+/**
+ * Add context for next log.
+ * @brief Logger::addContext
+ * @param key
+ * @param value
+ */
+void Logger::addContext(QString key, QString value)
+{
+    this->context.insert(key, value);
 }
 
 /**
@@ -171,7 +186,7 @@ void Logger::critical(QString message, QMap<QString, QString> context = QMap<QSt
  * @param message
  * @param context
  */
-void Logger::alert(QString message, QMap<QString, QString> context = QMap<QString, QString>())
+void Logger::alert(QString message, QMap<QString, QString> context)
 {
     return this->log(LogLevel::ALERT, message, context);
 }
