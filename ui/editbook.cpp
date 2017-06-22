@@ -163,25 +163,19 @@ void EditBook::hydratePicture(QString picture)
 {
     // Hydrating cover picture
     QPixmap image;
-    if (!StringTools::isUrl(picture)) {
-         QFile coverPicture(picture);
-         if (coverPicture.exists()) {
-             image.load(picture);
-         } else if (picture > 0) {
-             QMap<QString, QString> context;
-             context.insert("file", picture);
-             context.insert("movieTitle", this->entity->getTitle());
-             context.insert("id", QString::number(this->entity->getId()));
-             this->logger->info("Picture cover not found", context);
-             QMessageBox::information(this, "Image introuvable", "Une erreur est survenue, la jaquette de ce livre ne peut être trouvée");
-         } else {
-             // Empty string
-             // TODO Load default cover
-         }
-     } else{
-        // Calling thread-blocking download
+    if (StringTools::isUrl(picture)) {
+        // Calling non thread-blocking download
         this->networkManager->download(picture);
-     }
+    } else if (StringTools::isFile(picture)) {
+        image.load(picture);
+    } else {
+        QMap<QString, QString> context;
+        context.insert("file", picture);
+        context.insert("movieTitle", this->entity->getTitle());
+        context.insert("id", QString::number(this->entity->getId()));
+        this->logger->info("Picture cover not found", context);
+        // TODO Load default cover
+    }
 }
 
 /**

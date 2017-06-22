@@ -29,7 +29,7 @@ SOURCES += main.cpp\
     settingsdialog.cpp \
     ui/firstlaunch.cpp \
     toolsmanager.cpp \
-    imageuploaddialog.cpp \
+    ui/imageuploaddialog.cpp \
     lenddialog.cpp \
     updater.cpp \
     searchdialog.cpp \
@@ -59,7 +59,7 @@ HEADERS  += dadabooks.h \
     settingsdialog.h \
     ui/firstlaunch.h \
     toolsmanager.h \
-    imageuploaddialog.h \
+    ui/imageuploaddialog.h \
     lenddialog.h \
     updater.h \
     searchdialog.h \
@@ -87,7 +87,7 @@ FORMS    += dadabooks.ui \
     previewbook.ui \
     settingsdialog.ui \
     ui/firstlaunch.ui \
-    imageuploaddialog.ui \
+    ui/imageuploaddialog.ui \
     lenddialog.ui \
     searchdialog.ui \
     ui/apidialog.ui \

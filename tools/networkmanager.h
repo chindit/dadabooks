@@ -10,6 +10,7 @@
 #include <QUrl>
 
 #include "tools/logger.h"
+#include "tools/stringtools.h"
 
 class NetworkManager : public QObject
 {

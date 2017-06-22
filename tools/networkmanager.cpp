@@ -75,7 +75,7 @@ void NetworkManager::setConnectors()
  */
 void NetworkManager::download(QString url)
 {
-    if (!this->isURLValid(url)) {
+    if (!StringTools::isUrl(url)) {
         emit(this->downloadFailed());
     }
     if (this->isLoaded) {
@@ -134,16 +134,4 @@ QByteArray NetworkManager::getFile()
 QString NetworkManager::getError()
 {
     return this->error;
-}
-
-/**
- * Check if URL is valid with strict requirements
- * @brief NetworkManager::isURLValid
- * @param url
- * @return
- */
-bool NetworkManager::isURLValid(QString url)
-{
-    QUrl urlObject = QUrl(url, QUrl::StrictMode);
-    return urlObject.isValid();
 }

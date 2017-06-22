@@ -1,5 +1,11 @@
 #include "stringtools.h"
 
+/**
+ * Move determinants to the end of the string
+ * @brief StringTools::stripDeterminants
+ * @param string
+ * @return
+ */
 QString StringTools::stripDeterminants(QString string)
 {
     QStringList determinants;
@@ -21,4 +27,28 @@ QString StringTools::stripDeterminants(QString string)
         }
     }
     return string.trimmed();
+}
+
+/**
+ * Check if URL is valid with strict requirements
+ * @brief NetworkManager::isURLValid
+ * @param url
+ * @return bool
+ */
+bool StringTools::isUrl(QString string)
+{
+    QUrl urlObject = QUrl(string, QUrl::StrictMode);
+    return urlObject.isValid();
+}
+
+/**
+ * Check if given path is a valid filename
+ * @brief StringTools::isFile
+ * @param string
+ * @return bool
+ */
+bool StringTools::isFile(QString string)
+{
+    QFile file = QFile(string);
+    return file.exists() && file.isReadable();
 }
