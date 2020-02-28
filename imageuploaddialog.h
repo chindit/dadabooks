@@ -1,8 +1,8 @@
 #ifndef IMAGEUPLOADDIALOG_H
 #define IMAGEUPLOADDIALOG_H
 
-#include <QDialog>
-#include <QFile>
+#include <QtWidgets/QDialog>
+#include <QtCore/QFile>
 
 #include "toolsmanager.h"
 

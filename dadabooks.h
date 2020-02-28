@@ -1,16 +1,16 @@
 #ifndef DADABOOKS_H
 #define DADABOOKS_H
 
-#include <QCheckBox>
-#include <QGridLayout>
-#include <QListWidget>
-#include <QMainWindow>
-#include <QMenuBar>
-#include <QMovie>
-#include <QProcess>
-#include <QTextEdit>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QListWidget>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMenuBar>
+#include <QtGui/QMovie>
+#include <QtCore/QProcess>
+#include <QtWidgets/QTextEdit>
 
-#include <time.h>
+#include <ctime>
 
 #include "addbook.h"
 #include "editbook.h"

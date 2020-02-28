@@ -1,7 +1,7 @@
 #ifndef ADD_EDITEUR_H
 #define ADD_EDITEUR_H
 
-#include <QDialog>
+#include <QtWidgets/QDialog>
 
 #include "sqlmanager.h"
 #include "toolsmanager.h"

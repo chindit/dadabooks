@@ -1,9 +1,9 @@
 #ifndef NV_LIVRE_H
 #define NV_LIVRE_H
 
-#include <QAbstractButton>
-#include <QCheckBox>
-#include <QDialog>
+#include <QtWidgets/QAbstractButton>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QDialog>
 
 #include "editbook.h"
 #include "sitemanager.h"

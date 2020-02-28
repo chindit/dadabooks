@@ -1,12 +1,12 @@
 #ifndef UPDATER_H
 #define UPDATER_H
 
-#include <QApplication>
-#include <QObject>
-#include <QProgressBar>
-#include <QPushButton>
-#include <QProcess>
-#include <QWidget>
+#include <QtWidgets/QApplication>
+#include <QtCore/QObject>
+#include <QtWidgets/QProgressBar>
+#include <QtWidgets/QPushButton>
+#include <QtCore/QProcess>
+#include <QtWidgets/QWidget>
 
 #include "toolsmanager.h"
 

@@ -2,23 +2,23 @@
 #define TOOLSMANAGER_H
 
 #include <cmath>
-#include <QCryptographicHash>
-#include <QDir>
-#include <QEventLoop>
-#include <QFileDialog>
-#include <QIcon>
-#include <QLabel>
-#include <QMessageBox>
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
-#include <QPainter>
-#include <QPixmap>
-#include <QProgressBar>
+#include <QtCore/QCryptographicHash>
+#include <QtCore/QDir>
+#include <QtCore/QEventLoop>
+#include <QtWidgets/QFileDialog>
+#include <QtGui/QIcon>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QMessageBox>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkRequest>
+#include <QtNetwork/QNetworkReply>
+#include <QtGui/QPainter>
+#include <QtGui/QPixmap>
+#include <QtWidgets/QProgressBar>
 #include <QtPrintSupport/QPrinter>
-#include <QString>
-#include <QTextDocument>
-#include <QVBoxLayout>
+#include <QtCore/QString>
+#include <QtGui/QTextDocument>
+#include <QtWidgets/QVBoxLayout>
 
 class ToolsManager
 {

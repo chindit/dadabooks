@@ -1,10 +1,10 @@
 #ifndef BOOK_EDIT_H
 #define BOOK_EDIT_H
 
-#include <QDialog>
-#include <QFileInfo>
-#include <QListWidget>
-#include <QMessageBox>
+#include <QtWidgets/QDialog>
+#include <QtCore/QFileInfo>
+#include <QtWidgets/QListWidget>
+#include <QtWidgets/QMessageBox>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>

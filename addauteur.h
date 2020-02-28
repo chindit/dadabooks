@@ -1,8 +1,8 @@
 #ifndef ADD_AUTEUR_H
 #define ADD_AUTEUR_H
 
-#include <QDialog>
-#include <QFileDialog>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QFileDialog>
 
 #include "sqlmanager.h"
 #include "toolsmanager.h"

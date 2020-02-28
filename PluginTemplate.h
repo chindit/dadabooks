@@ -1,8 +1,8 @@
 #ifndef PLUGINTEMPLATE_H
 #define PLUGINTEMPLATE_H
 
-#include <QList>
-#include <QMultiMap>
+#include <QtCore/QList>
+#include <QtCore/QMultiMap>
 
 class Plugin
 {
