@@ -28,9 +28,12 @@ if(${CMAKE_CXX_COMPILER_ID} MATCHES "GNU" OR ${CMAKE_CXX_COMPILER_ID} MATCHES "C
     set(CMAKE_CXX_FLAGS_MINSIZEREL "-Os")
 endif()
 
+find_package(Qt5Core REQUIRED)
+find_package(Qt5Gui REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Network REQUIRED)
 find_package(Qt5PrintSupport REQUIRED)
+find_package(Qt5Sql REQUIRED)
 find_package(Qt5Xml REQUIRED)
 
 include_directories(
@@ -87,7 +90,7 @@ set(RESOURCES
 set(LIBRARIES
         Qt5::Widgets
         Qt5::Network
-        Qt5::PrintSupport
+        Qt5::Sql
         Qt5::Xml
         )
 
@@ -97,5 +100,13 @@ qt5_add_resources(RCC_SOURCES ${RESOURCES})
 
 # Set target
 add_executable(${TARGET_NAME} ${SOURCES} ${HEADERS} ${UIC_SOURCES} ${RCC_SOURCES})
+
+target_link_libraries(${TARGET_NAME} Qt5::Core)
+target_link_libraries(${TARGET_NAME} Qt5::Gui)
+target_link_libraries(${TARGET_NAME} Qt5::Widgets)
+target_link_libraries(${TARGET_NAME} Qt5::Network)
+target_link_libraries(${TARGET_NAME} Qt5::PrintSupport)
+target_link_libraries(${TARGET_NAME} Qt5::Sql)
+target_link_libraries(${TARGET_NAME} Qt5::Xml)
 
 set_property(TARGET ${TARGET_NAME} PROPERTY CXX_STANDARD 20)
