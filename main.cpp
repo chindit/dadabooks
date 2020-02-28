@@ -1,6 +1,6 @@
 #include "dadabooks.h"
-#include <QApplication>
-#include <QSplashScreen>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QSplashScreen>
 
 int main(int argc, char *argv[])
 {

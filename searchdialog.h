@@ -1,8 +1,8 @@
 #ifndef SEARCHDIALOG_H
 #define SEARCHDIALOG_H
 
-#include <QDialog>
-#include <QListWidgetItem>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QListWidgetItem>
 
 #include "settingsmanager.h"
 #include "sqlmanager.h"

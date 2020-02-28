@@ -3,10 +3,10 @@
 
 enum Setting { AutoAuteur, AutoEditeur, Sqlite, MariaDB, DBHost, DBUser, DBPass, DBBase, Xml, Fichier, Initialized, OpenInTab, DownPics, Type, Empruntable };
 
-#include <QObject>
-#include <QMessageBox>
-#include <QVariant>
-#include <QSettings>
+#include <QtCore/QObject>
+#include <QtWidgets/QMessageBox>
+#include <QtCore/QVariant>
+#include <QtCore/QSettings>
 
 class SettingsManager : public QObject
 {

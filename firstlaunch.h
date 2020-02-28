@@ -1,10 +1,10 @@
 #ifndef FIRSTLAUNCH_H
 #define FIRSTLAUNCH_H
 
-#include <QDialog>
-#include <QFileDialog>
-#include <QFileInfo>
-#include <QLineEdit>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QFileDialog>
+#include <QtCore/QFileInfo>
+#include <QtWidgets/QLineEdit>
 
 #include "settingsmanager.h"
 

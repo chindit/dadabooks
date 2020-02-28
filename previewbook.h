@@ -1,13 +1,13 @@
 #ifndef BOOK_PREVIEW_H
 #define BOOK_PREVIEW_H
 
-#include <QDialog>
-#include <QMultiMap>
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
-#include <QProgressBar>
-#include <QMessageBox>
+#include <QtWidgets/QDialog>
+#include <QtCore/QMultiMap>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkRequest>
+#include <QtNetwork/QNetworkReply>
+#include <QtWidgets/QProgressBar>
+#include <QtWidgets/QMessageBox>
 
 #include "settingsmanager.h"
 

@@ -1,12 +1,12 @@
 #ifndef SITEMANAGER_H
 #define SITEMANAGER_H
 
-#include <QApplication>
-#include <QDir>
-#include <QList>
-#include <QMap>
-#include <QObject>
-#include <QPluginLoader>
+#include <QtWidgets/QApplication>
+#include <QtCore/QDir>
+#include <QtCore/QList>
+#include <QtCore/QMap>
+#include <QtCore/QObject>
+#include <QtCore/QPluginLoader>
 
 #include "PluginTemplate.h"
 

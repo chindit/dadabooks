@@ -1,9 +1,9 @@
 #ifndef LENDDIALOG_H
 #define LENDDIALOG_H
 
-#include <QDate>
-#include <QDialog>
-#include <QMessageBox>
+#include <QtCore/QDate>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QMessageBox>
 
 enum lendAction { Lend, Return };
 

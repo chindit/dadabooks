@@ -5,13 +5,13 @@
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlRecord>
 #include <QtSql/QSqlError>
-#include <QDebug>
-#include <QElapsedTimer>
+#include <QtCore/QDebug>
+#include <QtCore/QElapsedTimer>
 
 
 #include "settingsmanager.h"
 #include "toolsmanager.h"
-#include <QtPlugin>
+#include <QtCore/QtPlugin>
 
 class SqlManager
 {

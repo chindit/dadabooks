@@ -1,11 +1,11 @@
 #ifndef XMLMANAGER_H
 #define XMLMANAGER_H
 
-#include <QDate>
-#include <QFile>
-#include <QFileDialog>
-#include <QObject>
-#include <QTextStream>
+#include <QtCore/QDate>
+#include <QtCore/QFile>
+#include <QtWidgets/QFileDialog>
+#include <QtCore/QObject>
+#include <QtCore/QTextStream>
 #include <QtXml/QDomDocument>
 #include <QtXml/QDomElement>
 #include <iterator>

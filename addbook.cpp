@@ -1,8 +1,8 @@
 #include "addbook.h"
 #include "ui_addbook.h"
 
-#include <QMessageBox>
-#include <QStandardItem>
+#include <QtWidgets/QMessageBox>
+#include <QtGui/QStandardItem>
 
 AddBook::AddBook(QWidget *parent) : QDialog(parent), ui(new Ui::AddBook){
     ui->setupUi(this);

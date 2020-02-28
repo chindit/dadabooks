@@ -1,8 +1,8 @@
 #ifndef SETTINGSDIALOG_H
 #define SETTINGSDIALOG_H
 
-#include <QDialog>
-#include <QSignalMapper>
+#include <QtWidgets/QDialog>
+#include <QtCore/QSignalMapper>
 
 #include "settingsmanager.h"
 #include "xmlmanager.h"
